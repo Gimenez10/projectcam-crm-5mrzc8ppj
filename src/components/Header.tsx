@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Bell, Menu, Package2, Search } from 'lucide-react'
+import { Bell, Menu, Camera, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -24,7 +24,7 @@ export const Header = () => {
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-lg md:px-6">
       <div className="flex items-center gap-2">
         <Link to="/" className="flex items-center gap-2 font-semibold">
-          <Package2 className="h-6 w-6 text-primary" />
+          <Camera className="h-6 w-6 text-primary" />
           <span className="hidden text-lg font-bold md:inline-block">
             PROJECAM
           </span>
@@ -89,7 +89,7 @@ export const Header = () => {
             <SheetContent side="left" className="flex flex-col p-0">
               <div className="p-4 border-b">
                 <Link to="/" className="flex items-center gap-2 font-semibold">
-                  <Package2 className="h-6 w-6 text-primary" />
+                  <Camera className="h-6 w-6 text-primary" />
                   <span className="text-lg font-bold">PROJECAM</span>
                 </Link>
               </div>
