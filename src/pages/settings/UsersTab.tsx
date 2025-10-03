@@ -19,7 +19,6 @@ import { MoreHorizontal, Pencil, Trash2, Check, X } from 'lucide-react'
 import { mockUsers } from '@/lib/mock-data'
 import { AddUserDialog } from '@/components/settings/AddUserDialog'
 import { EditUserDialog } from '@/components/settings/EditUserDialog'
-import { Separator } from '@/components/ui/separator'
 import { format } from 'date-fns'
 
 export const UsersTab = () => {
@@ -63,7 +62,11 @@ export const UsersTab = () => {
                       {format(user.createdAt, 'dd/MM/yyyy')}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button size="sm" variant="ghost" className="text-success">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-success"
+                      >
                         <Check className="mr-2 h-4 w-4" /> Aprovar
                       </Button>
                       <Button
@@ -114,7 +117,7 @@ export const UsersTab = () => {
                           {user.email}
                         </div>
                       </div>
-                    </TableCell>
+                    </div>
                   </TableCell>
                   <TableCell>{user.role.name}</TableCell>
                   <TableCell>
@@ -131,7 +134,9 @@ export const UsersTab = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <EditUserDialog user={user}>
-                          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          <DropdownMenuItem
+                            onSelect={(e) => e.preventDefault()}
+                          >
                             <Pencil className="mr-2 h-4 w-4" /> Editar
                           </DropdownMenuItem>
                         </EditUserDialog>
