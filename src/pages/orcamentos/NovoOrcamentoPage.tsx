@@ -1,0 +1,169 @@
+import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { PlusCircle, Trash2, Upload } from 'lucide-react'
+
+export default function NovoOrcamentoPage() {
+  return (
+    <div className="flex flex-col gap-6 animate-fade-in-up">
+      <h1 className="text-2xl font-bold">Novo Orçamento</h1>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 flex flex-col gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Detalhes do Cliente</CardTitle>
+              <CardDescription>
+                Busque por um cliente existente ou adicione um novo.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="customer-name">Nome do Cliente</Label>
+                <Input id="customer-name" placeholder="Digite para buscar..." />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="customer-cpf">CPF/CNPJ</Label>
+                  <Input id="customer-cpf" />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="customer-email">Email</Label>
+                  <Input id="customer-email" type="email" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Itens do Orçamento</CardTitle>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline">
+                  <Upload className="mr-2 h-4 w-4" /> Upload via OCR
+                </Button>
+                <Button>
+                  <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Item
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-1/4">Descrição</TableHead>
+                    <TableHead>Qtd.</TableHead>
+                    <TableHead>Preço Unit.</TableHead>
+                    <TableHead>Desc. (%)</TableHead>
+                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <Input placeholder="Descrição do item" />
+                    </TableCell>
+                    <TableCell>
+                      <Input type="number" defaultValue="1" className="w-16" />
+                    </TableCell>
+                    <TableCell>
+                      <Input placeholder="R$ 0,00" className="w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Input type="number" defaultValue="0" className="w-16" />
+                    </TableCell>
+                    <TableCell className="text-right font-medium">
+                      R$ 0,00
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="icon">
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="lg:col-span-1 flex flex-col gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Resumo do Orçamento</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>R$ 0,00</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="global-discount">Desconto Global (%)</Label>
+                <Input
+                  id="global-discount"
+                  type="number"
+                  defaultValue="0"
+                  className="w-20"
+                />
+              </div>
+              <div className="flex justify-between text-lg font-bold">
+                <span>Total Geral</span>
+                <span>R$ 0,00</span>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Detalhes Adicionais</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="valid-until">Data de Validade</Label>
+                <Input id="valid-until" type="date" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="payment-conditions">
+                  Condições de Pagamento
+                </Label>
+                <Textarea
+                  id="payment-conditions"
+                  placeholder="Ex: 30/60 dias"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="observations">Observações</Label>
+                <Textarea id="observations" placeholder="Notas adicionais" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <div className="sticky bottom-0 bg-background/95 py-4 border-t flex justify-end gap-2">
+        <Button variant="outline" asChild>
+          <Link to="/orcamentos">Cancelar</Link>
+        </Button>
+        <Button variant="secondary">Salvar Rascunho</Button>
+        <Button>Enviar para Aprovação</Button>
+      </div>
+    </div>
+  )
+}
