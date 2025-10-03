@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Bell, Menu, Package2, Search, User as UserIcon } from 'lucide-react'
+import { Bell, Menu, Package2, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
