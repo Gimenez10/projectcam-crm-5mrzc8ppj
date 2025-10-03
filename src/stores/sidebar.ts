@@ -1,20 +1,11 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 
 type SidebarState = {
-  isCollapsed: boolean
-  toggleSidebar: () => void
+  isExpanded: boolean
+  setIsExpanded: (isExpanded: boolean) => void
 }
 
-export const useSidebarStore = create<SidebarState>()(
-  persist(
-    (set) => ({
-      isCollapsed: false,
-      toggleSidebar: () =>
-        set((state) => ({ isCollapsed: !state.isCollapsed })),
-    }),
-    {
-      name: 'sidebar-storage', // name of the item in the storage (must be unique)
-    },
-  ),
-)
+export const useSidebarStore = create<SidebarState>((set) => ({
+  isExpanded: false,
+  setIsExpanded: (isExpanded) => set({ isExpanded }),
+}))

@@ -9,27 +9,32 @@ import OrcamentosListPage from './pages/orcamentos/OrcamentosListPage'
 import NovoOrcamentoPage from './pages/orcamentos/NovoOrcamentoPage'
 import EditarOrcamentoPage from './pages/orcamentos/EditarOrcamentoPage'
 import AprovacoesPage from './pages/aprovacoes/AprovacoesPage'
+import SettingsPage from './pages/settings/SettingsPage'
+import { ThemeProvider } from './components/ThemeProvider'
 
 const App = () => (
-  <BrowserRouter>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Index />} />
-          <Route path="/orcamentos" element={<OrcamentosListPage />} />
-          <Route path="/orcamentos/novo" element={<NovoOrcamentoPage />} />
-          <Route
-            path="/orcamentos/editar/:id"
-            element={<EditarOrcamentoPage />}
-          />
-          <Route path="/aprovacoes" element={<AprovacoesPage />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </TooltipProvider>
-  </BrowserRouter>
+  <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+    <BrowserRouter>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/orcamentos" element={<OrcamentosListPage />} />
+            <Route path="/orcamentos/novo" element={<NovoOrcamentoPage />} />
+            <Route
+              path="/orcamentos/editar/:id"
+              element={<EditarOrcamentoPage />}
+            />
+            <Route path="/aprovacoes" element={<AprovacoesPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </TooltipProvider>
+    </BrowserRouter>
+  </ThemeProvider>
 )
 
 export default App

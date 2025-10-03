@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { SidebarNav } from '@/components/Sidebar'
 import { mockUser } from '@/lib/mock-data'
+import { ThemeToggle } from './ThemeToggle'
 
 export const Header = () => {
   return (
@@ -41,6 +42,7 @@ export const Header = () => {
             className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
           />
         </div>
+        <ThemeToggle />
         <Button variant="ghost" size="icon" className="relative rounded-full">
           <Bell className="h-5 w-5" />
           <span className="absolute top-0 right-0 flex h-2 w-2">
@@ -63,7 +65,9 @@ export const Header = () => {
             <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Meu Perfil</DropdownMenuItem>
-            <DropdownMenuItem>Configurações</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/settings">Configurações</Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Sair</DropdownMenuItem>
           </DropdownMenuContent>

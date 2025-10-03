@@ -6,11 +6,9 @@ import {
   CheckSquare,
   Users,
   Package,
-  ChevronLeft,
-  ChevronRight,
+  Settings,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import {
   Tooltip,
   TooltipContent,
@@ -19,12 +17,45 @@ import {
 import { useSidebarStore } from '@/stores/sidebar'
 
 const navItems = [
-  { to: '/', icon: Home, label: 'Dashboard' },
-  { to: '/orcamentos', icon: FileText, label: 'Orçamentos' },
-  { to: '/orcamentos/novo', icon: PlusCircle, label: 'Novo Orçamento' },
-  { to: '/aprovacoes', icon: CheckSquare, label: 'Aprovações' },
-  { to: '/clientes', icon: Users, label: 'Clientes', disabled: true },
-  { to: '/produtos', icon: Package, label: 'Produtos', disabled: true },
+  { to: '/', icon: Home, label: 'Dashboard', color: 'text-sky-500' },
+  {
+    to: '/orcamentos',
+    icon: FileText,
+    label: 'Orçamentos',
+    color: 'text-orange-500',
+  },
+  {
+    to: '/orcamentos/novo',
+    icon: PlusCircle,
+    label: 'Novo Orçamento',
+    color: 'text-green-500',
+  },
+  {
+    to: '/aprovacoes',
+    icon: CheckSquare,
+    label: 'Aprovações',
+    color: 'text-yellow-500',
+  },
+  {
+    to: '/clientes',
+    icon: Users,
+    label: 'Clientes',
+    disabled: true,
+    color: 'text-purple-500',
+  },
+  {
+    to: '/produtos',
+    icon: Package,
+    label: 'Produtos',
+    disabled: true,
+    color: 'text-pink-500',
+  },
+  {
+    to: '/settings',
+    icon: Settings,
+    label: 'Configurações',
+    color: 'text-gray-500',
+  },
 ]
 
 type SidebarNavProps = {
@@ -32,8 +63,8 @@ type SidebarNavProps = {
 }
 
 export const SidebarNav = ({ isMobile = false }: SidebarNavProps) => {
-  const { isCollapsed } = useSidebarStore()
-  const showLabels = !isCollapsed || isMobile
+  const { isExpanded } = useSidebarStore()
+  const showLabels = isExpanded || isMobile
 
   return (
     <nav className={cn('flex flex-col gap-2 px-2 sm:py-4', isMobile && 'mt-4')}>
@@ -52,7 +83,7 @@ export const SidebarNav = ({ isMobile = false }: SidebarNavProps) => {
               }
               onClick={(e) => item.disabled && e.preventDefault()}
             >
-              <item.icon className="h-5 w-5" />
+              <item.icon className={cn('h-5 w-5', item.color)} />
               {showLabels && <span>{item.label}</span>}
             </NavLink>
           </TooltipTrigger>
@@ -66,32 +97,19 @@ export const SidebarNav = ({ isMobile = false }: SidebarNavProps) => {
 }
 
 export const Sidebar = () => {
-  const { isCollapsed, toggleSidebar } = useSidebarStore()
+  const { isExpanded, setIsExpanded } = useSidebarStore()
 
   return (
     <aside
       className={cn(
-        'hidden md:flex md:flex-col border-r bg-card transition-width duration-300 ease-in-out',
-        isCollapsed ? 'w-20' : 'w-64',
+        'hidden md:flex md:flex-col border-r bg-card transition-all duration-300 ease-in-out',
+        isExpanded ? 'w-64' : 'w-20',
       )}
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
     >
       <div className="flex-1">
         <SidebarNav />
-      </div>
-      <div className="mt-auto p-4 border-t">
-        <Button
-          variant="outline"
-          size="icon"
-          className="w-full"
-          onClick={toggleSidebar}
-        >
-          {isCollapsed ? (
-            <ChevronRight className="h-5 w-5" />
-          ) : (
-            <ChevronLeft className="h-5 w-5" />
-          )}
-          <span className="sr-only">Toggle sidebar</span>
-        </Button>
       </div>
     </aside>
   )
