@@ -1,20 +1,48 @@
 export type UserRole = 'Administrator' | 'Seller'
 
-export type SellerPermissions = {
-  canCreateQuotes: boolean
-  canEditOwnQuotes: boolean
-  canViewAllQuotes: boolean
-  canRequestDiscounts: boolean
-  canDeleteQuotes: boolean
+export type Permission =
+  // Quotes
+  | 'quotes:create'
+  | 'quotes:read:own'
+  | 'quotes:read:all'
+  | 'quotes:update:own'
+  | 'quotes:update:all'
+  | 'quotes:delete:own'
+  | 'quotes:delete:all'
+  | 'quotes:approve_discounts'
+  // Customers
+  | 'customers:create'
+  | 'customers:read'
+  | 'customers:update'
+  | 'customers:delete'
+  // Products
+  | 'products:create'
+  | 'products:read'
+  | 'products:update'
+  | 'products:delete'
+  // Users & Roles
+  | 'users:manage'
+  | 'roles:manage'
+  // Settings
+  | 'settings:view'
+
+export type Role = {
+  id: string
+  name: string
+  description: string
+  permissions: Permission[]
 }
+
+export type UserStatus = 'Active' | 'Pending Approval' | 'Inactive'
 
 export type User = {
   id: string
   name: string
   email: string
   avatarUrl: string
-  role: UserRole
-  permissions?: SellerPermissions
+  role: Role
+  status: UserStatus
+  createdAt: Date
 }
 
 export type Customer = {
@@ -78,4 +106,12 @@ export type RecentActivity = {
   description: string
   timestamp: string
   quoteId: string
+}
+
+export type AuditLog = {
+  id: string
+  user: Pick<User, 'id' | 'name' | 'avatarUrl'>
+  action: string
+  details: string
+  timestamp: Date
 }

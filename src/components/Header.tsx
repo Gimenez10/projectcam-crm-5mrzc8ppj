@@ -12,10 +12,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { SidebarNav } from '@/components/Sidebar'
-import { mockUser } from '@/lib/mock-data'
+import { mockUser, mockUsers } from '@/lib/mock-data'
 import { ThemeToggle } from './ThemeToggle'
 
 export const Header = () => {
+  const pendingUsersCount = mockUsers.filter(
+    (u) => u.status === 'Pending Approval',
+  ).length
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-lg md:px-6">
       <div className="flex items-center gap-2">
@@ -45,10 +49,11 @@ export const Header = () => {
         <ThemeToggle />
         <Button variant="ghost" size="icon" className="relative rounded-full">
           <Bell className="h-5 w-5" />
-          <span className="absolute top-0 right-0 flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-          </span>
+          {pendingUsersCount > 0 && (
+            <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+              {pendingUsersCount}
+            </span>
+          )}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

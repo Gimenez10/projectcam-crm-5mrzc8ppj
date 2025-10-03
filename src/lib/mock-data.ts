@@ -5,8 +5,67 @@ import {
   QuoteStatus,
   KpiCardData,
   RecentActivity,
+  Role,
+  Permission,
+  AuditLog,
 } from '@/types'
-import { subDays, subMonths } from 'date-fns'
+import { subDays, subMonths, subHours } from 'date-fns'
+
+export const mockPermissions: Permission[] = [
+  'quotes:create',
+  'quotes:read:own',
+  'quotes:read:all',
+  'quotes:update:own',
+  'quotes:update:all',
+  'quotes:delete:own',
+  'quotes:delete:all',
+  'quotes:approve_discounts',
+  'customers:create',
+  'customers:read',
+  'customers:update',
+  'customers:delete',
+  'products:create',
+  'products:read',
+  'products:update',
+  'products:delete',
+  'users:manage',
+  'roles:manage',
+  'settings:view',
+]
+
+export const mockRoles: Role[] = [
+  {
+    id: 'role-admin',
+    name: 'Administrator',
+    description: 'Acesso total a todas as funcionalidades do sistema.',
+    permissions: mockPermissions,
+  },
+  {
+    id: 'role-seller',
+    name: 'Vendedor',
+    description: 'Cria e gerencia seus próprios orçamentos.',
+    permissions: [
+      'quotes:create',
+      'quotes:read:own',
+      'quotes:update:own',
+      'quotes:delete:own',
+      'customers:create',
+      'customers:read',
+    ],
+  },
+  {
+    id: 'role-manager',
+    name: 'Gerente de Vendas',
+    description: 'Visualiza todos os orçamentos e aprova descontos.',
+    permissions: [
+      'quotes:read:all',
+      'quotes:update:all',
+      'quotes:approve_discounts',
+      'customers:read',
+      'customers:update',
+    ],
+  },
+]
 
 export const mockUsers: User[] = [
   {
@@ -14,35 +73,36 @@ export const mockUsers: User[] = [
     name: 'Ana Silva',
     email: 'ana.silva@projecam.com',
     avatarUrl: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
-    role: 'Administrator',
+    role: mockRoles[0],
+    status: 'Active',
+    createdAt: subDays(new Date(), 30),
   },
   {
     id: 'user-2',
     name: 'Bruno Costa',
     email: 'bruno.costa@projecam.com',
     avatarUrl: 'https://img.usecurling.com/ppl/thumbnail?gender=male&seed=2',
-    role: 'Seller',
-    permissions: {
-      canCreateQuotes: true,
-      canEditOwnQuotes: true,
-      canViewAllQuotes: false,
-      canRequestDiscounts: true,
-      canDeleteQuotes: false,
-    },
+    role: mockRoles[1],
+    status: 'Active',
+    createdAt: subDays(new Date(), 15),
   },
   {
     id: 'user-3',
     name: 'Carla Dias',
     email: 'carla.dias@projecam.com',
     avatarUrl: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=3',
-    role: 'Seller',
-    permissions: {
-      canCreateQuotes: true,
-      canEditOwnQuotes: true,
-      canViewAllQuotes: true,
-      canRequestDiscounts: true,
-      canDeleteQuotes: true,
-    },
+    role: mockRoles[2],
+    status: 'Active',
+    createdAt: subDays(new Date(), 5),
+  },
+  {
+    id: 'user-4',
+    name: 'Daniel Souza',
+    email: 'daniel.souza@projecam.com',
+    avatarUrl: 'https://img.usecurling.com/ppl/thumbnail?gender=male&seed=4',
+    role: mockRoles[1],
+    status: 'Pending Approval',
+    createdAt: subDays(new Date(), 1),
   },
 ]
 
@@ -126,7 +186,7 @@ export const mockQuotes: Quote[] = Array.from({ length: 25 }, (_, i) => {
     customer,
     createdAt: subDays(new Date(), i * 2),
     validUntil: new Date(),
-    salesperson: mockUser,
+    salesperson: mockUsers[1],
     items,
     totalValue,
     globalDiscount,
@@ -225,5 +285,43 @@ export const mockRecentActivities: RecentActivity[] = [
     description: 'Orçamento #ORC-2024010 enviado para aprovação.',
     timestamp: '2 dias atrás',
     quoteId: 'ORC-2024010',
+  },
+]
+
+export const mockAuditLogs: AuditLog[] = [
+  {
+    id: 'log-1',
+    user: mockUsers[0],
+    action: 'User Login',
+    details: 'User Ana Silva logged in successfully.',
+    timestamp: subHours(new Date(), 1),
+  },
+  {
+    id: 'log-2',
+    user: mockUsers[1],
+    action: 'Create Quote',
+    details: 'User Bruno Costa created quote #ORC-2024025.',
+    timestamp: subHours(new Date(), 2),
+  },
+  {
+    id: 'log-3',
+    user: mockUsers[2],
+    action: 'Approve Discount',
+    details: 'User Carla Dias approved discount for quote #ORC-2024020.',
+    timestamp: subHours(new Date(), 5),
+  },
+  {
+    id: 'log-4',
+    user: mockUsers[0],
+    action: 'Create User',
+    details: 'User Ana Silva created a new user: Daniel Souza.',
+    timestamp: subDays(new Date(), 1),
+  },
+  {
+    id: 'log-5',
+    user: mockUsers[0],
+    action: 'Update Role',
+    details: 'User Ana Silva updated permissions for the Vendedor role.',
+    timestamp: subDays(new Date(), 2),
   },
 ]

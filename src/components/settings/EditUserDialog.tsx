@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -28,56 +28,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { PlusCircle } from 'lucide-react'
+import { User } from '@/types'
 import { mockRoles } from '@/lib/mock-data'
-import { useToast } from '@/components/ui/use-toast'
 
 const formSchema = z.object({
   name: z
     .string()
     .min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
   email: z.string().email({ message: 'Por favor, insira um email válido.' }),
-  password: z
-    .string()
-    .min(8, { message: 'A senha deve ter pelo menos 8 caracteres.' }),
   roleId: z.string({ required_error: 'Por favor, selecione uma função.' }),
 })
 
-export const AddUserDialog = () => {
+type EditUserDialogProps = {
+  children: ReactNode
+  user: User
+}
+
+export const EditUserDialog = ({ children, user }: EditUserDialogProps) => {
   const [open, setOpen] = useState(false)
-  const { toast } = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      roleId: '',
+      name: user.name,
+      email: user.email,
+      roleId: user.role.id,
     },
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log({ ...values, status: 'Pending Approval' })
-    toast({
-      title: 'Usuário Criado com Sucesso!',
-      description: `${values.name} foi adicionado e está pendente de aprovação.`,
-    })
+    console.log(values)
     setOpen(false)
-    form.reset()
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Novo Usuário
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Adicionar Novo Usuário</DialogTitle>
+          <DialogTitle>Editar Usuário</DialogTitle>
           <DialogDescription>
-            A nova conta ficará pendente de aprovação por um administrador.
+            Faça alterações no perfil do usuário aqui. Clique em salvar quando
+            terminar.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -102,20 +93,11 @@ export const AddUserDialog = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="john.doe@example.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Senha Provisória</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
+                    <Input
+                      placeholder="john.doe@example.com"
+                      {...field}
+                      disabled
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -156,7 +138,7 @@ export const AddUserDialog = () => {
               >
                 Cancelar
               </Button>
-              <Button type="submit">Criar Usuário</Button>
+              <Button type="submit">Salvar Alterações</Button>
             </DialogFooter>
           </form>
         </Form>
