@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -65,19 +63,8 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4">
         <OrcamentosVendedorBarChart />
-        <div className="flex flex-col items-center justify-center gap-4 p-6 bg-card rounded-lg border">
-          <h3 className="text-xl font-semibold">Ações Rápidas</h3>
-          <div className="flex flex-col sm:flex-row gap-4 w-full">
-            <Button asChild className="w-full">
-              <Link to="/orcamentos/novo">Criar Novo Orçamento</Link>
-            </Button>
-            <Button asChild variant="secondary" className="w-full">
-              <Link to="/aprovacoes">Ver Aprovações Pendentes</Link>
-            </Button>
-          </div>
-        </div>
       </div>
     </div>
   )

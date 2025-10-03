@@ -37,7 +37,7 @@ export const Header = () => {
         </h1>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4">
         <div className="relative hidden md:block">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -47,6 +47,7 @@ export const Header = () => {
           />
         </div>
         <ThemeToggle />
+
         <Button variant="ghost" size="icon" className="relative rounded-full">
           <Bell className="h-5 w-5" />
           {pendingUsersCount > 0 && (
