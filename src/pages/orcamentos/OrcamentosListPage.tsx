@@ -7,7 +7,7 @@ import {
   MoreHorizontal,
   Trash2,
   Copy,
-  FilePdf,
+  FileText,
   Pencil,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -156,7 +156,7 @@ export default function OrcamentosListPage() {
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                          <FilePdf className="mr-2 h-4 w-4" /> Gerar PDF
+                          <FileText className="mr-2 h-4 w-4" /> Gerar PDF
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Copy className="mr-2 h-4 w-4" /> Duplicar

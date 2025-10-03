@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { PlusCircle, Trash2, Upload, FilePdf } from 'lucide-react'
+import { PlusCircle, Trash2, Upload, FileText } from 'lucide-react'
 import { mockQuotes } from '@/lib/mock-data'
 import { Badge } from '@/components/ui/badge'
 
@@ -206,7 +206,7 @@ export default function EditarOrcamentoPage() {
         </Button>
         <Button variant="secondary">Salvar Alterações</Button>
         <Button>
-          <FilePdf className="mr-2 h-4 w-4" /> Gerar PDF
+          <FileText className="mr-2 h-4 w-4" /> Gerar PDF
         </Button>
       </div>
     </div>
