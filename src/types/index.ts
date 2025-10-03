@@ -1,8 +1,20 @@
+export type UserRole = 'Administrator' | 'Seller'
+
+export type SellerPermissions = {
+  canCreateQuotes: boolean
+  canEditOwnQuotes: boolean
+  canViewAllQuotes: boolean
+  canRequestDiscounts: boolean
+  canDeleteQuotes: boolean
+}
+
 export type User = {
   id: string
   name: string
   email: string
   avatarUrl: string
+  role: UserRole
+  permissions?: SellerPermissions
 }
 
 export type Customer = {

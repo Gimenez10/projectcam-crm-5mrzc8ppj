@@ -8,12 +8,45 @@ import {
 } from '@/types'
 import { subDays, subMonths } from 'date-fns'
 
-export const mockUser: User = {
-  id: 'user-1',
-  name: 'Ana Silva',
-  email: 'ana.silva@projecam.com',
-  avatarUrl: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
-}
+export const mockUsers: User[] = [
+  {
+    id: 'user-1',
+    name: 'Ana Silva',
+    email: 'ana.silva@projecam.com',
+    avatarUrl: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1',
+    role: 'Administrator',
+  },
+  {
+    id: 'user-2',
+    name: 'Bruno Costa',
+    email: 'bruno.costa@projecam.com',
+    avatarUrl: 'https://img.usecurling.com/ppl/thumbnail?gender=male&seed=2',
+    role: 'Seller',
+    permissions: {
+      canCreateQuotes: true,
+      canEditOwnQuotes: true,
+      canViewAllQuotes: false,
+      canRequestDiscounts: true,
+      canDeleteQuotes: false,
+    },
+  },
+  {
+    id: 'user-3',
+    name: 'Carla Dias',
+    email: 'carla.dias@projecam.com',
+    avatarUrl: 'https://img.usecurling.com/ppl/thumbnail?gender=female&seed=3',
+    role: 'Seller',
+    permissions: {
+      canCreateQuotes: true,
+      canEditOwnQuotes: true,
+      canViewAllQuotes: true,
+      canRequestDiscounts: true,
+      canDeleteQuotes: true,
+    },
+  },
+]
+
+export const mockUser: User = mockUsers[0]
 
 const mockCustomers: Customer[] = [
   {
