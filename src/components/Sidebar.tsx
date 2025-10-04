@@ -17,29 +17,39 @@ import {
 import { useSidebarStore } from '@/stores/sidebar'
 
 export const navItems = [
-  { to: '/', icon: Home, label: 'Dashboard', color: 'text-sky-500' },
+  {
+    to: '/',
+    icon: Home,
+    label: 'Dashboard',
+    shortLabel: 'Dashboard',
+    color: 'text-sky-500',
+  },
   {
     to: '/ordens-de-servico',
     icon: FileText,
     label: 'Ordens de Serviço',
+    shortLabel: 'OS',
     color: 'text-orange-500',
   },
   {
     to: '/ordens-de-servico/nova',
     icon: PlusCircle,
     label: 'Nova Ordem de Serviço',
+    shortLabel: 'Nova',
     color: 'text-green-500',
   },
   {
     to: '/aprovacoes',
     icon: CheckSquare,
     label: 'Aprovações',
+    shortLabel: 'Aprovar',
     color: 'text-yellow-500',
   },
   {
     to: '/clientes',
     icon: Users,
     label: 'Clientes',
+    shortLabel: 'Clientes',
     disabled: true,
     color: 'text-purple-500',
   },
@@ -47,6 +57,7 @@ export const navItems = [
     to: '/produtos',
     icon: Package,
     label: 'Produtos',
+    shortLabel: 'Produtos',
     disabled: true,
     color: 'text-pink-500',
   },
@@ -54,6 +65,7 @@ export const navItems = [
     to: '/settings',
     icon: Settings,
     label: 'Configurações',
+    shortLabel: 'Ajustes',
     color: 'text-gray-500',
   },
 ]

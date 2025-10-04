@@ -2,17 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { navItems as originalNavItems } from '@/components/Sidebar'
 
-const mobileNavItems = originalNavItems
-  .filter((item) => !item.disabled)
-  .map((item) => {
-    if (item.label === 'Nova Ordem de Serviço') {
-      return { ...item, label: 'Nova' }
-    }
-    if (item.label === 'Configurações') {
-      return { ...item, label: 'Ajustes' }
-    }
-    return item
-  })
+const mobileNavItems = originalNavItems.filter((item) => !item.disabled)
 
 export const MobileNav = () => {
   return (
@@ -30,7 +20,7 @@ export const MobileNav = () => {
             }
           >
             <item.icon className={cn('h-5 w-5', item.color)} />
-            <span className="text-xs truncate">{item.label}</span>
+            <span className="text-xs truncate">{item.shortLabel}</span>
           </NavLink>
         ))}
       </div>
