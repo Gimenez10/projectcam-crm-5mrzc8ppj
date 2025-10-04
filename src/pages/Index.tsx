@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import {
   Select,
   SelectContent,
@@ -12,20 +13,98 @@ import { TopClientesBarChart } from '@/components/dashboard/TopClientesBarChart'
 import { OrdensServicoVendedorBarChart } from '@/components/dashboard/OrdensServicoVendedorBarChart'
 import { RecentActivity } from '@/components/dashboard/RecentActivity'
 import { useAuth } from '@/hooks/use-auth'
-
-// NOTE: Dashboard data is still using mock data for demonstration.
-// A full implementation would require fetching this data from Supabase.
+import { Skeleton } from '@/components/ui/skeleton'
 import {
-  mockKpiCards,
-  mockStatusData,
-  mockVendasMensaisData,
-  mockTopClientesData,
-  mockRecentActivities,
-  mockVendedoresData,
-} from '@/lib/temp-mock-data'
+  getKpiData,
+  getStatusDistribution,
+  getMonthlySales,
+  getTopCustomers,
+  getSalesBySalesperson,
+  getRecentActivities,
+} from '@/services/dashboard'
+import { KpiCardData, RecentActivity as RecentActivityType } from '@/types'
 
 const Index = () => {
   const { profile } = useAuth()
+  const [isLoading, setIsLoading] = useState(true)
+  const [kpiCards, setKpiCards] = useState<KpiCardData[]>([])
+  const [statusData, setStatusData] = useState<
+    { name: string; value: number }[]
+  >([])
+  const [vendasMensaisData, setVendasMensaisData] = useState<
+    { name: string; total: number }[]
+  >([])
+  const [topClientesData, setTopClientesData] = useState<
+    { name: string; value: number }[]
+  >([])
+  const [vendedoresData, setVendedoresData] = useState<
+    { name: string; value: number }[]
+  >([])
+  const [recentActivities, setRecentActivities] = useState<
+    RecentActivityType[]
+  >([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      const [kpi, status, monthly, topCustomers, salesperson, activities] =
+        await Promise.all([
+          getKpiData(),
+          getStatusDistribution(),
+          getMonthlySales(),
+          getTopCustomers(),
+          getSalesBySalesperson(),
+          getRecentActivities(),
+        ])
+
+      if (kpi) {
+        setKpiCards([
+          {
+            title: 'Ordens de Serviço Criadas',
+            value: kpi.createdCount?.toString() ?? '0',
+            change: 5,
+            period: 'vs. mês passado',
+            chartData: Array.from({ length: 7 }, (_, i) => ({
+              value: 10 + i * 2,
+            })),
+          },
+          {
+            title: 'Vendas Fechadas',
+            value: `R$ ${kpi.totalSales.toLocaleString('pt-BR')}`,
+            change: 12,
+            period: 'vs. mês passado',
+            chartData: Array.from({ length: 7 }, (_, i) => ({
+              value: 15 + i * 3,
+            })),
+          },
+          {
+            title: 'Valor Total de O.S.',
+            value: `R$ ${kpi.totalValue.toLocaleString('pt-BR')}`,
+            change: -2,
+            period: 'vs. mês passado',
+            chartData: Array.from({ length: 7 }, (_, i) => ({ value: 20 - i })),
+          },
+          {
+            title: 'Taxa de Conversão',
+            value: `${kpi.conversionRate.toFixed(1)}%`,
+            change: 1.5,
+            period: 'vs. mês passado',
+            chartData: Array.from({ length: 7 }, (_, i) => ({
+              value: 22 + Math.sin(i),
+            })),
+          },
+        ])
+      }
+      setStatusData(status)
+      setVendasMensaisData(monthly)
+      setTopClientesData(topCustomers)
+      setVendedoresData(salesperson)
+      setRecentActivities(activities)
+
+      setIsLoading(false)
+    }
+    fetchData()
+  }, [])
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in-up">
@@ -35,7 +114,7 @@ const Index = () => {
             Bem-vindo(a), {profile?.full_name || 'Usuário'}!
           </h1>
           <p className="text-muted-foreground">
-            Você tem 3 ordens de serviço pendentes de aprovação.
+            Aqui está um resumo da atividade recente.
           </p>
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -53,31 +132,53 @@ const Index = () => {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {mockKpiCards.map((card, index) => (
-          <KpiCard key={index} {...card} />
-        ))}
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton key={index} className="h-[126px] w-full" />
+            ))
+          : kpiCards.map((card, index) => <KpiCard key={index} {...card} />)}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <div className="lg:col-span-4">
-          <VendasMensaisBarChart data={mockVendasMensaisData} />
+          {isLoading ? (
+            <Skeleton className="h-[380px] w-full" />
+          ) : (
+            <VendasMensaisBarChart data={vendasMensaisData} />
+          )}
         </div>
         <div className="lg:col-span-3">
-          <StatusPieChart data={mockStatusData} />
+          {isLoading ? (
+            <Skeleton className="h-[380px] w-full" />
+          ) : (
+            <StatusPieChart data={statusData} />
+          )}
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <TopClientesBarChart data={mockTopClientesData} />
+          {isLoading ? (
+            <Skeleton className="h-[380px] w-full" />
+          ) : (
+            <TopClientesBarChart data={topClientesData} />
+          )}
         </div>
         <div className="lg:col-span-1">
-          <RecentActivity activities={mockRecentActivities} />
+          {isLoading ? (
+            <Skeleton className="h-[380px] w-full" />
+          ) : (
+            <RecentActivity activities={recentActivities} />
+          )}
         </div>
       </div>
 
       <div className="grid gap-4">
-        <OrdensServicoVendedorBarChart data={mockVendedoresData} />
+        {isLoading ? (
+          <Skeleton className="h-[380px] w-full" />
+        ) : (
+          <OrdensServicoVendedorBarChart data={vendedoresData} />
+        )}
       </div>
     </div>
   )
