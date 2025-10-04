@@ -11,6 +11,11 @@ import EditarOrdemServicoPage from './pages/ordens-de-servico/EditarOrdemServico
 import AprovacoesPage from './pages/aprovacoes/AprovacoesPage'
 import SettingsPage from './pages/settings/SettingsPage'
 import { ThemeProvider } from './components/ThemeProvider'
+import { AuthProvider } from './hooks/use-auth'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import LoginPage from './pages/auth/LoginPage'
+import SignUpPage from './pages/auth/SignUpPage'
+import AuthLayout from './components/AuthLayout'
 
 const App = () => (
   <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
@@ -18,26 +23,36 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Index />} />
-            <Route
-              path="/ordens-de-servico"
-              element={<OrdensServicoListPage />}
-            />
-            <Route
-              path="/ordens-de-servico/nova"
-              element={<NovaOrdemServicoPage />}
-            />
-            <Route
-              path="/ordens-de-servico/editar/:id"
-              element={<EditarOrdemServicoPage />}
-            />
-            <Route path="/aprovacoes" element={<AprovacoesPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route element={<AuthLayout />}>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignUpPage />} />
+            </Route>
+
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Index />} />
+                <Route
+                  path="/ordens-de-servico"
+                  element={<OrdensServicoListPage />}
+                />
+                <Route
+                  path="/ordens-de-servico/nova"
+                  element={<NovaOrdemServicoPage />}
+                />
+                <Route
+                  path="/ordens-de-servico/editar/:id"
+                  element={<EditarOrdemServicoPage />}
+                />
+                <Route path="/aprovacoes" element={<AprovacoesPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+              </Route>
+            </Route>
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </TooltipProvider>
     </BrowserRouter>
   </ThemeProvider>

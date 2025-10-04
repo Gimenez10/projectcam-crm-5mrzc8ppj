@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import {
   Card,
   CardContent,
@@ -14,7 +15,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -24,7 +24,6 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Calendar as CalendarIcon, Search } from 'lucide-react'
-import { mockAuditLogs, mockUsers } from '@/lib/mock-data'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import {
@@ -34,9 +33,24 @@ import {
 } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import { cn } from '@/lib/utils'
+import { Profile } from '@/types'
+import { getAllProfiles } from '@/services/profiles'
+import { Skeleton } from '@/components/ui/skeleton'
+
+// NOTE: Audit log data would be fetched from a dedicated 'audit_logs' table.
+// This is a placeholder UI.
+const mockAuditLogs: any[] = []
 
 export const AuditLogTab = () => {
-  const actionTypes = [...new Set(mockAuditLogs.map((log) => log.action))]
+  const [users, setUsers] = useState<Profile[]>([])
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const profiles = await getAllProfiles()
+      setUsers(profiles)
+    }
+    fetchUsers()
+  }, [])
 
   return (
     <Card>
@@ -53,9 +67,9 @@ export const AuditLogTab = () => {
               <SelectValue placeholder="Filtrar por usuário" />
             </SelectTrigger>
             <SelectContent>
-              {mockUsers.map((user) => (
+              {users.map((user) => (
                 <SelectItem key={user.id} value={user.id}>
-                  {user.name}
+                  {user.full_name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -65,11 +79,7 @@ export const AuditLogTab = () => {
               <SelectValue placeholder="Filtrar por ação" />
             </SelectTrigger>
             <SelectContent>
-              {actionTypes.map((action) => (
-                <SelectItem key={action} value={action}>
-                  {action}
-                </SelectItem>
-              ))}
+              {/* Actions would be populated dynamically */}
             </SelectContent>
           </Select>
           <Popover>
@@ -103,33 +113,15 @@ export const AuditLogTab = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockAuditLogs.map((log) => (
-                <TableRow key={log.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage
-                          src={log.user.avatarUrl}
-                          alt={log.user.name}
-                        />
-                        <AvatarFallback>
-                          {log.user.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span>{log.user.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{log.action}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {log.details}
-                  </TableCell>
-                  <TableCell>
-                    {format(log.timestamp, "dd/MM/yyyy 'às' HH:mm", {
-                      locale: ptBR,
-                    })}
+              {mockAuditLogs.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="h-24 text-center">
+                    Nenhum registro de auditoria encontrado.
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                <></> /* Map over logs here */
+              )}
             </TableBody>
           </Table>
         </div>

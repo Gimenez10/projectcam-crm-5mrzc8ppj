@@ -23,9 +23,25 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
-import { mockPermissions } from '@/lib/mock-data'
-import { Role } from '@/types'
 import { ScrollArea } from '../ui/scroll-area'
+
+// NOTE: This is a placeholder for permissions. A real implementation would fetch this from the backend.
+const mockPermissions = [
+  'service_orders:create',
+  'service_orders:read:own',
+  'service_orders:read:all',
+  'service_orders:update:own',
+  'service_orders:update:all',
+  'service_orders:delete:own',
+  'service_orders:delete:all',
+  'service_orders:approve_discounts',
+  'customers:create',
+  'customers:read',
+  'customers:update',
+  'customers:delete',
+  'users:manage',
+  'roles:manage',
+]
 
 const formSchema = z.object({
   name: z
@@ -38,6 +54,13 @@ const formSchema = z.object({
       message: 'Você deve selecionar pelo menos uma permissão.',
     }),
 })
+
+type Role = {
+  id: string
+  name: string
+  description: string
+  permissions: string[]
+}
 
 type RoleDialogProps = {
   children: ReactNode
@@ -56,7 +79,7 @@ export const RoleDialog = ({ children, role }: RoleDialogProps) => {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    console.log(values) // Placeholder for API call
     setOpen(false)
     form.reset()
   }

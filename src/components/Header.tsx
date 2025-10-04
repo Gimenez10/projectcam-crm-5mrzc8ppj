@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Bell, Camera, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,13 +10,29 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { mockUser, mockUsers } from '@/lib/mock-data'
 import { ThemeToggle } from './ThemeToggle'
+import { useAuth } from '@/hooks/use-auth'
+import { signOut } from '@/services/auth'
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 
 export const Header = () => {
-  const pendingUsersCount = mockUsers.filter(
-    (u) => u.status === 'Pending Approval',
-  ).length
+  const { profile } = useAuth()
+  const navigate = useNavigate()
+
+  const handleSignOut = async () => {
+    await signOut()
+    navigate('/login')
+  }
+
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return ''
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase()
+  }
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-lg md:px-6">
@@ -46,20 +62,20 @@ export const Header = () => {
 
         <Button variant="ghost" size="icon" className="relative rounded-full">
           <Bell className="h-5 w-5" />
-          {pendingUsersCount > 0 && (
-            <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
-              {pendingUsersCount}
-            </span>
-          )}
+          {/* Notification logic to be implemented */}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" className="rounded-full">
-              <img
-                src={mockUser.avatarUrl}
-                alt="Avatar do usuário"
-                className="h-8 w-8 rounded-full"
-              />
+              <Avatar className="h-8 w-8">
+                <AvatarImage
+                  src={profile?.avatar_url ?? undefined}
+                  alt={profile?.full_name ?? 'User Avatar'}
+                />
+                <AvatarFallback>
+                  {getInitials(profile?.full_name)}
+                </AvatarFallback>
+              </Avatar>
               <span className="sr-only">Toggle user menu</span>
             </Button>
           </DropdownMenuTrigger>
@@ -71,7 +87,7 @@ export const Header = () => {
               <Link to="/settings">Configurações</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Sair</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut}>Sair</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

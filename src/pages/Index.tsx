@@ -11,15 +11,28 @@ import { VendasMensaisBarChart } from '@/components/dashboard/VendasMensaisBarCh
 import { TopClientesBarChart } from '@/components/dashboard/TopClientesBarChart'
 import { OrdensServicoVendedorBarChart } from '@/components/dashboard/OrdensServicoVendedorBarChart'
 import { RecentActivity } from '@/components/dashboard/RecentActivity'
-import { mockKpiCards, mockUser } from '@/lib/mock-data'
+import { useAuth } from '@/hooks/use-auth'
+
+// NOTE: Dashboard data is still using mock data for demonstration.
+// A full implementation would require fetching this data from Supabase.
+import {
+  mockKpiCards,
+  mockStatusData,
+  mockVendasMensaisData,
+  mockTopClientesData,
+  mockRecentActivities,
+  mockVendedoresData,
+} from '@/lib/temp-mock-data'
 
 const Index = () => {
+  const { profile } = useAuth()
+
   return (
     <div className="flex flex-col gap-6 animate-fade-in-up">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-            Bem-vindo(a), {mockUser.name}!
+            Bem-vindo(a), {profile?.full_name || 'Usuário'}!
           </h1>
           <p className="text-muted-foreground">
             Você tem 3 ordens de serviço pendentes de aprovação.
@@ -40,31 +53,31 @@ const Index = () => {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {mockKpiCards.map((card) => (
-          <KpiCard key={card.title} {...card} />
+        {mockKpiCards.map((card, index) => (
+          <KpiCard key={index} {...card} />
         ))}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <div className="lg:col-span-4">
-          <VendasMensaisBarChart />
+          <VendasMensaisBarChart data={mockVendasMensaisData} />
         </div>
         <div className="lg:col-span-3">
-          <StatusPieChart />
+          <StatusPieChart data={mockStatusData} />
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <TopClientesBarChart />
+          <TopClientesBarChart data={mockTopClientesData} />
         </div>
         <div className="lg:col-span-1">
-          <RecentActivity />
+          <RecentActivity activities={mockRecentActivities} />
         </div>
       </div>
 
       <div className="grid gap-4">
-        <OrdensServicoVendedorBarChart />
+        <OrdensServicoVendedorBarChart data={mockVendedoresData} />
       </div>
     </div>
   )

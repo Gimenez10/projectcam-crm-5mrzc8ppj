@@ -28,36 +28,50 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { User } from '@/types'
-import { mockRoles } from '@/lib/mock-data'
+import { Profile, UserRole } from '@/types'
+import { useToast } from '../ui/use-toast'
+import { updateProfileRole } from '@/services/profiles'
 
 const formSchema = z.object({
   name: z
     .string()
     .min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
   email: z.string().email({ message: 'Por favor, insira um email válido.' }),
-  roleId: z.string({ required_error: 'Por favor, selecione uma função.' }),
+  role: z.enum(['admin', 'manager', 'seller']),
 })
 
 type EditUserDialogProps = {
   children: ReactNode
-  user: User
+  user: Profile & { email?: string } // email is optional as it comes from auth.users
 }
 
 export const EditUserDialog = ({ children, user }: EditUserDialogProps) => {
   const [open, setOpen] = useState(false)
+  const { toast } = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: user.name,
-      email: user.email,
-      roleId: user.role.id,
+      name: user.full_name ?? '',
+      email: user.email ?? '',
+      role: user.role,
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    setOpen(false)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const { error } = await updateProfileRole(user.id, values.role)
+    if (error) {
+      toast({
+        title: 'Erro ao atualizar',
+        description: error.message,
+        variant: 'destructive',
+      })
+    } else {
+      toast({
+        title: 'Usuário atualizado!',
+        description: `A função de ${values.name} foi atualizada.`,
+      })
+      setOpen(false)
+    }
   }
 
   return (
@@ -80,7 +94,7 @@ export const EditUserDialog = ({ children, user }: EditUserDialogProps) => {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input placeholder="John Doe" {...field} disabled />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -105,7 +119,7 @@ export const EditUserDialog = ({ children, user }: EditUserDialogProps) => {
             />
             <FormField
               control={form.control}
-              name="roleId"
+              name="role"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Função</FormLabel>
@@ -119,11 +133,9 @@ export const EditUserDialog = ({ children, user }: EditUserDialogProps) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {mockRoles.map((role) => (
-                        <SelectItem key={role.id} value={role.id}>
-                          {role.name}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="seller">Vendedor</SelectItem>
+                      <SelectItem value="manager">Gerente</SelectItem>
+                      <SelectItem value="admin">Administrador</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

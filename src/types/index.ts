@@ -1,98 +1,36 @@
-export type UserRole = 'Administrator' | 'Seller'
+import { Database } from './lib/supabase/types'
 
-export type Permission =
-  // Service Orders
-  | 'service_orders:create'
-  | 'service_orders:read:own'
-  | 'service_orders:read:all'
-  | 'service_orders:update:own'
-  | 'service_orders:update:all'
-  | 'service_orders:delete:own'
-  | 'service_orders:delete:all'
-  | 'service_orders:approve_discounts'
-  // Customers
-  | 'customers:create'
-  | 'customers:read'
-  | 'customers:update'
-  | 'customers:delete'
-  // Products
-  | 'products:create'
-  | 'products:read'
-  | 'products:update'
-  | 'products:delete'
-  // Users & Roles
-  | 'users:manage'
-  | 'roles:manage'
-  // Settings
-  | 'settings:view'
-
-export type Role = {
-  id: string
-  name: string
-  description: string
-  permissions: Permission[]
-}
-
-export type UserStatus = 'Active' | 'Pending Approval' | 'Inactive'
-
-export type User = {
-  id: string
-  name: string
+// Auth
+export type SignInCredentials = {
   email: string
-  avatarUrl: string
-  role: Role
-  status: UserStatus
-  createdAt: Date
+  password: string
 }
 
-export type Customer = {
-  id: string
-  name: string
-  cpfCnpj: string
-  address: string
-  city: string
-  state: string
-  zipCode: string
-  phone: string
+export type SignUpCredentials = {
+  fullName: string
   email: string
+  password: string
 }
 
-export type ServiceOrderItem = {
-  id: string
-  code: string
-  description: string
-  quantity: number
-  unitPrice: number
-  discount: number // percentage
-}
+// Database types
+export type Profile = Database['public']['Tables']['profiles']['Row']
+export type Customer = Database['public']['Tables']['customers']['Row']
+export type ServiceOrder =
+  Database['public']['Tables']['service_orders']['Row'] & {
+    customer: Customer | null
+    salesperson: Profile | null
+    items?: ServiceOrderItem[]
+  }
+export type ServiceOrderItem =
+  Database['public']['Tables']['service_order_items']['Row']
 
+// Enums from database
+export type UserRole = Database['public']['Enums']['user_role']
 export type ServiceOrderStatus =
-  | 'Rascunho'
-  | 'Pendente'
-  | 'Aprovado'
-  | 'Rejeitado'
-  | 'Fechado'
+  Database['public']['Enums']['service_order_status']
+export type ApprovalStatus = Database['public']['Enums']['approval_status']
 
-export type ApprovalStatus = 'Pendente' | 'Aprovado' | 'Rejeitado'
-
-export type ServiceOrder = {
-  id: string
-  customer: Customer
-  createdAt: Date
-  validUntil: Date
-  salesperson: User
-  items: ServiceOrderItem[]
-  totalValue: number
-  globalDiscount: number // percentage
-  status: ServiceOrderStatus
-  paymentConditions: string
-  observations: string
-  approvalStatus?: ApprovalStatus
-  approver?: User
-  approvalComments?: string
-  requestedAt?: Date
-}
-
+// App-specific types (can be removed if not needed)
 export type KpiCardData = {
   title: string
   value: string
@@ -110,7 +48,7 @@ export type RecentActivity = {
 
 export type AuditLog = {
   id: string
-  user: Pick<User, 'id' | 'name' | 'avatarUrl'>
+  user: Pick<Profile, 'id' | 'full_name' | 'avatar_url'>
   action: string
   details: string
   timestamp: Date

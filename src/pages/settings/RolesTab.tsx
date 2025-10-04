@@ -21,8 +21,30 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, Pencil, PlusCircle, Trash2 } from 'lucide-react'
-import { mockRoles } from '@/lib/mock-data'
 import { RoleDialog } from '@/components/settings/RoleDialog'
+
+// NOTE: Role management is complex and requires a dedicated backend implementation.
+// This component is a placeholder for the UI.
+const mockRoles = [
+  {
+    id: 'role-admin',
+    name: 'Administrator',
+    description: 'Acesso total a todas as funcionalidades do sistema.',
+    permissions: 19,
+  },
+  {
+    id: 'role-manager',
+    name: 'Gerente de Vendas',
+    description: 'Visualiza todas as ordens de serviço e aprova descontos.',
+    permissions: 5,
+  },
+  {
+    id: 'role-seller',
+    name: 'Vendedor',
+    description: 'Cria e gerencia suas próprias ordens de serviço.',
+    permissions: 6,
+  },
+]
 
 export const RolesTab = () => {
   return (
@@ -60,13 +82,13 @@ export const RolesTab = () => {
                   <TableCell className="text-muted-foreground max-w-xs truncate">
                     {role.description}
                   </TableCell>
-                  <TableCell>{role.permissions.length}</TableCell>
+                  <TableCell>{role.permissions}</TableCell>
                   <TableCell className="text-right">
-                    <RoleDialog role={role}>
-                      <Button size="icon" variant="ghost">
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    </RoleDialog>
+                    {/* <RoleDialog role={role}> */}
+                    <Button size="icon" variant="ghost">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    {/* </RoleDialog> */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button size="icon" variant="ghost">
@@ -74,13 +96,11 @@ export const RolesTab = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <RoleDialog role={role}>
-                          <DropdownMenuItem
-                            onSelect={(e) => e.preventDefault()}
-                          >
-                            <Pencil className="mr-2 h-4 w-4" /> Editar
-                          </DropdownMenuItem>
-                        </RoleDialog>
+                        {/* <RoleDialog role={role}> */}
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          <Pencil className="mr-2 h-4 w-4" /> Editar
+                        </DropdownMenuItem>
+                        {/* </RoleDialog> */}
                         <DropdownMenuItem className="text-destructive">
                           <Trash2 className="mr-2 h-4 w-4" /> Excluir
                         </DropdownMenuItem>

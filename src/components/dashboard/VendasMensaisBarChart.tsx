@@ -18,7 +18,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart'
-import { mockVendasMensaisData } from '@/lib/mock-data'
 
 const chartConfig = {
   total: {
@@ -27,7 +26,11 @@ const chartConfig = {
   },
 }
 
-export const VendasMensaisBarChart = () => {
+type VendasMensaisBarChartProps = {
+  data: { name: string; total: number }[]
+}
+
+export const VendasMensaisBarChart = ({ data }: VendasMensaisBarChartProps) => {
   return (
     <Card>
       <CardHeader>
@@ -40,19 +43,19 @@ export const VendasMensaisBarChart = () => {
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={mockVendasMensaisData}
+              data={data}
               margin={{ top: 20, right: 20, left: -10, bottom: 0 }}
             >
               <defs>
                 <linearGradient id="fillVendas" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
-                    stopColor="var(--color-primary)"
+                    stopColor="hsl(var(--primary))"
                     stopOpacity={0.8}
                   />
                   <stop
                     offset="95%"
-                    stopColor="var(--color-primary)"
+                    stopColor="hsl(var(--primary))"
                     stopOpacity={0.1}
                   />
                 </linearGradient>

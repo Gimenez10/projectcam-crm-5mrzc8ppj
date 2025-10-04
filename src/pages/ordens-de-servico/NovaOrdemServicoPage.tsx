@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -19,8 +19,46 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { PlusCircle, Trash2, Upload } from 'lucide-react'
+import { useAuth } from '@/hooks/use-auth'
+import { supabase } from '@/lib/supabase/client'
+import { useToast } from '@/components/ui/use-toast'
 
 export default function NovaOrdemServicoPage() {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const { toast } = useToast()
+
+  // NOTE: This is a simplified version. A real implementation would use a form library
+  // like react-hook-form, manage items state, calculate totals, and handle customer selection.
+
+  const handleSave = async () => {
+    if (!user) return
+
+    // Placeholder data
+    const newOrder = {
+      created_by: user.id,
+      status: 'Rascunho',
+      total_value: 0,
+      // ... other fields
+    }
+
+    const { error } = await supabase.from('service_orders').insert(newOrder)
+
+    if (error) {
+      toast({
+        title: 'Erro ao salvar',
+        description: error.message,
+        variant: 'destructive',
+      })
+    } else {
+      toast({
+        title: 'Rascunho salvo!',
+        description: 'A ordem de serviço foi salva como rascunho.',
+      })
+      navigate('/ordens-de-servico')
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6 animate-fade-in-up">
       <h1 className="text-2xl font-bold">Nova Ordem de Serviço</h1>
@@ -161,7 +199,9 @@ export default function NovaOrdemServicoPage() {
         <Button variant="outline" asChild>
           <Link to="/ordens-de-servico">Cancelar</Link>
         </Button>
-        <Button variant="secondary">Salvar Rascunho</Button>
+        <Button variant="secondary" onClick={handleSave}>
+          Salvar Rascunho
+        </Button>
         <Button>Enviar para Aprovação</Button>
       </div>
     </div>
