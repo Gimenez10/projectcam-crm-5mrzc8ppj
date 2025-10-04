@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Bell, Menu, Camera, Search } from 'lucide-react'
+import { Bell, Camera, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -10,8 +10,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { SidebarNav } from '@/components/Sidebar'
 import { mockUser, mockUsers } from '@/lib/mock-data'
 import { ThemeToggle } from './ThemeToggle'
 
@@ -78,25 +76,6 @@ export const Header = () => {
             <DropdownMenuItem>Sair</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="md:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col p-0">
-              <div className="p-4 border-b">
-                <Link to="/" className="flex items-center gap-2 font-semibold">
-                  <Camera className="h-6 w-6 text-primary" />
-                  <span className="text-lg font-bold">PROJECAM</span>
-                </Link>
-              </div>
-              <SidebarNav isMobile={true} />
-            </SheetContent>
-          </Sheet>
-        </div>
       </div>
     </header>
   )

@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/tooltip'
 import { useSidebarStore } from '@/stores/sidebar'
 
-const navItems = [
+export const navItems = [
   { to: '/', icon: Home, label: 'Dashboard', color: 'text-sky-500' },
   {
     to: '/orcamentos',
