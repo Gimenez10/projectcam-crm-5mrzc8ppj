@@ -11,7 +11,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart'
-import { mockStatusData } from '@/lib/mock-data'
 
 const chartConfig = {
   value: { label: 'Ordens de Serviço' },
@@ -22,7 +21,11 @@ const chartConfig = {
   Fechado: { label: 'Fechado', color: 'hsl(var(--chart-2))' },
 }
 
-export const StatusPieChart = () => {
+type StatusPieChartProps = {
+  data: { name: string; value: number }[]
+}
+
+export const StatusPieChart = ({ data }: StatusPieChartProps) => {
   return (
     <Card>
       <CardHeader>
@@ -43,17 +46,17 @@ export const StatusPieChart = () => {
                 content={<ChartTooltipContent hideLabel />}
               />
               <Pie
-                data={mockStatusData}
+                data={data}
                 dataKey="value"
                 nameKey="name"
                 innerRadius={60}
                 strokeWidth={5}
               >
-                {mockStatusData.map((entry) => (
+                {data.map((entry) => (
                   <Cell
                     key={`cell-${entry.name}`}
                     fill={
-                      chartConfig[entry.name as keyof typeof chartConfig].color
+                      chartConfig[entry.name as keyof typeof chartConfig]?.color
                     }
                   />
                 ))}
