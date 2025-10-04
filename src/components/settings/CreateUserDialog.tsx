@@ -1,4 +1,4 @@
-import { useState, ReactNode } from 'react'
+import { useState, ReactNode, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -32,6 +32,8 @@ import { useToast } from '@/components/ui/use-toast'
 import { inviteUser } from '@/services/users'
 import { createAuditLog } from '@/services/audit'
 import { useAuth } from '@/hooks/use-auth'
+import { getRoles } from '@/services/roles'
+import { Role } from '@/types'
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: 'Nome completo é obrigatório.' }),
@@ -39,9 +41,7 @@ const formSchema = z.object({
   password: z
     .string()
     .min(8, { message: 'A senha deve ter no mínimo 8 caracteres.' }),
-  role: z.enum(['admin', 'manager', 'seller'], {
-    required_error: 'Função é obrigatória.',
-  }),
+  roleId: z.string({ required_error: 'Função é obrigatória.' }),
 })
 
 interface CreateUserDialogProps {
@@ -55,6 +55,7 @@ export const CreateUserDialog = ({
 }: CreateUserDialogProps) => {
   const [open, setOpen] = useState(false)
   const [isCreating, setIsCreating] = useState(false)
+  const [roles, setRoles] = useState<Role[]>([])
   const { toast } = useToast()
   const { user: adminUser, profile: adminProfile } = useAuth()
 
@@ -62,6 +63,12 @@ export const CreateUserDialog = ({
     resolver: zodResolver(formSchema),
     defaultValues: { fullName: '', email: '', password: '' },
   })
+
+  useEffect(() => {
+    if (open) {
+      getRoles().then(setRoles)
+    }
+  }, [open])
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!adminUser || !adminProfile) {
@@ -84,13 +91,14 @@ export const CreateUserDialog = ({
         title: 'Usuário criado!',
         description: `Um convite foi enviado para ${values.email}.`,
       })
+      const roleName = roles.find((r) => r.id === values.roleId)?.name
       await createAuditLog({
         actorId: adminUser.id,
         actorName: adminProfile.full_name ?? 'Admin',
         action: 'user:create',
         targetUserId: data?.user?.id,
         targetUserName: values.fullName,
-        details: { role: values.role },
+        details: { role: roleName },
       })
       onUserCreated()
       setOpen(false)
@@ -155,7 +163,7 @@ export const CreateUserDialog = ({
             />
             <FormField
               control={form.control}
-              name="role"
+              name="roleId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Função</FormLabel>
@@ -169,9 +177,11 @@ export const CreateUserDialog = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="seller">Vendedor</SelectItem>
-                      <SelectItem value="manager">Gerente</SelectItem>
-                      <SelectItem value="admin">Administrador</SelectItem>
+                      {roles.map((role) => (
+                        <SelectItem key={role.id} value={role.id}>
+                          {role.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />

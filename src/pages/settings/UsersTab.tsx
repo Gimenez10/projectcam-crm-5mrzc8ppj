@@ -31,10 +31,10 @@ import { DeleteUserDialog } from '@/components/settings/DeleteUserDialog'
 import { getUsersWithEmail } from '@/services/users'
 import { Profile } from '@/types'
 
-type UserWithEmail = Profile & { email?: string }
+type UserWithEmailAndRole = Profile & { email?: string; role_name?: string }
 
 export const UsersTab = () => {
-  const [users, setUsers] = useState<UserWithEmail[]>([])
+  const [users, setUsers] = useState<UserWithEmailAndRole[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchUsers = useCallback(async () => {
@@ -118,7 +118,7 @@ export const UsersTab = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="secondary">{user.role}</Badge>
+                        <Badge variant="secondary">{user.role_name}</Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>

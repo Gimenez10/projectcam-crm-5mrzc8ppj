@@ -13,7 +13,13 @@ export type SignUpCredentials = {
 }
 
 // Database types
-export type Profile = Database['public']['Tables']['profiles']['Row']
+export type Role = Database['public']['Tables']['roles']['Row'] & {
+  permissions: string[]
+}
+export type Permission = Database['public']['Tables']['permissions']['Row']
+export type Profile = Database['public']['Tables']['profiles']['Row'] & {
+  role?: Role | null
+}
 export type Customer = Database['public']['Tables']['customers']['Row']
 export type ServiceOrder =
   Database['public']['Tables']['service_orders']['Row'] & {
@@ -25,7 +31,6 @@ export type ServiceOrderItem =
   Database['public']['Tables']['service_order_items']['Row']
 
 // Enums from database
-export type UserRole = Database['public']['Enums']['user_role']
 export type ServiceOrderStatus =
   Database['public']['Enums']['service_order_status']
 export type ApprovalStatus = Database['public']['Enums']['approval_status']

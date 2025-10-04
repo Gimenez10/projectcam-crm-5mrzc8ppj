@@ -28,11 +28,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Profile } from '@/types'
+import { Profile, Role } from '@/types'
 import { useToast } from '../ui/use-toast'
 import { updateUserProfile } from '@/services/users'
 import { createAuditLog } from '@/services/audit'
 import { useAuth } from '@/hooks/use-auth'
+import { getRoles } from '@/services/roles'
 
 const formSchema = z.object({
   full_name: z
@@ -40,7 +41,7 @@ const formSchema = z.object({
     .min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
   email: z.string().email(),
   avatar_url: z.string().url().optional().or(z.literal('')),
-  role: z.enum(['admin', 'manager', 'seller']),
+  role_id: z.string(),
 })
 
 type EditUserDialogProps = {
@@ -55,6 +56,7 @@ export const EditUserDialog = ({
   onUserUpdated,
 }: EditUserDialogProps) => {
   const [open, setOpen] = useState(false)
+  const [roles, setRoles] = useState<Role[]>([])
   const { toast } = useToast()
   const { user: adminUser, profile: adminProfile } = useAuth()
 
@@ -64,17 +66,20 @@ export const EditUserDialog = ({
       full_name: user.full_name ?? '',
       email: user.email ?? '',
       avatar_url: user.avatar_url ?? '',
-      role: user.role,
+      role_id: user.role_id ?? '',
     },
   })
 
   useEffect(() => {
-    form.reset({
-      full_name: user.full_name ?? '',
-      email: user.email ?? '',
-      avatar_url: user.avatar_url ?? '',
-      role: user.role,
-    })
+    if (open) {
+      getRoles().then(setRoles)
+      form.reset({
+        full_name: user.full_name ?? '',
+        email: user.email ?? '',
+        avatar_url: user.avatar_url ?? '',
+        role_id: user.role_id ?? '',
+      })
+    }
   }, [user, form, open])
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -88,14 +93,13 @@ export const EditUserDialog = ({
       changes.full_name = { before: user.full_name, after: values.full_name }
     if (values.avatar_url !== user.avatar_url)
       changes.avatar_url = { before: user.avatar_url, after: values.avatar_url }
-    if (values.role !== user.role)
-      changes.role = { before: user.role, after: values.role }
+    if (values.role_id !== user.role_id) {
+      const oldRole = roles.find((r) => r.id === user.role_id)?.name
+      const newRole = roles.find((r) => r.id === values.role_id)?.name
+      changes.role = { before: oldRole, after: newRole }
+    }
 
-    const { error } = await updateUserProfile(user.id, {
-      full_name: values.full_name,
-      avatar_url: values.avatar_url,
-      role: values.role,
-    })
+    const { error } = await updateUserProfile(user.id, values)
 
     if (error) {
       toast({
@@ -184,7 +188,7 @@ export const EditUserDialog = ({
             />
             <FormField
               control={form.control}
-              name="role"
+              name="role_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Função</FormLabel>
@@ -198,9 +202,11 @@ export const EditUserDialog = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="seller">Vendedor</SelectItem>
-                      <SelectItem value="manager">Gerente</SelectItem>
-                      <SelectItem value="admin">Administrador</SelectItem>
+                      {roles.map((role) => (
+                        <SelectItem key={role.id} value={role.id}>
+                          {role.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />

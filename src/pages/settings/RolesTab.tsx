@@ -1,3 +1,4 @@
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -22,31 +23,35 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, Pencil, PlusCircle, Trash2 } from 'lucide-react'
 import { RoleDialog } from '@/components/settings/RoleDialog'
-
-// NOTE: Role management is complex and requires a dedicated backend implementation.
-// This component is a placeholder for the UI.
-const mockRoles = [
-  {
-    id: 'role-admin',
-    name: 'Administrator',
-    description: 'Acesso total a todas as funcionalidades do sistema.',
-    permissions: 19,
-  },
-  {
-    id: 'role-manager',
-    name: 'Gerente de Vendas',
-    description: 'Visualiza todas as ordens de serviço e aprova descontos.',
-    permissions: 5,
-  },
-  {
-    id: 'role-seller',
-    name: 'Vendedor',
-    description: 'Cria e gerencia suas próprias ordens de serviço.',
-    permissions: 6,
-  },
-]
+import { DeleteRoleDialog } from '@/components/settings/DeleteRoleDialog'
+import { getRoles } from '@/services/roles'
+import { Role } from '@/types'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@/components/ui/badge'
 
 export const RolesTab = () => {
+  const [roles, setRoles] = useState<Role[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  const fetchRoles = useCallback(async () => {
+    setIsLoading(true)
+    const data = await getRoles()
+    setRoles(data)
+    setIsLoading(false)
+  }, [])
+
+  useEffect(() => {
+    fetchRoles()
+  }, [fetchRoles])
+
+  const renderSkeleton = () => (
+    <TableRow>
+      <TableCell colSpan={4}>
+        <Skeleton className="h-4 w-full" />
+      </TableCell>
+    </TableRow>
+  )
+
   return (
     <Card>
       <CardHeader>
@@ -57,7 +62,7 @@ export const RolesTab = () => {
       </CardHeader>
       <CardContent>
         <div className="flex justify-end mb-4">
-          <RoleDialog>
+          <RoleDialog onRoleSaved={fetchRoles}>
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Nova Função
             </Button>
@@ -76,39 +81,56 @@ export const RolesTab = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockRoles.map((role) => (
-                <TableRow key={role.id}>
-                  <TableCell className="font-medium">{role.name}</TableCell>
-                  <TableCell className="text-muted-foreground max-w-xs truncate">
-                    {role.description}
-                  </TableCell>
-                  <TableCell>{role.permissions}</TableCell>
-                  <TableCell className="text-right">
-                    {/* <RoleDialog role={role}> */}
-                    <Button size="icon" variant="ghost">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    {/* </RoleDialog> */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        {/* <RoleDialog role={role}> */}
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                          <Pencil className="mr-2 h-4 w-4" /> Editar
-                        </DropdownMenuItem>
-                        {/* </RoleDialog> */}
-                        <DropdownMenuItem className="text-destructive">
-                          <Trash2 className="mr-2 h-4 w-4" /> Excluir
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {isLoading
+                ? Array.from({ length: 3 }).map((_, i) => renderSkeleton())
+                : roles.map((role) => (
+                    <TableRow key={role.id}>
+                      <TableCell className="font-medium">
+                        {role.name}
+                        {role.is_predefined && (
+                          <Badge variant="outline" className="ml-2">
+                            Padrão
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground max-w-xs truncate">
+                        {role.description}
+                      </TableCell>
+                      <TableCell>{role.permissions.length}</TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="icon" variant="ghost">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <RoleDialog role={role} onRoleSaved={fetchRoles}>
+                              <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                              >
+                                <Pencil className="mr-2 h-4 w-4" />{' '}
+                                {role.is_predefined ? 'Visualizar' : 'Editar'}
+                              </DropdownMenuItem>
+                            </RoleDialog>
+                            {!role.is_predefined && (
+                              <DeleteRoleDialog
+                                roleToDelete={role}
+                                onRoleDeleted={fetchRoles}
+                              >
+                                <DropdownMenuItem
+                                  onSelect={(e) => e.preventDefault()}
+                                  className="text-destructive"
+                                >
+                                  <Trash2 className="mr-2 h-4 w-4" /> Excluir
+                                </DropdownMenuItem>
+                              </DeleteRoleDialog>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </div>

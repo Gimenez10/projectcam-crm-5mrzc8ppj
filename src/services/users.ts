@@ -1,15 +1,15 @@
 import { supabase } from '@/lib/supabase/client'
-import { Profile, UserRole } from '@/types'
+import { Profile } from '@/types'
 
-type UserWithEmail = Profile & { email?: string }
+type UserWithEmailAndRole = Profile & { email?: string; role_name?: string }
 type AdminCreateUserCredentials = {
   fullName: string
   email: string
   password: string
-  role: UserRole
+  roleId: string
 }
 
-export const getUsersWithEmail = async (): Promise<UserWithEmail[]> => {
+export const getUsersWithEmail = async (): Promise<UserWithEmailAndRole[]> => {
   const { data: authUsers, error: authError } =
     await supabase.auth.admin.listUsers()
   if (authError) {
@@ -19,18 +19,17 @@ export const getUsersWithEmail = async (): Promise<UserWithEmail[]> => {
 
   const { data: profiles, error: profilesError } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*, role:roles(name)')
   if (profilesError) {
     console.error('Error fetching profiles:', profilesError)
     return []
   }
 
-  const combinedUsers = profiles.map((profile) => ({
+  return profiles.map((profile) => ({
     ...profile,
     email: authUsers.users.find((u) => u.id === profile.id)?.email,
+    role_name: (profile.role as any)?.name,
   }))
-
-  return combinedUsers
 }
 
 export const inviteUser = async (credentials: AdminCreateUserCredentials) => {
@@ -43,14 +42,15 @@ export const inviteUser = async (credentials: AdminCreateUserCredentials) => {
     },
   })
 
-  if (error) {
-    return { data: null, error }
-  }
+  if (error) return { data: null, error }
 
   if (data.user) {
     const { error: profileError } = await supabase
       .from('profiles')
-      .update({ role: credentials.role, full_name: credentials.fullName })
+      .update({
+        role_id: credentials.roleId,
+        full_name: credentials.fullName,
+      })
       .eq('id', data.user.id)
 
     if (profileError) {
@@ -64,7 +64,7 @@ export const inviteUser = async (credentials: AdminCreateUserCredentials) => {
 
 export const updateUserProfile = async (
   userId: string,
-  updates: { full_name?: string; avatar_url?: string; role?: UserRole },
+  updates: { full_name?: string; avatar_url?: string; role_id?: string },
 ) => {
   const { data, error } = await supabase
     .from('profiles')
