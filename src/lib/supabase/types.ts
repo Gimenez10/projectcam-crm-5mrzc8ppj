@@ -15,16 +15,204 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      customers: {
+        Row: {
+          address: string | null
+          city: string | null
+          cpf_cnpj: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          state: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          state?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          state?: string | null
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          full_name: string | null
+          id: string
+          role: Database['public']['Enums']['user_role']
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id: string
+          role?: Database['public']['Enums']['user_role']
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string
+          role?: Database['public']['Enums']['user_role']
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      service_order_items: {
+        Row: {
+          code: string | null
+          description: string
+          discount: number
+          id: string
+          quantity: number
+          service_order_id: string
+          unit_price: number
+        }
+        Insert: {
+          code?: string | null
+          description: string
+          discount?: number
+          id?: string
+          quantity: number
+          service_order_id: string
+          unit_price: number
+        }
+        Update: {
+          code?: string | null
+          description?: string
+          discount?: number
+          id?: string
+          quantity?: number
+          service_order_id?: string
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'service_order_items_service_order_id_fkey'
+            columns: ['service_order_id']
+            isOneToOne: false
+            referencedRelation: 'service_orders'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      service_orders: {
+        Row: {
+          approval_comments: string | null
+          approval_status: Database['public']['Enums']['approval_status'] | null
+          approver_id: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          description: string | null
+          global_discount: number
+          id: string
+          observations: string | null
+          order_number: number
+          payment_conditions: string | null
+          requested_at: string | null
+          status: Database['public']['Enums']['service_order_status']
+          title: string | null
+          total_value: number
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          approval_comments?: string | null
+          approval_status?:
+            | Database['public']['Enums']['approval_status']
+            | null
+          approver_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          description?: string | null
+          global_discount?: number
+          id?: string
+          observations?: string | null
+          order_number?: number
+          payment_conditions?: string | null
+          requested_at?: string | null
+          status?: Database['public']['Enums']['service_order_status']
+          title?: string | null
+          total_value?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          approval_comments?: string | null
+          approval_status?:
+            | Database['public']['Enums']['approval_status']
+            | null
+          approver_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          description?: string | null
+          global_discount?: number
+          id?: string
+          observations?: string | null
+          order_number?: number
+          payment_conditions?: string | null
+          requested_at?: string | null
+          status?: Database['public']['Enums']['service_order_status']
+          title?: string | null
+          total_value?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'service_orders_customer_id_fkey'
+            columns: ['customer_id']
+            isOneToOne: false
+            referencedRelation: 'customers'
+            referencedColumns: ['id']
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { user_id: string }
+        Returns: Database['public']['Enums']['user_role']
+      }
     }
     Enums: {
-      [_ in never]: never
+      approval_status: 'Pendente' | 'Aprovado' | 'Rejeitado'
+      service_order_status:
+        | 'Rascunho'
+        | 'Pendente'
+        | 'Aprovado'
+        | 'Rejeitado'
+        | 'Fechado'
+      user_role: 'admin' | 'manager' | 'seller'
     }
     CompositeTypes: {
       [_ in never]: never
@@ -151,6 +339,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      approval_status: ['Pendente', 'Aprovado', 'Rejeitado'],
+      service_order_status: [
+        'Rascunho',
+        'Pendente',
+        'Aprovado',
+        'Rejeitado',
+        'Fechado',
+      ],
+      user_role: ['admin', 'manager', 'seller'],
+    },
   },
 } as const

@@ -1,4 +1,4 @@
-import { Database } from './lib/supabase/types'
+import { Database, Json } from '@/lib/supabase/types'
 
 // Auth
 export type SignInCredentials = {
@@ -30,7 +30,7 @@ export type ServiceOrderStatus =
   Database['public']['Enums']['service_order_status']
 export type ApprovalStatus = Database['public']['Enums']['approval_status']
 
-// App-specific types (can be removed if not needed)
+// App-specific types
 export type KpiCardData = {
   title: string
   value: string
@@ -48,8 +48,11 @@ export type RecentActivity = {
 
 export type AuditLog = {
   id: string
-  user: Pick<Profile, 'id' | 'full_name' | 'avatar_url'>
+  actor_id: string | null
+  actor_name: string | null
   action: string
-  details: string
-  timestamp: Date
+  target_user_id: string | null
+  target_user_name: string | null
+  details: Json | null
+  created_at: string
 }

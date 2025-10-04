@@ -1,4 +1,4 @@
-import { useState, ReactNode, useEffect } from 'react'
+import { useState, ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -28,98 +28,73 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Profile } from '@/types'
-import { useToast } from '../ui/use-toast'
-import { updateUserProfile } from '@/services/users'
+import { useToast } from '@/components/ui/use-toast'
+import { inviteUser } from '@/services/users'
 import { createAuditLog } from '@/services/audit'
 import { useAuth } from '@/hooks/use-auth'
 
 const formSchema = z.object({
-  full_name: z
+  fullName: z.string().min(2, { message: 'Nome completo é obrigatório.' }),
+  email: z.string().email({ message: 'Email inválido.' }),
+  password: z
     .string()
-    .min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
-  email: z.string().email(),
-  avatar_url: z.string().url().optional().or(z.literal('')),
-  role: z.enum(['admin', 'manager', 'seller']),
+    .min(8, { message: 'A senha deve ter no mínimo 8 caracteres.' }),
+  role: z.enum(['admin', 'manager', 'seller'], {
+    required_error: 'Função é obrigatória.',
+  }),
 })
 
-type EditUserDialogProps = {
+interface CreateUserDialogProps {
+  onUserCreated: () => void
   children: ReactNode
-  user: Profile & { email?: string }
-  onUserUpdated: () => void
 }
 
-export const EditUserDialog = ({
+export const CreateUserDialog = ({
+  onUserCreated,
   children,
-  user,
-  onUserUpdated,
-}: EditUserDialogProps) => {
+}: CreateUserDialogProps) => {
   const [open, setOpen] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
   const { toast } = useToast()
   const { user: adminUser, profile: adminProfile } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      full_name: user.full_name ?? '',
-      email: user.email ?? '',
-      avatar_url: user.avatar_url ?? '',
-      role: user.role,
-    },
+    defaultValues: { fullName: '', email: '', password: '' },
   })
 
-  useEffect(() => {
-    form.reset({
-      full_name: user.full_name ?? '',
-      email: user.email ?? '',
-      avatar_url: user.avatar_url ?? '',
-      role: user.role,
-    })
-  }, [user, form, open])
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!adminUser || !adminProfile) {
       toast({ title: 'Erro de autenticação', variant: 'destructive' })
       return
     }
 
-    const changes: Record<string, { before: any; after: any }> = {}
-    if (values.full_name !== user.full_name)
-      changes.full_name = { before: user.full_name, after: values.full_name }
-    if (values.avatar_url !== user.avatar_url)
-      changes.avatar_url = { before: user.avatar_url, after: values.avatar_url }
-    if (values.role !== user.role)
-      changes.role = { before: user.role, after: values.role }
-
-    const { error } = await updateUserProfile(user.id, {
-      full_name: values.full_name,
-      avatar_url: values.avatar_url,
-      role: values.role,
-    })
+    setIsCreating(true)
+    const { data, error } = await inviteUser(values)
+    setIsCreating(false)
 
     if (error) {
       toast({
-        title: 'Erro ao atualizar',
+        title: 'Erro ao criar usuário',
         description: error.message,
         variant: 'destructive',
       })
     } else {
       toast({
-        title: 'Usuário atualizado!',
-        description: `O perfil de ${values.full_name} foi atualizado.`,
+        title: 'Usuário criado!',
+        description: `Um convite foi enviado para ${values.email}.`,
       })
-      if (Object.keys(changes).length > 0) {
-        await createAuditLog({
-          actorId: adminUser.id,
-          actorName: adminProfile.full_name ?? 'Admin',
-          action: 'user:update',
-          targetUserId: user.id,
-          targetUserName: values.full_name,
-          details: changes,
-        })
-      }
-      onUserUpdated()
+      await createAuditLog({
+        actorId: adminUser.id,
+        actorName: adminProfile.full_name ?? 'Admin',
+        action: 'user:create',
+        targetUserId: data?.user?.id,
+        targetUserName: values.fullName,
+        details: { role: values.role },
+      })
+      onUserCreated()
       setOpen(false)
+      form.reset()
     }
   }
 
@@ -128,17 +103,16 @@ export const EditUserDialog = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Editar Usuário</DialogTitle>
+          <DialogTitle>Convidar Novo Usuário</DialogTitle>
           <DialogDescription>
-            Faça alterações no perfil do usuário aqui. Clique em salvar quando
-            terminar.
+            Preencha os detalhes para criar um novo usuário.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="full_name"
+              name="fullName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nome Completo</FormLabel>
@@ -157,9 +131,9 @@ export const EditUserDialog = ({
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
+                      type="email"
                       placeholder="john.doe@example.com"
                       {...field}
-                      disabled
                     />
                   </FormControl>
                   <FormMessage />
@@ -168,15 +142,12 @@ export const EditUserDialog = ({
             />
             <FormField
               control={form.control}
-              name="avatar_url"
+              name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL do Avatar</FormLabel>
+                  <FormLabel>Senha</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="https://example.com/avatar.png"
-                      {...field}
-                    />
+                    <Input type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -212,10 +183,13 @@ export const EditUserDialog = ({
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
+                disabled={isCreating}
               >
                 Cancelar
               </Button>
-              <Button type="submit">Salvar Alterações</Button>
+              <Button type="submit" disabled={isCreating}>
+                {isCreating ? 'Criando...' : 'Criar Usuário'}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

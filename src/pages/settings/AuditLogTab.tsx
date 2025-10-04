@@ -14,43 +14,43 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
-import { Calendar as CalendarIcon, Search } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
-import { cn } from '@/lib/utils'
-import { Profile } from '@/types'
-import { getAllProfiles } from '@/services/profiles'
 import { Skeleton } from '@/components/ui/skeleton'
-
-// NOTE: Audit log data would be fetched from a dedicated 'audit_logs' table.
-// This is a placeholder UI.
-const mockAuditLogs: any[] = []
+import { supabase } from '@/lib/supabase/client'
+import { AuditLog } from '@/types'
+import { Badge } from '@/components/ui/badge'
 
 export const AuditLogTab = () => {
-  const [users, setUsers] = useState<Profile[]>([])
+  const [logs, setLogs] = useState<AuditLog[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const profiles = await getAllProfiles()
-      setUsers(profiles)
+    const fetchLogs = async () => {
+      setIsLoading(true)
+      const { data, error } = await supabase
+        .from('audit_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50)
+
+      if (error) {
+        console.error('Error fetching audit logs:', error)
+      } else {
+        setLogs(data as AuditLog[])
+      }
+      setIsLoading(false)
     }
-    fetchUsers()
+    fetchLogs()
   }, [])
+
+  const renderSkeleton = () => (
+    <TableRow>
+      <TableCell colSpan={4}>
+        <Skeleton className="h-4 w-full" />
+      </TableCell>
+    </TableRow>
+  )
 
   return (
     <Card>
@@ -61,66 +61,44 @@ export const AuditLogTab = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col md:flex-row gap-4 mb-4">
-          <Select>
-            <SelectTrigger className="md:w-[200px]">
-              <SelectValue placeholder="Filtrar por usuário" />
-            </SelectTrigger>
-            <SelectContent>
-              {users.map((user) => (
-                <SelectItem key={user.id} value={user.id}>
-                  {user.full_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="md:w-[200px]">
-              <SelectValue placeholder="Filtrar por ação" />
-            </SelectTrigger>
-            <SelectContent>
-              {/* Actions would be populated dynamically */}
-            </SelectContent>
-          </Select>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={'outline'}
-                className={cn(
-                  'w-full md:w-[240px] justify-start text-left font-normal',
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                <span>Selecione um período</span>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar mode="range" numberOfMonths={2} />
-            </PopoverContent>
-          </Popover>
-          <Button>
-            <Search className="mr-2 h-4 w-4" /> Filtrar
-          </Button>
-        </div>
         <div className="rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Usuário</TableHead>
+                <TableHead>Ator</TableHead>
                 <TableHead>Ação</TableHead>
-                <TableHead>Detalhes</TableHead>
+                <TableHead>Alvo</TableHead>
                 <TableHead>Data e Hora</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockAuditLogs.length === 0 ? (
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => renderSkeleton())
+              ) : logs.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="h-24 text-center">
                     Nenhum registro de auditoria encontrado.
                   </TableCell>
                 </TableRow>
               ) : (
-                <></> /* Map over logs here */
+                logs.map((log) => (
+                  <TableRow key={log.id}>
+                    <TableCell className="font-medium">
+                      {log.actor_name}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{log.action}</Badge>
+                    </TableCell>
+                    <TableCell>{log.target_user_name || 'N/A'}</TableCell>
+                    <TableCell>
+                      {format(
+                        new Date(log.created_at),
+                        "dd/MM/yyyy 'às' HH:mm",
+                        { locale: ptBR },
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
             </TableBody>
           </Table>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Table,
   TableBody,
@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { MoreHorizontal, Pencil, UserPlus } from 'lucide-react'
+import { MoreHorizontal, Pencil, Trash2, UserPlus } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -24,10 +24,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { supabase } from '@/lib/supabase/client'
-import { Profile } from '@/types'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EditUserDialog } from '@/components/settings/EditUserDialog'
+import { CreateUserDialog } from '@/components/settings/CreateUserDialog'
+import { DeleteUserDialog } from '@/components/settings/DeleteUserDialog'
+import { getUsersWithEmail } from '@/services/users'
+import { Profile } from '@/types'
 
 type UserWithEmail = Profile & { email?: string }
 
@@ -35,35 +37,20 @@ export const UsersTab = () => {
   const [users, setUsers] = useState<UserWithEmail[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setIsLoading(true)
-      const { data: authUsers, error: authError } =
-        await supabase.auth.admin.listUsers()
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*')
-
-      if (authError || profilesError) {
-        console.error(authError || profilesError)
-        setIsLoading(false)
-        return
-      }
-
-      const combinedUsers = profiles.map((profile) => ({
-        ...profile,
-        email: authUsers.users.find((u) => u.id === profile.id)?.email,
-      }))
-
-      setUsers(combinedUsers)
-      setIsLoading(false)
-    }
-    fetchUsers()
+  const fetchUsers = useCallback(async () => {
+    setIsLoading(true)
+    const combinedUsers = await getUsersWithEmail()
+    setUsers(combinedUsers)
+    setIsLoading(false)
   }, [])
+
+  useEffect(() => {
+    fetchUsers()
+  }, [fetchUsers])
 
   const renderSkeleton = () => (
     <TableRow>
-      <TableCell colSpan={3}>
+      <TableCell>
         <div className="flex items-center gap-4">
           <Skeleton className="h-10 w-10 rounded-full" />
           <div className="space-y-2">
@@ -86,14 +73,16 @@ export const UsersTab = () => {
       <CardHeader>
         <CardTitle>Gerenciamento de Usuários</CardTitle>
         <CardDescription>
-          Visualize e gerencie os usuários do sistema.
+          Visualize, convide e gerencie os usuários do sistema.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex justify-end mb-4">
-          <Button>
-            <UserPlus className="mr-2 h-4 w-4" /> Convidar Usuário
-          </Button>
+          <CreateUserDialog onUserCreated={fetchUsers}>
+            <Button>
+              <UserPlus className="mr-2 h-4 w-4" /> Convidar Usuário
+            </Button>
+          </CreateUserDialog>
         </div>
         <div className="rounded-md border">
           <Table>
@@ -101,9 +90,7 @@ export const UsersTab = () => {
               <TableRow>
                 <TableHead>Usuário</TableHead>
                 <TableHead>Função</TableHead>
-                <TableHead>
-                  <span className="sr-only">Ações</span>
-                </TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -134,11 +121,36 @@ export const UsersTab = () => {
                         <Badge variant="secondary">{user.role}</Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <EditUserDialog user={user}>
-                          <Button size="icon" variant="ghost">
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                        </EditUserDialog>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="icon" variant="ghost">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <EditUserDialog
+                              user={user}
+                              onUserUpdated={fetchUsers}
+                            >
+                              <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                              >
+                                <Pencil className="mr-2 h-4 w-4" /> Editar
+                              </DropdownMenuItem>
+                            </EditUserDialog>
+                            <DeleteUserDialog
+                              userToDelete={user}
+                              onUserDeleted={fetchUsers}
+                            >
+                              <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                                className="text-destructive"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" /> Excluir
+                              </DropdownMenuItem>
+                            </DeleteUserDialog>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}
