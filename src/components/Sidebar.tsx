@@ -19,15 +19,15 @@ import { useSidebarStore } from '@/stores/sidebar'
 export const navItems = [
   { to: '/', icon: Home, label: 'Dashboard', color: 'text-sky-500' },
   {
-    to: '/orcamentos',
+    to: '/ordens-de-servico',
     icon: FileText,
-    label: 'Orçamentos',
+    label: 'Ordens de Serviço',
     color: 'text-orange-500',
   },
   {
-    to: '/orcamentos/novo',
+    to: '/ordens-de-servico/nova',
     icon: PlusCircle,
-    label: 'Novo Orçamento',
+    label: 'Nova Ordem de Serviço',
     color: 'text-green-500',
   },
   {

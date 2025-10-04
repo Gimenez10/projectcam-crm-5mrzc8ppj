@@ -19,22 +19,22 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { PlusCircle, Trash2, Upload, FileText } from 'lucide-react'
-import { mockQuotes } from '@/lib/mock-data'
+import { mockServiceOrders } from '@/lib/mock-data'
 import { Badge } from '@/components/ui/badge'
 
-export default function EditarOrcamentoPage() {
+export default function EditarOrdemServicoPage() {
   const { id } = useParams()
-  const quote = mockQuotes.find((q) => q.id === id)
+  const serviceOrder = mockServiceOrders.find((q) => q.id === id)
 
-  if (!quote) {
+  if (!serviceOrder) {
     return (
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Orçamento não encontrado</h1>
+        <h1 className="text-2xl font-bold">Ordem de Serviço não encontrada</h1>
         <p className="text-muted-foreground">
-          O orçamento com o ID {id} não foi encontrado.
+          A ordem de serviço com o ID {id} não foi encontrada.
         </p>
         <Button asChild className="mt-4">
-          <Link to="/orcamentos">Voltar para a lista</Link>
+          <Link to="/ordens-de-servico">Voltar para a lista</Link>
         </Button>
       </div>
     )
@@ -43,9 +43,11 @@ export default function EditarOrcamentoPage() {
   return (
     <div className="flex flex-col gap-6 animate-fade-in-up">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Editar Orçamento #{quote.id}</h1>
+        <h1 className="text-2xl font-bold">
+          Editar Ordem de Serviço #{serviceOrder.id}
+        </h1>
         <Badge variant="secondary" className="text-base">
-          Status: {quote.status}
+          Status: {serviceOrder.status}
         </Badge>
       </div>
 
@@ -58,14 +60,17 @@ export default function EditarOrcamentoPage() {
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="customer-name">Nome do Cliente</Label>
-                <Input id="customer-name" defaultValue={quote.customer.name} />
+                <Input
+                  id="customer-name"
+                  defaultValue={serviceOrder.customer.name}
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="customer-cpf">CPF/CNPJ</Label>
                   <Input
                     id="customer-cpf"
-                    defaultValue={quote.customer.cpfCnpj}
+                    defaultValue={serviceOrder.customer.cpfCnpj}
                   />
                 </div>
                 <div className="grid gap-2">
@@ -73,7 +78,7 @@ export default function EditarOrcamentoPage() {
                   <Input
                     id="customer-email"
                     type="email"
-                    defaultValue={quote.customer.email}
+                    defaultValue={serviceOrder.customer.email}
                   />
                 </div>
               </div>
@@ -82,7 +87,7 @@ export default function EditarOrcamentoPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Itens do Orçamento</CardTitle>
+              <CardTitle>Itens da Ordem de Serviço</CardTitle>
               <div className="flex justify-end gap-2">
                 <Button variant="outline">
                   <Upload className="mr-2 h-4 w-4" /> Upload via OCR
@@ -105,7 +110,7 @@ export default function EditarOrcamentoPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {quote.items.map((item) => (
+                  {serviceOrder.items.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell>
                         <Input defaultValue={item.description} />
@@ -156,13 +161,13 @@ export default function EditarOrcamentoPage() {
         <div className="lg:col-span-1 flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Resumo do Orçamento</CardTitle>
+              <CardTitle>Resumo da Ordem de Serviço</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span>
-                  {quote.items
+                  {serviceOrder.items
                     .reduce(
                       (acc, item) =>
                         acc +
@@ -182,14 +187,14 @@ export default function EditarOrcamentoPage() {
                 <Input
                   id="global-discount"
                   type="number"
-                  defaultValue={quote.globalDiscount}
+                  defaultValue={serviceOrder.globalDiscount}
                   className="w-20"
                 />
               </div>
               <div className="flex justify-between text-lg font-bold">
                 <span>Total Geral</span>
                 <span>
-                  {quote.totalValue.toLocaleString('pt-BR', {
+                  {serviceOrder.totalValue.toLocaleString('pt-BR', {
                     style: 'currency',
                     currency: 'BRL',
                   })}
@@ -202,7 +207,7 @@ export default function EditarOrcamentoPage() {
 
       <div className="sticky bottom-0 bg-background/95 py-4 border-t flex justify-end gap-2">
         <Button variant="outline" asChild>
-          <Link to="/orcamentos">Cancelar</Link>
+          <Link to="/ordens-de-servico">Cancelar</Link>
         </Button>
         <Button variant="secondary">Salvar Alterações</Button>
         <Button>

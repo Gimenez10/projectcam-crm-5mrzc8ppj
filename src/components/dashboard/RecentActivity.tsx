@@ -24,7 +24,7 @@ export const RecentActivity = () => {
                 <div className="flex-1">
                   <p className="text-sm">
                     <Link
-                      to={`/orcamentos/editar/${activity.quoteId}`}
+                      to={`/ordens-de-servico/editar/${activity.serviceOrderId}`}
                       className="font-medium text-primary hover:underline"
                     >
                       {activity.description}

@@ -22,18 +22,18 @@ import { mockVendedoresData } from '@/lib/mock-data'
 
 const chartConfig = {
   value: {
-    label: 'Orçamentos',
+    label: 'Ordens de Serviço',
     color: 'hsl(var(--chart-5))',
   },
 }
 
-export const OrcamentosVendedorBarChart = () => {
+export const OrdensServicoVendedorBarChart = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Orçamentos por Vendedor</CardTitle>
+        <CardTitle>Ordens de Serviço por Vendedor</CardTitle>
         <CardDescription>
-          Número de orçamentos criados por vendedor
+          Número de ordens de serviço criadas por vendedor
         </CardDescription>
       </CardHeader>
       <CardContent>

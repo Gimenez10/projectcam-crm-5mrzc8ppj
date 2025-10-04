@@ -14,7 +14,7 @@ import {
 import { mockStatusData } from '@/lib/mock-data'
 
 const chartConfig = {
-  value: { label: 'Orçamentos' },
+  value: { label: 'Ordens de Serviço' },
   Rascunho: { label: 'Rascunho', color: 'hsl(var(--muted-foreground))' },
   Pendente: { label: 'Pendente', color: 'hsl(var(--chart-3))' },
   Aprovado: { label: 'Aprovado', color: 'hsl(var(--chart-1))' },
@@ -26,8 +26,10 @@ export const StatusPieChart = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Orçamentos por Status</CardTitle>
-        <CardDescription>Distribuição dos orçamentos atuais</CardDescription>
+        <CardTitle>Ordens de Serviço por Status</CardTitle>
+        <CardDescription>
+          Distribuição das ordens de serviço atuais
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer

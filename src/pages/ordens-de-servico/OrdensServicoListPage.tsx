@@ -42,12 +42,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
-import { mockQuotes } from '@/lib/mock-data'
-import { Quote, QuoteStatus } from '@/types'
+import { mockServiceOrders } from '@/lib/mock-data'
+import { ServiceOrder, ServiceOrderStatus } from '@/types'
 import { cn } from '@/lib/utils'
 
 const getStatusVariant = (
-  status: QuoteStatus,
+  status: ServiceOrderStatus,
 ): 'default' | 'secondary' | 'destructive' | 'outline' => {
   switch (status) {
     case 'Aprovado':
@@ -63,11 +63,11 @@ const getStatusVariant = (
   }
 }
 
-export default function OrcamentosListPage() {
+export default function OrdensServicoListPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
-  const totalPages = Math.ceil(mockQuotes.length / itemsPerPage)
-  const currentQuotes = mockQuotes.slice(
+  const totalPages = Math.ceil(mockServiceOrders.length / itemsPerPage)
+  const currentServiceOrders = mockServiceOrders.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   )
@@ -75,18 +75,18 @@ export default function OrcamentosListPage() {
   return (
     <div className="flex flex-col gap-4 animate-fade-in-up">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Lista de Orçamentos</h1>
+        <h1 className="text-2xl font-bold">Lista de Ordens de Serviço</h1>
         <Button asChild>
-          <Link to="/orcamentos/novo">
-            <PlusCircle className="mr-2 h-4 w-4" /> Novo Orçamento
+          <Link to="/ordens-de-servico/nova">
+            <PlusCircle className="mr-2 h-4 w-4" /> Nova Ordem de Serviço
           </Link>
         </Button>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Orçamentos</CardTitle>
+          <CardTitle>Ordens de Serviço</CardTitle>
           <CardDescription>
-            Gerencie, visualize e edite seus orçamentos.
+            Gerencie, visualize e edite suas ordens de serviço.
           </CardDescription>
           <div className="relative mt-4">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -112,26 +112,28 @@ export default function OrcamentosListPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {currentQuotes.map((quote: Quote) => (
-                <TableRow key={quote.id}>
-                  <TableCell className="font-medium">{quote.id}</TableCell>
-                  <TableCell>{quote.customer.name}</TableCell>
+              {currentServiceOrders.map((serviceOrder: ServiceOrder) => (
+                <TableRow key={serviceOrder.id}>
+                  <TableCell className="font-medium">
+                    {serviceOrder.id}
+                  </TableCell>
+                  <TableCell>{serviceOrder.customer.name}</TableCell>
                   <TableCell>
                     <Badge
-                      variant={getStatusVariant(quote.status)}
+                      variant={getStatusVariant(serviceOrder.status)}
                       className={cn(
-                        quote.status === 'Aprovado' &&
+                        serviceOrder.status === 'Aprovado' &&
                           'bg-success text-success-foreground',
-                        quote.status === 'Pendente' &&
+                        serviceOrder.status === 'Pendente' &&
                           'bg-warning text-warning-foreground',
                       )}
                     >
-                      {quote.status}
+                      {serviceOrder.status}
                     </Badge>
                   </TableCell>
-                  <TableCell>{quote.salesperson.name}</TableCell>
+                  <TableCell>{serviceOrder.salesperson.name}</TableCell>
                   <TableCell className="text-right">
-                    {quote.totalValue.toLocaleString('pt-BR', {
+                    {serviceOrder.totalValue.toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
                     })}
@@ -151,7 +153,9 @@ export default function OrcamentosListPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Ações</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
-                          <Link to={`/orcamentos/editar/${quote.id}`}>
+                          <Link
+                            to={`/ordens-de-servico/editar/${serviceOrder.id}`}
+                          >
                             <Pencil className="mr-2 h-4 w-4" /> Ver/Editar
                           </Link>
                         </DropdownMenuItem>
@@ -171,14 +175,14 @@ export default function OrcamentosListPage() {
               ))}
             </TableBody>
           </Table>
-          {mockQuotes.length === 0 && (
+          {mockServiceOrders.length === 0 && (
             <div className="text-center py-10">
               <File className="mx-auto h-12 w-12 text-muted-foreground" />
               <h3 className="mt-4 text-lg font-semibold">
-                Nenhum orçamento encontrado
+                Nenhuma ordem de serviço encontrada
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                Comece criando um novo orçamento.
+                Comece criando uma nova ordem de serviço.
               </p>
             </div>
           )}

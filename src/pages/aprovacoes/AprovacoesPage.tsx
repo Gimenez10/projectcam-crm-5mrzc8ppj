@@ -15,12 +15,12 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { mockQuotes } from '@/lib/mock-data'
+import { mockServiceOrders } from '@/lib/mock-data'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Check, X } from 'lucide-react'
 
-const pendingApprovals = mockQuotes.filter(
+const pendingApprovals = mockServiceOrders.filter(
   (q) => q.approvalStatus === 'Pendente',
 )
 
@@ -39,7 +39,7 @@ export default function AprovacoesPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID do Orçamento</TableHead>
+                <TableHead>ID da Ordem de Serviço</TableHead>
                 <TableHead>Cliente</TableHead>
                 <TableHead>Solicitante</TableHead>
                 <TableHead>Desconto (%)</TableHead>
@@ -48,19 +48,21 @@ export default function AprovacoesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {pendingApprovals.map((quote) => (
-                <TableRow key={quote.id}>
-                  <TableCell className="font-medium">{quote.id}</TableCell>
-                  <TableCell>{quote.customer.name}</TableCell>
-                  <TableCell>{quote.salesperson.name}</TableCell>
+              {pendingApprovals.map((serviceOrder) => (
+                <TableRow key={serviceOrder.id}>
+                  <TableCell className="font-medium">
+                    {serviceOrder.id}
+                  </TableCell>
+                  <TableCell>{serviceOrder.customer.name}</TableCell>
+                  <TableCell>{serviceOrder.salesperson.name}</TableCell>
                   <TableCell>
                     <Badge variant="secondary">
-                      {quote.globalDiscount.toFixed(2)}%
+                      {serviceOrder.globalDiscount.toFixed(2)}%
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {quote.requestedAt
-                      ? formatDistanceToNow(quote.requestedAt, {
+                    {serviceOrder.requestedAt
+                      ? formatDistanceToNow(serviceOrder.requestedAt, {
                           addSuffix: true,
                           locale: ptBR,
                         })

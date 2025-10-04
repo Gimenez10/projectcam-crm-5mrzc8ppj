@@ -20,10 +20,10 @@ import {
 } from '@/components/ui/table'
 import { PlusCircle, Trash2, Upload } from 'lucide-react'
 
-export default function NovoOrcamentoPage() {
+export default function NovaOrdemServicoPage() {
   return (
     <div className="flex flex-col gap-6 animate-fade-in-up">
-      <h1 className="text-2xl font-bold">Novo Orçamento</h1>
+      <h1 className="text-2xl font-bold">Nova Ordem de Serviço</h1>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 flex flex-col gap-6">
@@ -54,7 +54,7 @@ export default function NovoOrcamentoPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Itens do Orçamento</CardTitle>
+              <CardTitle>Itens da Ordem de Serviço</CardTitle>
               <div className="flex justify-end gap-2">
                 <Button variant="outline">
                   <Upload className="mr-2 h-4 w-4" /> Upload via OCR
@@ -108,7 +108,7 @@ export default function NovoOrcamentoPage() {
         <div className="lg:col-span-1 flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Resumo do Orçamento</CardTitle>
+              <CardTitle>Resumo da Ordem de Serviço</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="flex justify-between">
@@ -159,7 +159,7 @@ export default function NovoOrcamentoPage() {
 
       <div className="sticky bottom-0 bg-background/95 py-4 border-t flex justify-end gap-2">
         <Button variant="outline" asChild>
-          <Link to="/orcamentos">Cancelar</Link>
+          <Link to="/ordens-de-servico">Cancelar</Link>
         </Button>
         <Button variant="secondary">Salvar Rascunho</Button>
         <Button>Enviar para Aprovação</Button>

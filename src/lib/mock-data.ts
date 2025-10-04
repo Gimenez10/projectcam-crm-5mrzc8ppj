@@ -1,8 +1,8 @@
 import {
   User,
   Customer,
-  Quote,
-  QuoteStatus,
+  ServiceOrder,
+  ServiceOrderStatus,
   KpiCardData,
   RecentActivity,
   Role,
@@ -12,14 +12,14 @@ import {
 import { subDays, subMonths, subHours } from 'date-fns'
 
 export const mockPermissions: Permission[] = [
-  'quotes:create',
-  'quotes:read:own',
-  'quotes:read:all',
-  'quotes:update:own',
-  'quotes:update:all',
-  'quotes:delete:own',
-  'quotes:delete:all',
-  'quotes:approve_discounts',
+  'service_orders:create',
+  'service_orders:read:own',
+  'service_orders:read:all',
+  'service_orders:update:own',
+  'service_orders:update:all',
+  'service_orders:delete:own',
+  'service_orders:delete:all',
+  'service_orders:approve_discounts',
   'customers:create',
   'customers:read',
   'customers:update',
@@ -43,12 +43,12 @@ export const mockRoles: Role[] = [
   {
     id: 'role-seller',
     name: 'Vendedor',
-    description: 'Cria e gerencia seus próprios orçamentos.',
+    description: 'Cria e gerencia suas próprias ordens de serviço.',
     permissions: [
-      'quotes:create',
-      'quotes:read:own',
-      'quotes:update:own',
-      'quotes:delete:own',
+      'service_orders:create',
+      'service_orders:read:own',
+      'service_orders:update:own',
+      'service_orders:delete:own',
       'customers:create',
       'customers:read',
     ],
@@ -56,11 +56,11 @@ export const mockRoles: Role[] = [
   {
     id: 'role-manager',
     name: 'Gerente de Vendas',
-    description: 'Visualiza todos os orçamentos e aprova descontos.',
+    description: 'Visualiza todas as ordens de serviço e aprova descontos.',
     permissions: [
-      'quotes:read:all',
-      'quotes:update:all',
-      'quotes:approve_discounts',
+      'service_orders:read:all',
+      'service_orders:update:all',
+      'service_orders:approve_discounts',
       'customers:read',
       'customers:update',
     ],
@@ -144,7 +144,7 @@ const mockCustomers: Customer[] = [
   },
 ]
 
-const statuses: QuoteStatus[] = [
+const statuses: ServiceOrderStatus[] = [
   'Rascunho',
   'Pendente',
   'Aprovado',
@@ -152,55 +152,69 @@ const statuses: QuoteStatus[] = [
   'Fechado',
 ]
 
-export const mockQuotes: Quote[] = Array.from({ length: 25 }, (_, i) => {
-  const customer = mockCustomers[i % mockCustomers.length]
-  const status = statuses[i % statuses.length]
-  const items = [
-    {
-      id: `item-${i}-1`,
-      code: `PROD-00${i + 1}`,
-      description: `Produto de Teste ${i + 1}`,
-      quantity: (i % 5) + 1,
-      unitPrice: 100 + i * 10,
-      discount: i % 4 === 0 ? 5 : 0,
-    },
-    {
-      id: `item-${i}-2`,
-      code: `SERV-00${i + 1}`,
-      description: `Serviço de Instalação ${i + 1}`,
-      quantity: 1,
-      unitPrice: 250 + i * 5,
-      discount: 0,
-    },
-  ]
-  const subtotal = items.reduce(
-    (acc, item) =>
-      acc + item.quantity * item.unitPrice * (1 - item.discount / 100),
-    0,
-  )
-  const globalDiscount = i % 5 === 0 ? 10 : 0
-  const totalValue = subtotal * (1 - globalDiscount / 100)
-
-  return {
-    id: `ORC-${2024001 + i}`,
-    customer,
-    createdAt: subDays(new Date(), i * 2),
-    validUntil: new Date(),
-    salesperson: mockUsers[1],
-    items,
-    totalValue,
-    globalDiscount,
-    status,
-    paymentConditions: '30/60 dias',
-    observations: 'Instalação a ser agendada.',
-    approvalStatus: globalDiscount > 5 ? 'Pendente' : undefined,
-    requestedAt: globalDiscount > 5 ? subDays(new Date(), i * 2) : undefined,
+const generatedIds = new Set<number>()
+const generateUniqueId = (): number => {
+  let id = Math.floor(Math.random() * 1001)
+  while (generatedIds.has(id)) {
+    id = Math.floor(Math.random() * 1001)
   }
-})
+  generatedIds.add(id)
+  return id
+}
+
+export const mockServiceOrders: ServiceOrder[] = Array.from(
+  { length: 25 },
+  (_, i) => {
+    const customer = mockCustomers[i % mockCustomers.length]
+    const status = statuses[i % statuses.length]
+    const items = [
+      {
+        id: `item-${i}-1`,
+        code: `PROD-00${i + 1}`,
+        description: `Produto de Teste ${i + 1}`,
+        quantity: (i % 5) + 1,
+        unitPrice: 100 + i * 10,
+        discount: i % 4 === 0 ? 5 : 0,
+      },
+      {
+        id: `item-${i}-2`,
+        code: `SERV-00${i + 1}`,
+        description: `Serviço de Instalação ${i + 1}`,
+        quantity: 1,
+        unitPrice: 250 + i * 5,
+        discount: 0,
+      },
+    ]
+    const subtotal = items.reduce(
+      (acc, item) =>
+        acc + item.quantity * item.unitPrice * (1 - item.discount / 100),
+      0,
+    )
+    const globalDiscount = i % 5 === 0 ? 10 : 0
+    const totalValue = subtotal * (1 - globalDiscount / 100)
+    const id = `OS-${generateUniqueId()}`
+
+    return {
+      id,
+      customer,
+      createdAt: subDays(new Date(), i * 2),
+      validUntil: new Date(),
+      salesperson: mockUsers[1],
+      items,
+      totalValue,
+      globalDiscount,
+      status,
+      paymentConditions: '30/60 dias',
+      observations: 'Instalação a ser agendada.',
+      approvalStatus: globalDiscount > 5 ? 'Pendente' : undefined,
+      requestedAt: globalDiscount > 5 ? subDays(new Date(), i * 2) : undefined,
+    }
+  },
+)
 
 export const mockKpiCards: KpiCardData[] = [
   {
-    title: 'Orçamentos Criados',
+    title: 'Ordens de Serviço Criadas',
     value: '150',
     change: 5,
     period: 'vs. mês passado',
@@ -214,7 +228,7 @@ export const mockKpiCards: KpiCardData[] = [
     chartData: Array.from({ length: 7 }, (_, i) => ({ value: 15 + i * 3 })),
   },
   {
-    title: 'Valor Total de Orçamentos',
+    title: 'Valor Total de O.S.',
     value: 'R$ 1.2M',
     change: -2,
     period: 'vs. mês passado',
@@ -264,27 +278,27 @@ export const mockVendedoresData = [
 export const mockRecentActivities: RecentActivity[] = [
   {
     id: 'act-1',
-    description: 'Orçamento #ORC-2024025 aprovado por Gerente.',
+    description: `Ordem de Serviço #${mockServiceOrders[0].id} aprovada por Gerente.`,
     timestamp: '2 horas atrás',
-    quoteId: 'ORC-2024025',
+    serviceOrderId: mockServiceOrders[0].id,
   },
   {
     id: 'act-2',
-    description: 'Novo orçamento #ORC-2024001 criado por Ana Silva.',
+    description: `Nova ordem de serviço #${mockServiceOrders[1].id} criada por Ana Silva.`,
     timestamp: '5 horas atrás',
-    quoteId: 'ORC-2024001',
+    serviceOrderId: mockServiceOrders[1].id,
   },
   {
     id: 'act-3',
-    description: 'Orçamento #ORC-2024015 rejeitado.',
+    description: `Ordem de Serviço #${mockServiceOrders[2].id} rejeitada.`,
     timestamp: '1 dia atrás',
-    quoteId: 'ORC-2024015',
+    serviceOrderId: mockServiceOrders[2].id,
   },
   {
     id: 'act-4',
-    description: 'Orçamento #ORC-2024010 enviado para aprovação.',
+    description: `Ordem de Serviço #${mockServiceOrders[3].id} enviada para aprovação.`,
     timestamp: '2 dias atrás',
-    quoteId: 'ORC-2024010',
+    serviceOrderId: mockServiceOrders[3].id,
   },
 ]
 
@@ -299,15 +313,15 @@ export const mockAuditLogs: AuditLog[] = [
   {
     id: 'log-2',
     user: mockUsers[1],
-    action: 'Create Quote',
-    details: 'User Bruno Costa created quote #ORC-2024025.',
+    action: 'Create Service Order',
+    details: `User Bruno Costa created service order #${mockServiceOrders[0].id}.`,
     timestamp: subHours(new Date(), 2),
   },
   {
     id: 'log-3',
     user: mockUsers[2],
     action: 'Approve Discount',
-    details: 'User Carla Dias approved discount for quote #ORC-2024020.',
+    details: `User Carla Dias approved discount for service order #${mockServiceOrders[4].id}.`,
     timestamp: subHours(new Date(), 5),
   },
   {

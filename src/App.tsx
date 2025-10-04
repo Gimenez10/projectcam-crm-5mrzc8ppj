@@ -5,9 +5,9 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import Index from './pages/Index'
 import NotFound from './pages/NotFound'
 import Layout from './components/Layout'
-import OrcamentosListPage from './pages/orcamentos/OrcamentosListPage'
-import NovoOrcamentoPage from './pages/orcamentos/NovoOrcamentoPage'
-import EditarOrcamentoPage from './pages/orcamentos/EditarOrcamentoPage'
+import OrdensServicoListPage from './pages/ordens-de-servico/OrdensServicoListPage'
+import NovaOrdemServicoPage from './pages/ordens-de-servico/NovaOrdemServicoPage'
+import EditarOrdemServicoPage from './pages/ordens-de-servico/EditarOrdemServicoPage'
 import AprovacoesPage from './pages/aprovacoes/AprovacoesPage'
 import SettingsPage from './pages/settings/SettingsPage'
 import { ThemeProvider } from './components/ThemeProvider'
@@ -21,11 +21,17 @@ const App = () => (
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
-            <Route path="/orcamentos" element={<OrcamentosListPage />} />
-            <Route path="/orcamentos/novo" element={<NovoOrcamentoPage />} />
             <Route
-              path="/orcamentos/editar/:id"
-              element={<EditarOrcamentoPage />}
+              path="/ordens-de-servico"
+              element={<OrdensServicoListPage />}
+            />
+            <Route
+              path="/ordens-de-servico/nova"
+              element={<NovaOrdemServicoPage />}
+            />
+            <Route
+              path="/ordens-de-servico/editar/:id"
+              element={<EditarOrdemServicoPage />}
             />
             <Route path="/aprovacoes" element={<AprovacoesPage />} />
             <Route path="/settings" element={<SettingsPage />} />

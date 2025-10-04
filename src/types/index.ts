@@ -1,15 +1,15 @@
 export type UserRole = 'Administrator' | 'Seller'
 
 export type Permission =
-  // Quotes
-  | 'quotes:create'
-  | 'quotes:read:own'
-  | 'quotes:read:all'
-  | 'quotes:update:own'
-  | 'quotes:update:all'
-  | 'quotes:delete:own'
-  | 'quotes:delete:all'
-  | 'quotes:approve_discounts'
+  // Service Orders
+  | 'service_orders:create'
+  | 'service_orders:read:own'
+  | 'service_orders:read:all'
+  | 'service_orders:update:own'
+  | 'service_orders:update:all'
+  | 'service_orders:delete:own'
+  | 'service_orders:delete:all'
+  | 'service_orders:approve_discounts'
   // Customers
   | 'customers:create'
   | 'customers:read'
@@ -57,7 +57,7 @@ export type Customer = {
   email: string
 }
 
-export type QuoteItem = {
+export type ServiceOrderItem = {
   id: string
   code: string
   description: string
@@ -66,7 +66,7 @@ export type QuoteItem = {
   discount: number // percentage
 }
 
-export type QuoteStatus =
+export type ServiceOrderStatus =
   | 'Rascunho'
   | 'Pendente'
   | 'Aprovado'
@@ -75,16 +75,16 @@ export type QuoteStatus =
 
 export type ApprovalStatus = 'Pendente' | 'Aprovado' | 'Rejeitado'
 
-export type Quote = {
+export type ServiceOrder = {
   id: string
   customer: Customer
   createdAt: Date
   validUntil: Date
   salesperson: User
-  items: QuoteItem[]
+  items: ServiceOrderItem[]
   totalValue: number
   globalDiscount: number // percentage
-  status: QuoteStatus
+  status: ServiceOrderStatus
   paymentConditions: string
   observations: string
   approvalStatus?: ApprovalStatus
@@ -105,7 +105,7 @@ export type RecentActivity = {
   id: string
   description: string
   timestamp: string
-  quoteId: string
+  serviceOrderId: string
 }
 
 export type AuditLog = {

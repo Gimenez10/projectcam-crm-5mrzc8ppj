@@ -5,8 +5,8 @@ import { navItems as originalNavItems } from '@/components/Sidebar'
 const mobileNavItems = originalNavItems
   .filter((item) => !item.disabled)
   .map((item) => {
-    if (item.label === 'Novo Orçamento') {
-      return { ...item, label: 'Novo' }
+    if (item.label === 'Nova Ordem de Serviço') {
+      return { ...item, label: 'Nova' }
     }
     if (item.label === 'Configurações') {
       return { ...item, label: 'Ajustes' }

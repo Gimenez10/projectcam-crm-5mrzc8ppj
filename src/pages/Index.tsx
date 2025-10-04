@@ -9,7 +9,7 @@ import { KpiCard } from '@/components/dashboard/KpiCard'
 import { StatusPieChart } from '@/components/dashboard/StatusPieChart'
 import { VendasMensaisBarChart } from '@/components/dashboard/VendasMensaisBarChart'
 import { TopClientesBarChart } from '@/components/dashboard/TopClientesBarChart'
-import { OrcamentosVendedorBarChart } from '@/components/dashboard/OrcamentosVendedorBarChart'
+import { OrdensServicoVendedorBarChart } from '@/components/dashboard/OrdensServicoVendedorBarChart'
 import { RecentActivity } from '@/components/dashboard/RecentActivity'
 import { mockKpiCards, mockUser } from '@/lib/mock-data'
 
@@ -22,7 +22,7 @@ const Index = () => {
             Bem-vindo(a), {mockUser.name}!
           </h1>
           <p className="text-muted-foreground">
-            Você tem 3 orçamentos pendentes de aprovação.
+            Você tem 3 ordens de serviço pendentes de aprovação.
           </p>
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -64,7 +64,7 @@ const Index = () => {
       </div>
 
       <div className="grid gap-4">
-        <OrcamentosVendedorBarChart />
+        <OrdensServicoVendedorBarChart />
       </div>
     </div>
   )
