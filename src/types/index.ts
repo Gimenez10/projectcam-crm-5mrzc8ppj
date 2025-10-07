@@ -61,3 +61,16 @@ export type AuditLog = {
   details: Json | null
   created_at: string
 }
+
+export type NotificationSetting = {
+  id: string
+  event_type: string
+  description: string
+  is_enabled: boolean
+  recipients: {
+    users: string[]
+    roles: string[]
+  }
+  created_at: string
+  updated_at: string
+}

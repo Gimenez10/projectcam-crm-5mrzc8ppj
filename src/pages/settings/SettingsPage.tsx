@@ -3,6 +3,7 @@ import { ProfileTab } from './ProfileTab'
 import { UsersTab } from './UsersTab'
 import { RolesTab } from './RolesTab'
 import { AuditLogTab } from './AuditLogTab'
+import { NotificationsTab } from './NotificationsTab'
 
 export default function SettingsPage() {
   return (
@@ -15,10 +16,11 @@ export default function SettingsPage() {
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="profile">Perfil</TabsTrigger>
           <TabsTrigger value="users">Usuários</TabsTrigger>
           <TabsTrigger value="roles">Funções</TabsTrigger>
+          <TabsTrigger value="notifications">Notificações</TabsTrigger>
           <TabsTrigger value="audit">Log de Auditoria</TabsTrigger>
         </TabsList>
         <TabsContent value="profile" className="mt-6">
@@ -29,6 +31,9 @@ export default function SettingsPage() {
         </TabsContent>
         <TabsContent value="roles" className="mt-6">
           <RolesTab />
+        </TabsContent>
+        <TabsContent value="notifications" className="mt-6">
+          <NotificationsTab />
         </TabsContent>
         <TabsContent value="audit" className="mt-6">
           <AuditLogTab />
