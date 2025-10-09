@@ -3,17 +3,30 @@ CREATE TABLE public.products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     description TEXT,
+    product_code TEXT UNIQUE,
     barcode TEXT UNIQUE,
-    serial_number INTEGER,
+    internal_code INTEGER,
+    serial_number TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-    CONSTRAINT serial_number_range CHECK (serial_number >= 0 AND serial_number <= 999)
+    CONSTRAINT internal_code_range CHECK (internal_code >= 0 AND internal_code <= 999)
 );
 
-COMMENT ON TABLE public.products IS 'Stores product information, including barcodes and serial numbers.';
+COMMENT ON TABLE public.products IS 'Stores product information, including various identification codes.';
+COMMENT ON COLUMN public.products.product_code IS 'Unique product identifier code.';
 COMMENT ON COLUMN public.products.barcode IS 'Unique product barcode for scanning and identification.';
-COMMENT ON COLUMN public.products.serial_number IS 'Serial number for the product, must be between 0 and 999.';
+COMMENT ON COLUMN public.products.internal_code IS 'Internal code for the product, must be between 0 and 999.';
+COMMENT ON COLUMN public.products.serial_number IS 'Alphanumeric serial number for the product unit.';
+
+-- Function to automatically update updated_at timestamp
+CREATE OR REPLACE FUNCTION public.trigger_set_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Trigger for products table to update the updated_at timestamp
 CREATE TRIGGER set_timestamp

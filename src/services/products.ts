@@ -25,7 +25,9 @@ export const getProducts = async ({
   let query = supabase.from('products').select('*', { count: 'exact' })
 
   if (searchTerm) {
-    query = query.or(`name.ilike.%${searchTerm}%,barcode.ilike.%${searchTerm}%`)
+    query = query.or(
+      `name.ilike.%${searchTerm}%,barcode.ilike.%${searchTerm}%,product_code.ilike.%${searchTerm}%`,
+    )
   }
 
   query = query.order(sort.column, { ascending: sort.order === 'asc' })
@@ -58,7 +60,7 @@ export const getProductById = async (id: string): Promise<Product | null> => {
 }
 
 export const createProduct = async (
-  productData: ProductPayload,
+  productData: Partial<ProductPayload>,
   creatorId: string,
 ) => {
   const { data, error } = await supabase

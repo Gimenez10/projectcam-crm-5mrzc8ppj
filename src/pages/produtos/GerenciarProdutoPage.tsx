@@ -36,13 +36,15 @@ const productFormSchema = z.object({
     .string()
     .min(3, { message: 'O nome do produto deve ter pelo menos 3 caracteres.' }),
   description: z.string().optional(),
+  product_code: z.string().optional(),
   barcode: z.string().optional(),
-  serial_number: z.coerce
+  internal_code: z.coerce
     .number({ invalid_type_error: 'Deve ser um número.' })
     .int({ message: 'Deve ser um número inteiro.' })
-    .min(0, { message: 'O número de série não pode ser negativo.' })
-    .max(999, { message: 'O número de série não pode ser maior que 999.' })
+    .min(0, { message: 'O código interno não pode ser negativo.' })
+    .max(999, { message: 'O código interno não pode ser maior que 999.' })
     .nullable(),
+  serial_number: z.string().optional(),
 })
 
 export default function GerenciarProdutoPage() {
@@ -58,8 +60,10 @@ export default function GerenciarProdutoPage() {
     defaultValues: {
       name: '',
       description: '',
+      product_code: '',
       barcode: '',
-      serial_number: null,
+      internal_code: null,
+      serial_number: '',
     },
   })
 
@@ -150,10 +154,23 @@ export default function GerenciarProdutoPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
+                  name="product_code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Código do Produto</FormLabel>
+                      <FormControl>
+                        <Input placeholder="SKU-12345" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="barcode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Código de Barras do Produto</FormLabel>
+                      <FormLabel>Código de Barra</FormLabel>
                       <div className="flex items-center gap-2">
                         <FormControl>
                           <Input placeholder="1234567890123" {...field} />
@@ -177,10 +194,10 @@ export default function GerenciarProdutoPage() {
                 />
                 <FormField
                   control={form.control}
-                  name="serial_number"
+                  name="internal_code"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Número de Série</FormLabel>
+                      <FormLabel>Código Interno</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -188,6 +205,19 @@ export default function GerenciarProdutoPage() {
                           {...field}
                           value={field.value ?? ''}
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="serial_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Número de Série</FormLabel>
+                      <FormControl>
+                        <Input placeholder="SN-ABC-123" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

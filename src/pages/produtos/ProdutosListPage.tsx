@@ -59,7 +59,7 @@ export default function ProdutosListPage() {
 
   const renderSkeleton = () => (
     <TableRow>
-      <TableCell colSpan={4}>
+      <TableCell colSpan={5}>
         <Skeleton className="h-6 w-full" />
       </TableCell>
     </TableRow>
@@ -85,7 +85,7 @@ export default function ProdutosListPage() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Buscar por nome ou código de barras..."
+            placeholder="Buscar por nome, código do produto ou de barras..."
             className="pl-8 sm:w-1/2 md:w-1/3"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -98,8 +98,9 @@ export default function ProdutosListPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
-                <TableHead>Código de Barras</TableHead>
-                <TableHead>Nº de Série</TableHead>
+                <TableHead>Cód. Produto</TableHead>
+                <TableHead>Cód. Barra</TableHead>
+                <TableHead>Cód. Interno</TableHead>
                 <TableHead>
                   <span className="sr-only">Ações</span>
                 </TableHead>
@@ -115,8 +116,9 @@ export default function ProdutosListPage() {
                       <TableCell className="font-medium">
                         {product.name}
                       </TableCell>
+                      <TableCell>{product.product_code || 'N/A'}</TableCell>
                       <TableCell>{product.barcode || 'N/A'}</TableCell>
-                      <TableCell>{product.serial_number ?? 'N/A'}</TableCell>
+                      <TableCell>{product.internal_code ?? 'N/A'}</TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
