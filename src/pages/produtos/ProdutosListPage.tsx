@@ -6,6 +6,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -29,19 +30,28 @@ import { getProducts } from '@/services/products'
 import { Product } from '@/types'
 import { DeleteProductDialog } from '@/components/produtos/DeleteProductDialog'
 import { useDebounce } from '@/hooks/use-debounce'
+import { DataTablePagination } from '@/components/DataTablePagination'
 
 export default function ProdutosListPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [total, setTotal] = useState(0)
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
   const fetchProducts = useCallback(async () => {
     setIsLoading(true)
-    const data = await getProducts(debouncedSearchTerm)
+    const { data, count } = await getProducts({
+      page,
+      perPage,
+      searchTerm: debouncedSearchTerm,
+    })
     setProducts(data)
+    setTotal(count)
     setIsLoading(false)
-  }, [debouncedSearchTerm])
+  }, [page, perPage, debouncedSearchTerm])
 
   useEffect(() => {
     fetchProducts()
@@ -50,7 +60,7 @@ export default function ProdutosListPage() {
   const renderSkeleton = () => (
     <TableRow>
       <TableCell colSpan={4}>
-        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-6 w-full" />
       </TableCell>
     </TableRow>
   )
@@ -82,8 +92,8 @@ export default function ProdutosListPage() {
           />
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -97,7 +107,9 @@ export default function ProdutosListPage() {
             </TableHeader>
             <TableBody>
               {isLoading
-                ? Array.from({ length: 5 }).map((_, i) => renderSkeleton())
+                ? Array.from({ length: perPage }).map((_, i) =>
+                    renderSkeleton(),
+                  )
                 : products.map((product) => (
                     <TableRow key={product.id}>
                       <TableCell className="font-medium">
@@ -138,6 +150,15 @@ export default function ProdutosListPage() {
           </Table>
         </div>
       </CardContent>
+      <CardFooter className="p-4 border-t">
+        <DataTablePagination
+          page={page}
+          total={total}
+          perPage={perPage}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+        />
+      </CardFooter>
     </Card>
   )
 }

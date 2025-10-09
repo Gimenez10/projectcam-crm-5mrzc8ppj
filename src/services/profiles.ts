@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase/client'
-import { Profile } from '@/types'
+import { Profile, DashboardLayout } from '@/types'
 
 export const getProfile = async (userId: string): Promise<Profile | null> => {
   const { data, error } = await supabase
@@ -25,4 +25,22 @@ export const getAllProfiles = async (): Promise<Profile[]> => {
   }
 
   return data as Profile[]
+}
+
+export const updateDashboardLayout = async (
+  userId: string,
+  layout: DashboardLayout,
+) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .update({ dashboard_layout: layout })
+    .eq('id', userId)
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error updating dashboard layout:', error)
+  }
+
+  return { data, error }
 }

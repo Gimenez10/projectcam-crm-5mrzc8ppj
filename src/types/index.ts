@@ -12,6 +12,25 @@ export type SignUpCredentials = {
   password: string
 }
 
+// Dashboard Customization
+export type LayoutItem = {
+  i: string
+  x: number
+  y: number
+  w: number
+  h: number
+}
+
+export type WidgetConfig = {
+  id: string
+  component: string
+}
+
+export type DashboardLayout = {
+  layout: LayoutItem[]
+  widgets: WidgetConfig[]
+}
+
 // Database types
 export type Role = Database['public']['Tables']['roles']['Row'] & {
   permissions: string[]
@@ -19,6 +38,7 @@ export type Role = Database['public']['Tables']['roles']['Row'] & {
 export type Permission = Database['public']['Tables']['permissions']['Row']
 export type Profile = Database['public']['Tables']['profiles']['Row'] & {
   role?: Role | null
+  dashboard_layout?: DashboardLayout | null
 }
 export type Customer = Database['public']['Tables']['customers']['Row']
 export type Product = Database['public']['Tables']['products']['Row']

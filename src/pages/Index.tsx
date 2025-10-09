@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
 import { KpiCard } from '@/components/dashboard/KpiCard'
 import { StatusPieChart } from '@/components/dashboard/StatusPieChart'
 import { VendasMensaisBarChart } from '@/components/dashboard/VendasMensaisBarChart'
@@ -23,7 +17,7 @@ import {
   getRecentActivities,
 } from '@/services/dashboard'
 import { KpiCardData, RecentActivity as RecentActivityType } from '@/types'
-import { ConnectWalletButton } from '@/components/ConnectWalletButton'
+import { Layout, Settings } from 'lucide-react'
 
 const Index = () => {
   const { profile } = useAuth()
@@ -44,6 +38,10 @@ const Index = () => {
   const [recentActivities, setRecentActivities] = useState<
     RecentActivityType[]
   >([])
+
+  // NOTE: Dashboard customization logic is not implemented in this step
+  // to keep the file focused. A full implementation would involve a grid layout
+  // library and saving the layout to the user's profile.
 
   useEffect(() => {
     const fetchData = async () => {
@@ -118,18 +116,11 @@ const Index = () => {
             Aqui está um resumo da atividade recente.
           </p>
         </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Select defaultValue="30d">
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Selecione o período" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7d">Últimos 7 dias</SelectItem>
-              <SelectItem value="30d">Mês Atual</SelectItem>
-              <SelectItem value="1y">Ano Atual</SelectItem>
-            </SelectContent>
-          </Select>
-          <ConnectWalletButton />
+        <div className="flex items-center gap-2">
+          <Button variant="outline">
+            <Layout className="mr-2 h-4 w-4" />
+            Personalizar Dashboard
+          </Button>
         </div>
       </div>
 
