@@ -21,6 +21,7 @@ export type Profile = Database['public']['Tables']['profiles']['Row'] & {
   role?: Role | null
 }
 export type Customer = Database['public']['Tables']['customers']['Row']
+export type Product = Database['public']['Tables']['products']['Row']
 export type ServiceOrder =
   Database['public']['Tables']['service_orders']['Row'] & {
     customer: Customer | null

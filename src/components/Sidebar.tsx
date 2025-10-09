@@ -58,7 +58,7 @@ export const navItems = [
     icon: Package,
     label: 'Produtos',
     shortLabel: 'Produtos',
-    disabled: true,
+    disabled: false,
     color: 'text-pink-500',
   },
   {

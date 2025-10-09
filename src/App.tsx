@@ -16,6 +16,8 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import LoginPage from './pages/auth/LoginPage'
 import SignUpPage from './pages/auth/SignUpPage'
 import AuthLayout from './components/AuthLayout'
+import ProdutosListPage from './pages/produtos/ProdutosListPage'
+import GerenciarProdutoPage from './pages/produtos/GerenciarProdutoPage'
 
 const App = () => (
   <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
@@ -44,6 +46,15 @@ const App = () => (
                 <Route
                   path="/ordens-de-servico/editar/:id"
                   element={<EditarOrdemServicoPage />}
+                />
+                <Route path="/produtos" element={<ProdutosListPage />} />
+                <Route
+                  path="/produtos/novo"
+                  element={<GerenciarProdutoPage />}
+                />
+                <Route
+                  path="/produtos/editar/:id"
+                  element={<GerenciarProdutoPage />}
                 />
                 <Route path="/aprovacoes" element={<AprovacoesPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
