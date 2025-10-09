@@ -23,6 +23,7 @@ import {
   getRecentActivities,
 } from '@/services/dashboard'
 import { KpiCardData, RecentActivity as RecentActivityType } from '@/types'
+import { ConnectWalletButton } from '@/components/ConnectWalletButton'
 
 const Index = () => {
   const { profile } = useAuth()
@@ -128,6 +129,7 @@ const Index = () => {
               <SelectItem value="1y">Ano Atual</SelectItem>
             </SelectContent>
           </Select>
+          <ConnectWalletButton />
         </div>
       </div>
 
