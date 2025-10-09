@@ -6,6 +6,7 @@ DROP POLICY IF EXISTS "Admins and managers can view all service orders." ON publ
 DROP POLICY IF EXISTS "Admins can manage all service orders." ON public.service_orders;
 DROP POLICY IF EXISTS "Admins and managers can view all service order items." ON public.service_order_items;
 DROP POLICY IF EXISTS "Admins can manage all service order items." ON public.service_order_items;
+DROP POLICY IF EXISTS "Admins can view all audit logs." ON public.audit_logs;
 
 -- Step 1: Create new tables for roles and permissions
 CREATE TABLE public.roles (
@@ -185,3 +186,6 @@ CREATE POLICY "Admins and managers can view all service order items." ON public.
   FOR SELECT USING (public.get_user_role(auth.uid()) IN ('admin', 'manager'));
 CREATE POLICY "Admins can manage all service order items." ON public.service_order_items
   FOR ALL USING (public.get_user_role(auth.uid()) = 'admin') WITH CHECK (public.get_user_role(auth.uid()) = 'admin');
+
+CREATE POLICY "Admins can view all audit logs." ON public.audit_logs
+  FOR SELECT USING (public.get_user_role(auth.uid()) = 'admin');
