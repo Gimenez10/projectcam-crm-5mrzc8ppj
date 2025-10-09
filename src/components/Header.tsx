@@ -12,11 +12,10 @@ import {
 import { Input } from '@/components/ui/input'
 import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '@/hooks/use-auth'
-import { signOut } from '@/services/auth'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 
 export const Header = () => {
-  const { profile } = useAuth()
+  const { profile, signOut } = useAuth()
   const navigate = useNavigate()
 
   const handleSignOut = async () => {
@@ -25,7 +24,7 @@ export const Header = () => {
   }
 
   const getInitials = (name: string | null | undefined) => {
-    if (!name) return ''
+    if (!name) return 'U'
     return name
       .split(' ')
       .map((n) => n[0])
@@ -62,7 +61,6 @@ export const Header = () => {
 
         <Button variant="ghost" size="icon" className="relative rounded-full">
           <Bell className="h-5 w-5" />
-          {/* Notification logic to be implemented */}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -80,9 +78,10 @@ export const Header = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              {profile?.full_name || 'Minha Conta'}
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Meu Perfil</DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link to="/settings">Configurações</Link>
             </DropdownMenuItem>

@@ -1,10 +1,10 @@
 import { supabase } from '@/lib/supabase/client'
-import { Profile, UserRole } from '@/types'
+import { Profile } from '@/types'
 
 export const getProfile = async (userId: string): Promise<Profile | null> => {
   const { data, error } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*, role:roles(*)')
     .eq('id', userId)
     .single()
 
@@ -25,20 +25,4 @@ export const getAllProfiles = async (): Promise<Profile[]> => {
   }
 
   return data as Profile[]
-}
-
-export const updateProfileRole = async (
-  userId: string,
-  role: UserRole,
-): Promise<{ error: any }> => {
-  const { error } = await supabase
-    .from('profiles')
-    .update({ role })
-    .eq('id', userId)
-
-  if (error) {
-    console.error('Error updating profile role:', error)
-  }
-
-  return { error }
 }

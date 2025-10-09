@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
-import { signUp } from '@/services/auth'
+import { useAuth } from '@/hooks/use-auth'
 import { Camera } from 'lucide-react'
 
 const formSchema = z.object({
@@ -35,6 +35,7 @@ const formSchema = z.object({
 export default function SignUpPage() {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { signUp } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({

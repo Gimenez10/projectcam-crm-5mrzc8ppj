@@ -22,10 +22,10 @@ import GerenciarProdutoPage from './pages/produtos/GerenciarProdutoPage'
 const App = () => (
   <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
     <BrowserRouter>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <AuthProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
           <Routes>
             <Route element={<AuthLayout />}>
               <Route path="/login" element={<LoginPage />} />
@@ -63,8 +63,8 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </AuthProvider>
-      </TooltipProvider>
+        </TooltipProvider>
+      </AuthProvider>
     </BrowserRouter>
   </ThemeProvider>
 )

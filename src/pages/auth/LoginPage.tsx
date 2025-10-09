@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
-import { signInWithPassword } from '@/services/auth'
+import { useAuth } from '@/hooks/use-auth'
 import { Camera } from 'lucide-react'
 
 const formSchema = z.object({
@@ -32,6 +32,7 @@ const formSchema = z.object({
 export default function LoginPage() {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { signIn } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -41,13 +42,13 @@ export default function LoginPage() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true)
-    const { error } = await signInWithPassword(values)
+    const { error } = await signIn(values)
     setIsLoading(false)
 
     if (error) {
       toast({
         title: 'Erro no Login',
-        description: error.message,
+        description: 'Credenciais inválidas. Por favor, tente novamente.',
         variant: 'destructive',
       })
     } else {
