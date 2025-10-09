@@ -1,3 +1,12 @@
+-- Step 0: Drop dependent policies before schema changes
+DROP POLICY IF EXISTS "Admins can view all profiles." ON public.profiles;
+DROP POLICY IF EXISTS "Admins can update any profile." ON public.profiles;
+DROP POLICY IF EXISTS "Admins can manage all customers." ON public.customers;
+DROP POLICY IF EXISTS "Admins and managers can view all service orders." ON public.service_orders;
+DROP POLICY IF EXISTS "Admins can manage all service orders." ON public.service_orders;
+DROP POLICY IF EXISTS "Admins and managers can view all service order items." ON public.service_order_items;
+DROP POLICY IF EXISTS "Admins can manage all service order items." ON public.service_order_items;
+
 -- Step 1: Create new tables for roles and permissions
 CREATE TABLE public.roles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -158,8 +167,21 @@ CREATE POLICY "Admins can manage role permissions" ON public.role_permissions
 
 -- Note: Permissions table is considered static data managed by migrations, so no insert/update/delete policies for users.
 
--- Step 13: Update existing RLS policies on profiles table
-DROP POLICY IF EXISTS "Admins can update any profile." ON public.profiles;
+-- Step 13: Recreate policies with the new role management system
+CREATE POLICY "Admins can view all profiles." ON public.profiles
+  FOR SELECT USING (public.get_user_role(auth.uid()) = 'admin');
 CREATE POLICY "Admins can update any profile." ON public.profiles
   FOR UPDATE USING (public.get_user_role(auth.uid()) = 'admin');
 
+CREATE POLICY "Admins can manage all customers." ON public.customers
+  FOR ALL USING (public.get_user_role(auth.uid()) = 'admin') WITH CHECK (public.get_user_role(auth.uid()) = 'admin');
+
+CREATE POLICY "Admins and managers can view all service orders." ON public.service_orders
+  FOR SELECT USING (public.get_user_role(auth.uid()) IN ('admin', 'manager'));
+CREATE POLICY "Admins can manage all service orders." ON public.service_orders
+  FOR ALL USING (public.get_user_role(auth.uid()) = 'admin') WITH CHECK (public.get_user_role(auth.uid()) = 'admin');
+
+CREATE POLICY "Admins and managers can view all service order items." ON public.service_order_items
+  FOR SELECT USING (public.get_user_role(auth.uid()) IN ('admin', 'manager'));
+CREATE POLICY "Admins can manage all service order items." ON public.service_order_items
+  FOR ALL USING (public.get_user_role(auth.uid()) = 'admin') WITH CHECK (public.get_user_role(auth.uid()) = 'admin');
