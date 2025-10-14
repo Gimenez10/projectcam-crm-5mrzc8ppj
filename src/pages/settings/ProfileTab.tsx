@@ -22,6 +22,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { useToast } from '@/components/ui/use-toast'
 import { supabase } from '@/lib/supabase/client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { getInitials } from '@/lib/utils'
 
 const profileFormSchema = z.object({
   full_name: z
@@ -85,10 +86,7 @@ export const ProfileTab = () => {
                   alt={profile?.full_name ?? ''}
                 />
                 <AvatarFallback>
-                  {profile?.full_name
-                    ?.split(' ')
-                    .map((n) => n[0])
-                    .join('')}
+                  {getInitials(profile?.full_name)}
                 </AvatarFallback>
               </Avatar>
               <FormField

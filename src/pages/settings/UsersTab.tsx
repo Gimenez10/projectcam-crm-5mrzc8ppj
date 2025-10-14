@@ -30,6 +30,7 @@ import { CreateUserDialog } from '@/components/settings/CreateUserDialog'
 import { DeleteUserDialog } from '@/components/settings/DeleteUserDialog'
 import { getUsersWithEmail } from '@/services/users'
 import { Profile } from '@/types'
+import { getInitials } from '@/lib/utils'
 
 type UserWithEmailAndRole = Profile & { email?: string; role_name?: string }
 
@@ -101,12 +102,9 @@ export const UsersTab = () => {
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            <AvatarImage src={user.avatar_url ?? undefined} />
+                            <AvatarImage src={user.avatar_url || undefined} />
                             <AvatarFallback>
-                              {user.full_name
-                                ?.split(' ')
-                                .map((n) => n[0])
-                                .join('')}
+                              {getInitials(user.full_name)}
                             </AvatarFallback>
                           </Avatar>
                           <div>

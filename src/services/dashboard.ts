@@ -165,20 +165,21 @@ export const getRecentActivities = async (): Promise<RecentActivity[]> => {
   const { data, error } = await supabase
     .from('service_orders')
     .select(
-      'id, order_number, status, updated_at, salesperson:profiles(full_name)',
+      'id, order_number, status, updated_at, salesperson:profiles(full_name, avatar_url)',
     )
     .order('updated_at', { ascending: false })
-    .limit(2)
+    .limit(5)
 
   if (error) {
     console.error('Error fetching recent activities:', error)
     return []
   }
 
-  return data.map((order, index) => ({
-    id: `act-${index}`,
+  return data.map((order) => ({
+    id: order.id,
     description: `O.S. #${order.order_number} foi atualizada para ${order.status}.`,
     timestamp: format(new Date(order.updated_at), "dd/MM/yyyy 'às' HH:mm"),
     serviceOrderId: order.id,
+    salesperson: order.salesperson,
   }))
 }

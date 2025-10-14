@@ -70,6 +70,10 @@ export type RecentActivity = {
   description: string
   timestamp: string
   serviceOrderId: string
+  salesperson: {
+    full_name: string | null
+    avatar_url: string | null
+  } | null
 }
 
 export type AuditLog = {

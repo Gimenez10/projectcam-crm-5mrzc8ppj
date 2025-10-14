@@ -17,7 +17,9 @@ import {
   getRecentActivities,
 } from '@/services/dashboard'
 import { KpiCardData, RecentActivity as RecentActivityType } from '@/types'
-import { Layout, Settings } from 'lucide-react'
+import { Layout } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { getInitials } from '@/lib/utils'
 
 const Index = () => {
   const { profile } = useAuth()
@@ -38,10 +40,6 @@ const Index = () => {
   const [recentActivities, setRecentActivities] = useState<
     RecentActivityType[]
   >([])
-
-  // NOTE: Dashboard customization logic is not implemented in this step
-  // to keep the file focused. A full implementation would involve a grid layout
-  // library and saving the layout to the user's profile.
 
   useEffect(() => {
     const fetchData = async () => {
@@ -108,13 +106,22 @@ const Index = () => {
   return (
     <div className="flex flex-col gap-6 animate-fade-in-up">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-            Bem-vindo(a), {profile?.full_name || 'Usuário'}!
-          </h1>
-          <p className="text-muted-foreground">
-            Aqui está um resumo da atividade recente.
-          </p>
+        <div className="flex items-center gap-4">
+          <Avatar className="h-12 w-12 hidden sm:flex">
+            <AvatarImage
+              src={profile?.avatar_url || undefined}
+              alt={profile?.full_name ?? 'User Avatar'}
+            />
+            <AvatarFallback>{getInitials(profile?.full_name)}</AvatarFallback>
+          </Avatar>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+              Bem-vindo(a), {profile?.full_name || 'Usuário'}!
+            </h1>
+            <p className="text-muted-foreground">
+              Aqui está um resumo da atividade recente.
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline">

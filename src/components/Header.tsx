@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '@/hooks/use-auth'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { getInitials } from '@/lib/utils'
 
 export const Header = () => {
   const { profile, signOut } = useAuth()
@@ -21,16 +22,6 @@ export const Header = () => {
   const handleSignOut = async () => {
     await signOut()
     navigate('/login')
-  }
-
-  const getInitials = (name: string | null | undefined) => {
-    if (!name) return 'U'
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .substring(0, 2)
-      .toUpperCase()
   }
 
   return (
@@ -67,7 +58,7 @@ export const Header = () => {
             <Button variant="secondary" size="icon" className="rounded-full">
               <Avatar className="h-8 w-8">
                 <AvatarImage
-                  src={profile?.avatar_url ?? undefined}
+                  src={profile?.avatar_url || undefined}
                   alt={profile?.full_name ?? 'User Avatar'}
                 />
                 <AvatarFallback>

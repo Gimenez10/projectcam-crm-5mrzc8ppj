@@ -11,4 +11,18 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Add any other utility functions here
+/**
+ * Generates initials from a full name for avatar fallbacks.
+ * @param name - The full name string.
+ * @returns A string of 1 or 2 characters representing the initials.
+ */
+export function getInitials(name: string | null | undefined) {
+  if (!name) return 'U'
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase()
+}

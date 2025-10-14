@@ -6,8 +6,9 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { RecentActivity as RecentActivityType } from '@/types'
+import { getInitials } from '@/lib/utils'
 
 type RecentActivityProps = {
   activities: RecentActivityType[]
@@ -26,7 +27,13 @@ export const RecentActivity = ({ activities }: RecentActivityProps) => {
         {activities.map((activity) => (
           <div key={activity.id} className="flex items-start gap-4">
             <Avatar className="h-9 w-9">
-              <AvatarFallback>OS</AvatarFallback>
+              <AvatarImage
+                src={activity.salesperson?.avatar_url || undefined}
+                alt={activity.salesperson?.full_name ?? 'Avatar'}
+              />
+              <AvatarFallback>
+                {getInitials(activity.salesperson?.full_name)}
+              </AvatarFallback>
             </Avatar>
             <div className="grid gap-1">
               <p className="text-sm font-medium leading-none">
@@ -38,7 +45,8 @@ export const RecentActivity = ({ activities }: RecentActivityProps) => {
                 </Link>
               </p>
               <p className="text-sm text-muted-foreground">
-                {activity.timestamp}
+                {activity.timestamp} por{' '}
+                <strong>{activity.salesperson?.full_name || 'Sistema'}</strong>
               </p>
             </div>
           </div>
