@@ -1,6 +1,6 @@
 -- Add dashboard_layout column to profiles table
 ALTER TABLE public.profiles
-ADD COLUMN dashboard_layout JSONB;
+ADD COLUMN IF NOT EXISTS dashboard_layout JSONB;
 
 -- Comment for clarity
 COMMENT ON COLUMN public.profiles.dashboard_layout IS 'Stores the user''s custom dashboard layout and widget configuration.';
