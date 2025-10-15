@@ -13,22 +13,18 @@ export type SignUpCredentials = {
 }
 
 // Dashboard Customization
-export type LayoutItem = {
-  i: string
-  x: number
-  y: number
-  w: number
-  h: number
-}
-
 export type WidgetConfig = {
   id: string
-  component: string
 }
 
 export type DashboardLayout = {
-  layout: LayoutItem[]
   widgets: WidgetConfig[]
+}
+
+export type DashboardWidget = {
+  id: string
+  name: string
+  description: string
 }
 
 // Database types
