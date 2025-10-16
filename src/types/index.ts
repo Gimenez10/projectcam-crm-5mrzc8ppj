@@ -1,4 +1,7 @@
-import { Database, Json } from '@/lib/supabase/types'
+import { Database as SupabaseDatabase, Json } from '@/lib/supabase/types'
+
+// Overriding Supabase-generated types because they are out of sync with migrations.
+// This is the source of truth based on the applied migrations.
 
 // Auth
 export type SignInCredentials = {
@@ -27,30 +30,63 @@ export type DashboardWidget = {
   description: string
 }
 
-// Database types
-export type Role = Database['public']['Tables']['roles']['Row'] & {
-  permissions: string[]
+// Database types based on migrations
+export type Permission = {
+  id: string
+  name: string
+  description: string | null
+  created_at: string
 }
-export type Permission = Database['public']['Tables']['permissions']['Row']
-export type Profile = Database['public']['Tables']['profiles']['Row'] & {
-  role?: Role | null
-  dashboard_layout?: DashboardLayout | null
+
+export type Role = {
+  id: string
+  name: string
+  description: string | null
+  is_predefined: boolean
+  created_at: string
+  permissions: string[] // Array of permission IDs
 }
-export type Customer = Database['public']['Tables']['customers']['Row']
-export type Product = Database['public']['Tables']['products']['Row']
+
+export type Profile = {
+  id: string
+  full_name: string | null
+  avatar_url: string | null
+  updated_at: string
+  role_id: string | null
+  dashboard_layout: Json | null
+  // For joined queries
+  role?: { name: string } | null
+}
+
+export type Customer = SupabaseDatabase['public']['Tables']['customers']['Row']
+export type Product = {
+  id: string
+  name: string
+  description: string | null
+  product_code: string | null
+  barcode: string | null
+  internal_code: number | null
+  serial_number: string | null
+  created_at: string
+  updated_at: string
+  created_by: string | null
+}
+
+export type ServiceOrderItem =
+  SupabaseDatabase['public']['Tables']['service_order_items']['Row']
+
 export type ServiceOrder =
-  Database['public']['Tables']['service_orders']['Row'] & {
+  SupabaseDatabase['public']['Tables']['service_orders']['Row'] & {
     customer: Customer | null
     salesperson: Profile | null
     items?: ServiceOrderItem[]
   }
-export type ServiceOrderItem =
-  Database['public']['Tables']['service_order_items']['Row']
 
 // Enums from database
 export type ServiceOrderStatus =
-  Database['public']['Enums']['service_order_status']
-export type ApprovalStatus = Database['public']['Enums']['approval_status']
+  SupabaseDatabase['public']['Enums']['service_order_status']
+export type ApprovalStatus =
+  SupabaseDatabase['public']['Enums']['approval_status']
 
 // App-specific types
 export type KpiCardData = {
@@ -72,16 +108,7 @@ export type RecentActivity = {
   } | null
 }
 
-export type AuditLog = {
-  id: string
-  actor_id: string | null
-  actor_name: string | null
-  action: string
-  target_user_id: string | null
-  target_user_name: string | null
-  details: Json | null
-  created_at: string
-}
+export type AuditLog = SupabaseDatabase['public']['Tables']['audit_logs']['Row']
 
 export type NotificationSetting = {
   id: string
