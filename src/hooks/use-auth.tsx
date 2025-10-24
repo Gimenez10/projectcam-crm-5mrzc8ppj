@@ -7,17 +7,22 @@ import {
 } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase/client'
-import { Profile } from '@/types'
+import { Profile, SignInCredentials, SignUpCredentials } from '@/types'
 import { getProfile } from '@/services/profiles'
+import {
+  signInWithPassword,
+  signUp as signUpService,
+  signOut as signOutService,
+} from '@/services/auth'
 
 interface AuthContextType {
   user: User | null
   session: Session | null
   profile: Profile | null
-  signUp: (credentials: any) => Promise<{ error: any }>
-  signIn: (credentials: any) => Promise<{ error: any }>
-  signOut: () => Promise<{ error: any }>
   loading: boolean
+  signIn: (credentials: SignInCredentials) => Promise<{ error: any }>
+  signUp: (credentials: SignUpCredentials) => Promise<{ error: any }>
+  signOut: () => Promise<{ error: any }>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -53,52 +58,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false)
     })
 
-    const initializeSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-      setSession(session)
-      const currentUser = session?.user ?? null
-      setUser(currentUser)
-
-      if (currentUser) {
-        const userProfile = await getProfile(currentUser.id)
-        setProfile(userProfile)
-      }
-      setLoading(false)
-    }
-
-    initializeSession()
-
     return () => subscription.unsubscribe()
   }, [])
 
-  const signUp = async (credentials: any) => {
-    const { email, password, fullName } = credentials
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-        },
-        emailRedirectTo: `${window.location.origin}/`,
-      },
-    })
+  const signIn = async (credentials: SignInCredentials) => {
+    const { error } = await signInWithPassword(credentials)
     return { error }
   }
 
-  const signIn = async (credentials: any) => {
-    const { email, password } = credentials
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+  const signUp = async (credentials: SignUpCredentials) => {
+    const { error } = await signUpService(credentials)
     return { error }
   }
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
+    const { error } = await signOutService()
+    setProfile(null)
     return { error }
   }
 
@@ -106,10 +81,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     session,
     profile,
-    signUp,
-    signIn,
-    signOut,
     loading,
+    signIn,
+    signUp,
+    signOut,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
