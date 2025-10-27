@@ -5,60 +5,58 @@ import {
   useState,
   ReactNode,
 } from 'react'
-import { User, Session } from '@supabase/supabase-js'
+import { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase/client'
-import { Profile, SignInCredentials, SignUpCredentials } from '@/types'
 import { getProfile } from '@/services/profiles'
+import { Profile, SignInCredentials, SignUpCredentials } from '@/types'
 import {
   signInWithPassword,
   signUp as signUpService,
   signOut as signOutService,
 } from '@/services/auth'
 
-interface AuthContextType {
+type AuthContextType = {
   user: User | null
-  session: Session | null
   profile: Profile | null
+  session: Session | null
   loading: boolean
   signIn: (credentials: SignInCredentials) => Promise<{ error: any }>
   signUp: (credentials: SignUpCredentials) => Promise<{ error: any }>
-  signOut: () => Promise<{ error: any }>
+  signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return context
-}
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    setLoading(true)
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       const currentUser = session?.user ?? null
       setUser(currentUser)
 
       if (currentUser) {
-        const userProfile = await getProfile(currentUser.id)
-        setProfile(userProfile)
+        // Asynchronous operation is handled with .then() to keep the handler synchronous
+        getProfile(currentUser.id).then((userProfile) => {
+          setProfile(userProfile)
+          setLoading(false)
+        })
       } else {
         setProfile(null)
+        setLoading(false)
       }
-      setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
   const signIn = async (credentials: SignInCredentials) => {
@@ -72,15 +70,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const signOut = async () => {
-    const { error } = await signOutService()
-    setProfile(null)
-    return { error }
+    await signOutService()
   }
 
   const value = {
     user,
-    session,
     profile,
+    session,
     loading,
     signIn,
     signUp,
@@ -88,4 +84,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}
+
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
 }
