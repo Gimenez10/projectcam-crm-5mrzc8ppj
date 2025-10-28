@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
@@ -22,11 +23,21 @@ import { PlusCircle, Trash2, Upload } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { supabase } from '@/lib/supabase/client'
 import { useToast } from '@/components/ui/use-toast'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { PrintHeader } from '@/components/PrintHeader'
 
 export default function NovaOrdemServicoPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const [creationDate, setCreationDate] = useState(new Date())
+
+  useEffect(() => {
+    // Update the date every minute to keep it current
+    const timer = setInterval(() => setCreationDate(new Date()), 60000)
+    return () => clearInterval(timer)
+  }, [])
 
   // NOTE: This is a simplified version. A real implementation would use a form library
   // like react-hook-form, manage items state, calculate totals, and handle customer selection.
@@ -61,7 +72,8 @@ export default function NovaOrdemServicoPage() {
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in-up">
-      <h1 className="text-2xl font-bold">Nova Ordem de Serviço</h1>
+      <PrintHeader />
+      <h1 className="text-2xl font-bold print:hidden">Nova Ordem de Serviço</h1>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 flex flex-col gap-6">
@@ -92,14 +104,22 @@ export default function NovaOrdemServicoPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Itens da Ordem de Serviço</CardTitle>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline">
-                  <Upload className="mr-2 h-4 w-4" /> Upload via OCR
-                </Button>
-                <Button>
-                  <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Item
-                </Button>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle>Itens da Ordem de Serviço</CardTitle>
+                  <CardDescription>
+                    Data de Criação:{' '}
+                    {format(creationDate, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                  </CardDescription>
+                </div>
+                <div className="flex justify-end gap-2 print:hidden">
+                  <Button variant="outline">
+                    <Upload className="mr-2 h-4 w-4" /> Upload via OCR
+                  </Button>
+                  <Button>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Item
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -111,7 +131,7 @@ export default function NovaOrdemServicoPage() {
                     <TableHead>Preço Unit.</TableHead>
                     <TableHead>Desc. (%)</TableHead>
                     <TableHead className="text-right">Total</TableHead>
-                    <TableHead>Ações</TableHead>
+                    <TableHead className="print:hidden">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -131,7 +151,7 @@ export default function NovaOrdemServicoPage() {
                     <TableCell className="text-right font-medium">
                       R$ 0,00
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="print:hidden">
                       <Button variant="ghost" size="icon">
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -163,7 +183,10 @@ export default function NovaOrdemServicoPage() {
                 />
               </div>
               <div className="flex justify-between text-lg font-bold">
-                <span>Total Geral</span>
+                <span>
+                  <span className="print:hidden">Total Geral</span>
+                  <span className="hidden print:inline">Valor Total</span>
+                </span>
                 <span>R$ 0,00</span>
               </div>
             </CardContent>
@@ -195,7 +218,7 @@ export default function NovaOrdemServicoPage() {
         </div>
       </div>
 
-      <div className="sticky bottom-0 bg-background/95 py-4 border-t flex justify-end gap-2">
+      <div className="sticky bottom-0 bg-background/95 py-4 border-t flex justify-end gap-2 print:hidden">
         <Button variant="outline" asChild>
           <Link to="/ordens-de-servico">Cancelar</Link>
         </Button>

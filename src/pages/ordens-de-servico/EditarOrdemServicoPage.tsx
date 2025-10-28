@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -16,6 +22,9 @@ import { useToast } from '@/components/ui/use-toast'
 import { getServiceOrderById } from '@/services/serviceOrders'
 import { ServiceOrder } from '@/types'
 import { Skeleton } from '@/components/ui/skeleton'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { PrintHeader } from '@/components/PrintHeader'
 
 export default function EditarOrdemServicoPage() {
   const { id } = useParams<{ id: string }>()
@@ -67,7 +76,8 @@ export default function EditarOrdemServicoPage() {
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in-up">
-      <h1 className="text-2xl font-bold">
+      <PrintHeader />
+      <h1 className="text-2xl font-bold print:hidden">
         Editar Ordem de Serviço #{order?.order_number}
       </h1>
 
@@ -91,6 +101,14 @@ export default function EditarOrdemServicoPage() {
           <Card>
             <CardHeader>
               <CardTitle>Itens da Ordem de Serviço</CardTitle>
+              {order?.created_at && (
+                <CardDescription>
+                  Data de Criação:{' '}
+                  {format(new Date(order.created_at), 'dd/MM/yyyy HH:mm', {
+                    locale: ptBR,
+                  })}
+                </CardDescription>
+              )}
             </CardHeader>
             <CardContent>
               <Table>
@@ -134,7 +152,10 @@ export default function EditarOrdemServicoPage() {
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="flex justify-between text-lg font-bold">
-                <span>Total Geral</span>
+                <span>
+                  <span className="print:hidden">Total Geral</span>
+                  <span className="hidden print:inline">Valor Total</span>
+                </span>
                 <span>
                   {new Intl.NumberFormat('pt-BR', {
                     style: 'currency',
@@ -147,7 +168,7 @@ export default function EditarOrdemServicoPage() {
         </div>
       </div>
 
-      <div className="sticky bottom-0 bg-background/95 py-4 border-t flex justify-end gap-2">
+      <div className="sticky bottom-0 bg-background/95 py-4 border-t flex justify-end gap-2 print:hidden">
         <Button variant="outline" asChild>
           <Link to="/ordens-de-servico">Cancelar</Link>
         </Button>

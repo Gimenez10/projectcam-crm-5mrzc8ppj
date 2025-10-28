@@ -120,6 +120,51 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          barcode: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          internal_code: string | null
+          name: string
+          price: number | null
+          product_code: string
+          serial_number: string | null
+          stock: number | null
+          updated_at: string
+        }
+        Insert: {
+          barcode?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          internal_code?: string | null
+          name: string
+          price?: number | null
+          product_code: string
+          serial_number?: string | null
+          stock?: number | null
+          updated_at?: string
+        }
+        Update: {
+          barcode?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          internal_code?: string | null
+          name?: string
+          price?: number | null
+          product_code?: string
+          serial_number?: string | null
+          stock?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
