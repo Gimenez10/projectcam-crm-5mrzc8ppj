@@ -1,4 +1,5 @@
 -- Step 0: Drop dependent policies before schema changes
+-- This ensures the migration can run even if later migrations have been applied.
 DROP POLICY IF EXISTS "Admins can view all profiles." ON public.profiles;
 DROP POLICY IF EXISTS "Admins can update any profile." ON public.profiles;
 DROP POLICY IF EXISTS "Admins can manage all customers." ON public.customers;
@@ -7,6 +8,8 @@ DROP POLICY IF EXISTS "Admins can manage all service orders." ON public.service_
 DROP POLICY IF EXISTS "Admins and managers can view all service order items." ON public.service_order_items;
 DROP POLICY IF EXISTS "Admins can manage all service order items." ON public.service_order_items;
 DROP POLICY IF EXISTS "Admins can view all audit logs." ON public.audit_logs;
+DROP POLICY IF EXISTS "Admins can view notification settings" ON public.notification_settings;
+DROP POLICY IF EXISTS "Admins can manage notification settings" ON public.notification_settings;
 
 -- Step 1: Create new tables for roles and permissions
 CREATE TABLE public.roles (
@@ -102,13 +105,17 @@ COMMENT ON COLUMN public.profiles.role_id IS 'Foreign key to the roles table.';
 UPDATE public.profiles p
 SET role_id = (SELECT id FROM public.roles r WHERE r.name = p.role::text);
 
--- Step 7: Drop the old 'role' column and 'user_role' type
+-- Step 7: Drop the old function that depends on the enum
+DROP FUNCTION IF EXISTS public.get_user_role(user_id UUID);
+
+-- Step 8: Drop the old 'role' column from profiles
 ALTER TABLE public.profiles ALTER COLUMN role DROP DEFAULT;
 ALTER TABLE public.profiles DROP COLUMN role;
+
+-- Step 9: Now it should be safe to drop the type
 DROP TYPE public.user_role;
 
--- Step 8: Update get_user_role function to work with the new schema
-DROP FUNCTION IF EXISTS public.get_user_role(user_id UUID);
+-- Step 10: Recreate get_user_role function to work with the new schema
 CREATE OR REPLACE FUNCTION public.get_user_role(user_id UUID)
 RETURNS TEXT
 LANGUAGE sql
@@ -120,10 +127,10 @@ AS $$
   WHERE p.id = user_id;
 $$;
 
--- Step 9: Re-grant execute on the function to authenticated role
+-- Step 11: Re-grant execute on the function to authenticated role
 GRANT EXECUTE ON FUNCTION public.get_user_role(user_id UUID) TO authenticated;
 
--- Step 10: Update handle_new_user function to assign a default role_id
+-- Step 12: Update handle_new_user function to assign a default role_id
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -146,12 +153,12 @@ BEGIN
 END;
 $$;
 
--- Step 11: Enable RLS for new tables
+-- Step 13: Enable RLS for new tables
 ALTER TABLE public.roles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.permissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.role_permissions ENABLE ROW LEVEL SECURITY;
 
--- Step 12: Add RLS policies for new tables
+-- Step 14: Add RLS policies for new tables
 CREATE POLICY "Authenticated users can view roles and permissions" ON public.roles
   FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Authenticated users can view roles and permissions" ON public.permissions
@@ -169,7 +176,7 @@ CREATE POLICY "Admins can manage role permissions" ON public.role_permissions
 
 -- Note: Permissions table is considered static data managed by migrations, so no insert/update/delete policies for users.
 
--- Step 13: Recreate policies with the new role management system
+-- Step 15: Recreate policies with the new role management system
 CREATE POLICY "Admins can view all profiles." ON public.profiles
   FOR SELECT USING (public.get_user_role(auth.uid()) = 'admin');
 CREATE POLICY "Admins can update any profile." ON public.profiles
