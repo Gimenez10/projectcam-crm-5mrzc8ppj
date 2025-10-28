@@ -18,6 +18,8 @@ import SignUpPage from './pages/auth/SignUpPage'
 import AuthLayout from './components/AuthLayout'
 import ProdutosListPage from './pages/produtos/ProdutosListPage'
 import GerenciarProdutoPage from './pages/produtos/GerenciarProdutoPage'
+import ClientesListPage from './pages/clientes/ClientesListPage'
+import GerenciarClientePage from './pages/clientes/GerenciarClientePage'
 
 const App = () => (
   <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
@@ -55,6 +57,15 @@ const App = () => (
                 <Route
                   path="/produtos/editar/:id"
                   element={<GerenciarProdutoPage />}
+                />
+                <Route path="/clientes" element={<ClientesListPage />} />
+                <Route
+                  path="/clientes/novo"
+                  element={<GerenciarClientePage />}
+                />
+                <Route
+                  path="/clientes/editar/:id"
+                  element={<GerenciarClientePage />}
                 />
                 <Route path="/aprovacoes" element={<AprovacoesPage />} />
                 <Route path="/settings" element={<SettingsPage />} />

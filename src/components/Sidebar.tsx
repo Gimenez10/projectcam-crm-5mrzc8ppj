@@ -50,7 +50,7 @@ export const navItems = [
     icon: Users,
     label: 'Clientes',
     shortLabel: 'Clientes',
-    disabled: true,
+    disabled: false,
     color: 'text-purple-500',
   },
   {

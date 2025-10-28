@@ -26,31 +26,38 @@ import { useToast } from '@/components/ui/use-toast'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { PrintHeader } from '@/components/PrintHeader'
+import { Combobox, ComboboxOption } from '@/components/ui/combobox'
+import { getAllCustomers } from '@/services/customers'
+import { Customer } from '@/types'
 
 export default function NovaOrdemServicoPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
   const [creationDate, setCreationDate] = useState(new Date())
+  const [customers, setCustomers] = useState<Customer[]>([])
+  const [customerOptions, setCustomerOptions] = useState<ComboboxOption[]>([])
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string>('')
 
   useEffect(() => {
-    // Update the date every minute to keep it current
     const timer = setInterval(() => setCreationDate(new Date()), 60000)
+    getAllCustomers().then((data) => {
+      setCustomers(data)
+      setCustomerOptions(data.map((c) => ({ value: c.id, label: c.name })))
+    })
     return () => clearInterval(timer)
   }, [])
 
-  // NOTE: This is a simplified version. A real implementation would use a form library
-  // like react-hook-form, manage items state, calculate totals, and handle customer selection.
+  const selectedCustomer = customers.find((c) => c.id === selectedCustomerId)
 
   const handleSave = async () => {
     if (!user) return
 
-    // Placeholder data
     const newOrder = {
       created_by: user.id,
+      customer_id: selectedCustomerId || null,
       status: 'Rascunho',
       total_value: 0,
-      // ... other fields
     }
 
     const { error } = await supabase.from('service_orders').insert(newOrder)
@@ -87,16 +94,32 @@ export default function NovaOrdemServicoPage() {
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="customer-name">Nome do Cliente</Label>
-                <Input id="customer-name" placeholder="Digite para buscar..." />
+                <Combobox
+                  options={customerOptions}
+                  value={selectedCustomerId}
+                  onChange={setSelectedCustomerId}
+                  placeholder="Selecione um cliente..."
+                  searchPlaceholder="Buscar cliente..."
+                  emptyPlaceholder="Nenhum cliente encontrado."
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="customer-cpf">CPF/CNPJ</Label>
-                  <Input id="customer-cpf" />
+                  <Input
+                    id="customer-cpf"
+                    value={selectedCustomer?.cpf_cnpj ?? ''}
+                    disabled
+                  />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="customer-email">Email</Label>
-                  <Input id="customer-email" type="email" />
+                  <Input
+                    id="customer-email"
+                    type="email"
+                    value={selectedCustomer?.email ?? ''}
+                    disabled
+                  />
                 </div>
               </div>
             </CardContent>
