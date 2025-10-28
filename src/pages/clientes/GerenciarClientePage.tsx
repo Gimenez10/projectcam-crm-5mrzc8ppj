@@ -35,6 +35,8 @@ import { ptBR } from 'date-fns/locale'
 import { Pencil, PlusCircle, Trash2 } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import { EditPasswordDialog } from '@/components/clientes/EditPasswordDialog'
+import { CustomerActions } from '@/components/clientes/CustomerActions'
+import { CustomerPrintLayout } from '@/components/clientes/CustomerPrintLayout'
 
 const localContactSchema = z.object({
   name: z.string().optional(),
@@ -138,6 +140,7 @@ export default function GerenciarClientePage() {
   const { user } = useAuth()
   const [isLoading, setIsLoading] = useState(!!id)
   const [isSaving, setIsSaving] = useState(false)
+  const [customerData, setCustomerData] = useState<Customer | null>(null)
 
   const form = useForm<z.infer<typeof customerFormSchema>>({
     resolver: zodResolver(customerFormSchema),
@@ -174,6 +177,7 @@ export default function GerenciarClientePage() {
       setIsLoading(true)
       const customer = await getCustomerById(id)
       if (customer) {
+        setCustomerData(customer)
         const existingHours = customer.operating_hours || []
         const fullOperatingHours = defaultOperatingHours.map((defaultDay) => {
           const foundDay = existingHours.find(
@@ -219,893 +223,920 @@ export default function GerenciarClientePage() {
   if (isLoading) return <Skeleton className="h-96 w-full" />
 
   return (
-    <div className="animate-fade-in-up space-y-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle>
-                    {id ? 'Editar Cliente' : 'Novo Cliente'}
-                  </CardTitle>
-                  <CardDescription>
-                    Preencha os detalhes do cliente abaixo.
-                  </CardDescription>
-                </div>
-                {id && form.getValues('created_at') && (
-                  <div className="text-sm text-muted-foreground">
-                    <span className="font-semibold">Data do cadastro:</span>{' '}
-                    {format(
-                      new Date(form.getValues('created_at')!),
-                      'dd/MM/yyyy HH:mm',
-                      { locale: ptBR },
+    <>
+      <div className="animate-fade-in-up space-y-6 print-hidden">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle>
+                      {id ? 'Editar Cliente' : 'Novo Cliente'}
+                    </CardTitle>
+                    <CardDescription>
+                      Preencha os detalhes do cliente abaixo.
+                    </CardDescription>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    {id && customerData && (
+                      <CustomerActions customer={customerData} />
+                    )}
+                    {id && form.getValues('created_at') && (
+                      <div className="text-sm text-muted-foreground">
+                        <span className="font-semibold">Data do cadastro:</span>{' '}
+                        {format(
+                          new Date(form.getValues('created_at')!),
+                          'dd/MM/yyyy HH:mm',
+                          { locale: ptBR },
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="trade_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome Fantasia</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Nome fantasia do cliente"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Razão Social</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Razão social do cliente"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="grid md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="ie_rg"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>I.E / RG</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Inscrição Estadual ou RG"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="line_of_business"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ramo de Atividade</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Ex: Comércio, Indústria"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="grid md:grid-cols-3 gap-6">
-                <FormField
-                  control={form.control}
-                  name="cpf_cnpj"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>CPF / CNPJ</FormLabel>
-                      <FormControl>
-                        <Input placeholder="00.000.000/0000-00" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Telefone</FormLabel>
-                      <FormControl>
-                        <Input placeholder="(00) 90000-0000" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="contato@cliente.com"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Endereço</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Rua, Número, Bairro" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid md:grid-cols-3 gap-6">
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cidade</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Sua cidade" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="state"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Estado</FormLabel>
-                      <FormControl>
-                        <Input placeholder="SP" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="zip_code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>CEP</FormLabel>
-                      <FormControl>
-                        <Input placeholder="00000-000" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>LOCAL</CardTitle>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => appendLocal({ name: '', phone: '', role: '' })}
-                  disabled={localFields.length >= 3}
-                >
-                  <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Contato
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {localFields.map((field, index) => (
-                <div key={field.id} className="flex items-end gap-4">
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
-                    name={`local_contacts.${index}.name`}
+                    name="trade_name"
                     render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Nome</FormLabel>
+                      <FormItem>
+                        <FormLabel>Nome Fantasia</FormLabel>
                         <FormControl>
-                          <Input placeholder="Nome do contato" {...field} />
+                          <Input
+                            placeholder="Nome fantasia do cliente"
+                            {...field}
+                          />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
                   <FormField
                     control={form.control}
-                    name={`local_contacts.${index}.phone`}
+                    name="name"
                     render={({ field }) => (
-                      <FormItem className="flex-1">
+                      <FormItem>
+                        <FormLabel>Razão Social</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Razão social do cliente"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="ie_rg"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>I.E / RG</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Inscrição Estadual ou RG"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="line_of_business"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ramo de Atividade</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Ex: Comércio, Indústria"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid md:grid-cols-3 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="cpf_cnpj"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CPF / CNPJ</FormLabel>
+                        <FormControl>
+                          <Input placeholder="00.000.000/0000-00" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Telefone</FormLabel>
                         <FormControl>
-                          <Input placeholder="Telefone" {...field} />
+                          <Input placeholder="(00) 90000-0000" {...field} />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
                   <FormField
                     control={form.control}
-                    name={`local_contacts.${index}.role`}
+                    name="email"
                     render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Função</FormLabel>
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="Função" {...field} />
+                          <Input
+                            type="email"
+                            placeholder="contato@cliente.com"
+                            {...field}
+                          />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <div className="flex items-center">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeLocal(index)}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
                 </div>
-              ))}
-              {localFields.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  Nenhum contato local adicionado.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>EMERGÊNCIA</CardTitle>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    appendEmergency({ name: '', phone: '', relationship: '' })
-                  }
-                  disabled={emergencyFields.length >= 3}
-                >
-                  <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Contato
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {emergencyFields.map((field, index) => (
-                <div key={field.id} className="flex items-end gap-4">
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Endereço</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Rua, Número, Bairro" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid md:grid-cols-3 gap-6">
                   <FormField
                     control={form.control}
-                    name={`emergency_contacts.${index}.name`}
+                    name="city"
                     render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Nome</FormLabel>
+                      <FormItem>
+                        <FormLabel>Cidade</FormLabel>
                         <FormControl>
-                          <Input placeholder="Nome do contato" {...field} />
+                          <Input placeholder="Sua cidade" {...field} />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
                   <FormField
                     control={form.control}
-                    name={`emergency_contacts.${index}.relationship`}
+                    name="state"
                     render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Relação</FormLabel>
+                      <FormItem>
+                        <FormLabel>Estado</FormLabel>
                         <FormControl>
-                          <Input placeholder="Relação/Parentesco" {...field} />
+                          <Input placeholder="SP" {...field} />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
                   <FormField
                     control={form.control}
-                    name={`emergency_contacts.${index}.phone`}
+                    name="zip_code"
                     render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Telefone</FormLabel>
+                      <FormItem>
+                        <FormLabel>CEP</FormLabel>
                         <FormControl>
-                          <Input placeholder="Telefone" {...field} />
+                          <Input placeholder="00000-000" {...field} />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <div className="flex items-center">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeEmergency(index)}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
                 </div>
-              ))}
-              {emergencyFields.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  Nenhum contato de emergência adicionado.
-                </p>
-              )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Informações Sobre O Imóvel</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <FormField
-                control={form.control}
-                name="property_observations"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Observações</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Observações sobre o imóvel"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid md:grid-cols-3 gap-6">
-                <FormField
-                  control={form.control}
-                  name="property_type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tipo De Imóvel</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Residencial, Comercial..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="property_local_key"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Chave Local</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Com porteiro, na caixa de correio..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="property_animals"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Animais</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Sim, 1 cachorro dócil" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Senha Contra-Senha</CardTitle>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    appendPassword({ question: '', answer: '', username: '' })
-                  }
-                >
-                  <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Senha
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {passwordFields.map((field, index) => {
-                const passwordData = form.getValues(
-                  `passwords.${index}`,
-                ) as CustomerPassword
-                return (
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>LOCAL</CardTitle>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      appendLocal({ name: '', phone: '', role: '' })
+                    }
+                    disabled={localFields.length >= 3}
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Contato
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {localFields.map((field, index) => (
                   <div key={field.id} className="flex items-end gap-4">
                     <FormField
                       control={form.control}
-                      name={`passwords.${index}.question`}
+                      name={`local_contacts.${index}.name`}
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          <FormLabel>Pergunta</FormLabel>
+                          <FormLabel>Nome</FormLabel>
                           <FormControl>
-                            <Input placeholder="Pergunta secreta" {...field} />
+                            <Input placeholder="Nome do contato" {...field} />
                           </FormControl>
                         </FormItem>
                       )}
                     />
                     <FormField
                       control={form.control}
-                      name={`passwords.${index}.answer`}
+                      name={`local_contacts.${index}.phone`}
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          <FormLabel>Resposta</FormLabel>
+                          <FormLabel>Telefone</FormLabel>
                           <FormControl>
-                            <Input placeholder="Resposta secreta" {...field} />
+                            <Input placeholder="Telefone" {...field} />
                           </FormControl>
                         </FormItem>
                       )}
                     />
                     <FormField
                       control={form.control}
-                      name={`passwords.${index}.username`}
+                      name={`local_contacts.${index}.role`}
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          <FormLabel>Usuário</FormLabel>
+                          <FormLabel>Função</FormLabel>
                           <FormControl>
-                            <Input placeholder="Usuário associado" {...field} />
+                            <Input placeholder="Função" {...field} />
                           </FormControl>
                         </FormItem>
                       )}
                     />
                     <div className="flex items-center">
-                      {passwordData?.id && (
-                        <EditPasswordDialog
-                          password={passwordData}
-                          onPasswordUpdated={fetchAndResetData}
-                        >
-                          <Button type="button" variant="ghost" size="icon">
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                        </EditPasswordDialog>
-                      )}
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => removePassword(index)}
+                        onClick={() => removeLocal(index)}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>
                   </div>
-                )
-              })}
-              {passwordFields.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  Nenhuma senha adicionada.
-                </p>
-              )}
-            </CardContent>
-          </Card>
+                ))}
+                {localFields.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    Nenhum contato local adicionado.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Horários</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="hidden md:grid md:grid-cols-12 gap-4 items-center text-sm font-medium text-muted-foreground px-2">
-                <div className="md:col-span-2">Dia</div>
-                <div className="md:col-span-1 text-center">Ativo</div>
-                <div className="md:col-span-4 text-center">Manhã</div>
-                <div className="md:col-span-4 text-center">Tarde</div>
-              </div>
-              {operatingHoursFields.map((field, index) => (
-                <div
-                  key={field.id}
-                  className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center border rounded-lg p-4"
-                >
-                  <div className="md:col-span-2 font-medium">
-                    {weekDays[index].label}
-                  </div>
-                  <div className="md:col-span-1 flex justify-center">
-                    <FormField
-                      control={form.control}
-                      name={`operating_hours.${index}.is_active`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="md:col-span-4 grid grid-cols-2 gap-2">
-                    <FormField
-                      control={form.control}
-                      name={`operating_hours.${index}.morning_open`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs">Abre</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="time"
-                              {...field}
-                              value={field.value ?? ''}
-                              disabled={
-                                !form.watch(
-                                  `operating_hours.${index}.is_active`,
-                                )
-                              }
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`operating_hours.${index}.morning_close`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs">Fecha</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="time"
-                              {...field}
-                              value={field.value ?? ''}
-                              disabled={
-                                !form.watch(
-                                  `operating_hours.${index}.is_active`,
-                                )
-                              }
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="md:col-span-4 grid grid-cols-2 gap-2">
-                    <FormField
-                      control={form.control}
-                      name={`operating_hours.${index}.afternoon_open`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs">Abre</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="time"
-                              {...field}
-                              value={field.value ?? ''}
-                              disabled={
-                                !form.watch(
-                                  `operating_hours.${index}.is_active`,
-                                )
-                              }
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`operating_hours.${index}.afternoon_close`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs">Fecha</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="time"
-                              {...field}
-                              value={field.value ?? ''}
-                              disabled={
-                                !form.watch(
-                                  `operating_hours.${index}.is_active`,
-                                )
-                              }
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>EMERGÊNCIA</CardTitle>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      appendEmergency({ name: '', phone: '', relationship: '' })
+                    }
+                    disabled={emergencyFields.length >= 3}
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Contato
+                  </Button>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {emergencyFields.map((field, index) => (
+                  <div key={field.id} className="flex items-end gap-4">
+                    <FormField
+                      control={form.control}
+                      name={`emergency_contacts.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Nome</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Nome do contato" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`emergency_contacts.${index}.relationship`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Relação</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Relação/Parentesco"
+                              {...field}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`emergency_contacts.${index}.phone`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Telefone</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Telefone" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <div className="flex items-center">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeEmergency(index)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+                {emergencyFields.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    Nenhum contato de emergência adicionado.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Tempo Sistema</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <FormField
-                control={form.control}
-                name="system_time_entry"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Entrada</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="system_time_exit"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Saída</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="system_time_test"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Teste</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="system_time_interval"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Interv.</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="system_time_auto_arm"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Auto Arme</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="system_time_siren"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sirene</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Informações Sobre O Imóvel</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="property_observations"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Observações</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Observações sobre o imóvel"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid md:grid-cols-3 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="property_type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tipo De Imóvel</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Residencial, Comercial..."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="property_local_key"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Chave Local</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Com porteiro, na caixa de correio..."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="property_animals"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Animais</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Sim, 1 cachorro dócil"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Equipamento</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <FormField
-                control={form.control}
-                name="equipment_central"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Central</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Senha Contra-Senha</CardTitle>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      appendPassword({ question: '', answer: '', username: '' })
+                    }
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Senha
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {passwordFields.map((field, index) => {
+                  const passwordData = form.getValues(
+                    `passwords.${index}`,
+                  ) as CustomerPassword
+                  return (
+                    <div key={field.id} className="flex items-end gap-4">
+                      <FormField
+                        control={form.control}
+                        name={`passwords.${index}.question`}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel>Pergunta</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Pergunta secreta"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`passwords.${index}.answer`}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel>Resposta</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Resposta secreta"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`passwords.${index}.username`}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel>Usuário</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Usuário associado"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <div className="flex items-center">
+                        {passwordData?.id && (
+                          <EditPasswordDialog
+                            password={passwordData}
+                            onPasswordUpdated={fetchAndResetData}
+                          >
+                            <Button type="button" variant="ghost" size="icon">
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          </EditPasswordDialog>
+                        )}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removePassword(index)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                  )
+                })}
+                {passwordFields.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    Nenhuma senha adicionada.
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="equipment_version"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Versão</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="equipment_model"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Modelo</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="equipment_purchase_lease"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Compra / Locação</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="equipment_keyboard"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Teclado</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="equipment_siren"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sirene</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="equipment_infra"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Infra</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="equipment_magnet"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Magnet.</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="equipment_central_phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Telefone Da Central</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="equipment_communication_ways"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Vias De Comunicação</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Telefone, GPRS, Rádio" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardContent className="pt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Horários</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="hidden md:grid md:grid-cols-12 gap-4 items-center text-sm font-medium text-muted-foreground px-2">
+                  <div className="md:col-span-2">Dia</div>
+                  <div className="md:col-span-1 text-center">Ativo</div>
+                  <div className="md:col-span-4 text-center">Manhã</div>
+                  <div className="md:col-span-4 text-center">Tarde</div>
+                </div>
+                {operatingHoursFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center border rounded-lg p-4"
+                  >
+                    <div className="md:col-span-2 font-medium">
+                      {weekDays[index].label}
+                    </div>
+                    <div className="md:col-span-1 flex justify-center">
+                      <FormField
+                        control={form.control}
+                        name={`operating_hours.${index}.is_active`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="md:col-span-4 grid grid-cols-2 gap-2">
+                      <FormField
+                        control={form.control}
+                        name={`operating_hours.${index}.morning_open`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Abre</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="time"
+                                {...field}
+                                value={field.value ?? ''}
+                                disabled={
+                                  !form.watch(
+                                    `operating_hours.${index}.is_active`,
+                                  )
+                                }
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`operating_hours.${index}.morning_close`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Fecha</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="time"
+                                {...field}
+                                value={field.value ?? ''}
+                                disabled={
+                                  !form.watch(
+                                    `operating_hours.${index}.is_active`,
+                                  )
+                                }
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="md:col-span-4 grid grid-cols-2 gap-2">
+                      <FormField
+                        control={form.control}
+                        name={`operating_hours.${index}.afternoon_open`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Abre</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="time"
+                                {...field}
+                                value={field.value ?? ''}
+                                disabled={
+                                  !form.watch(
+                                    `operating_hours.${index}.is_active`,
+                                  )
+                                }
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`operating_hours.${index}.afternoon_close`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Fecha</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="time"
+                                {...field}
+                                value={field.value ?? ''}
+                                disabled={
+                                  !form.watch(
+                                    `operating_hours.${index}.is_active`,
+                                  )
+                                }
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Tempo Sistema</CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <FormField
+                  control={form.control}
+                  name="system_time_entry"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Entrada</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="system_time_exit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Saída</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="system_time_test"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Teste</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="system_time_interval"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Interv.</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="system_time_auto_arm"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Auto Arme</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="system_time_siren"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sirene</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Equipamento</CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <FormField
+                  control={form.control}
+                  name="equipment_central"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Central</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="equipment_version"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Versão</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="equipment_model"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Modelo</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="equipment_purchase_lease"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Compra / Locação</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="equipment_keyboard"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Teclado</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="equipment_siren"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sirene</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="equipment_infra"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Infra</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="equipment_magnet"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Magnet.</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="equipment_central_phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Telefone Da Central</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="equipment_communication_ways"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Vias De Comunicação</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Telefone, GPRS, Rádio" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="pt-6">
+                <FormField
+                  control={form.control}
+                  name="installation_team"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Equipe De Instalação</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Nome da equipe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+
+            <div className="mt-6 flex items-center justify-end gap-4">
               <FormField
                 control={form.control}
-                name="installation_team"
+                name="responsible_name"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Equipe De Instalação</FormLabel>
+                  <FormItem className="flex-1">
+                    <FormLabel>Nome Do Responsável</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nome da equipe" {...field} />
+                      <Input placeholder="Nome do responsável" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </CardContent>
-          </Card>
-
-          <div className="mt-6 flex items-center justify-end gap-4">
-            <FormField
-              control={form.control}
-              name="responsible_name"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>Nome Do Responsável</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Nome do responsável" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex gap-2 self-end">
-              <Button variant="outline" asChild>
-                <Link to="/clientes">Cancelar</Link>
-              </Button>
-              <Button type="submit" disabled={isSaving}>
-                {isSaving ? 'Salvando...' : 'Salvar Cliente'}
-              </Button>
+              <div className="flex gap-2 self-end">
+                <Button variant="outline" asChild>
+                  <Link to="/clientes">Cancelar</Link>
+                </Button>
+                <Button type="submit" disabled={isSaving}>
+                  {isSaving ? 'Salvando...' : 'Salvar Cliente'}
+                </Button>
+              </div>
             </div>
-          </div>
-        </form>
-      </Form>
-    </div>
+          </form>
+        </Form>
+      </div>
+      <div className="hidden print-only">
+        <CustomerPrintLayout customer={customerData} />
+      </div>
+    </>
   )
 }

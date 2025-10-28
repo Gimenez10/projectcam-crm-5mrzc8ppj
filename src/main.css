@@ -106,4 +106,29 @@
   .backdrop-blur-lg {
     backdrop-filter: blur(10px);
   }
+  @media print {
+    .print-only {
+      display: block !important;
+    }
+    .print-hidden {
+      display: none !important;
+    }
+    body {
+      background-color: #fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    main,
+    .card,
+    .card-content {
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    @page {
+      size: A4;
+      margin: 20mm;
+    }
+  }
 }
