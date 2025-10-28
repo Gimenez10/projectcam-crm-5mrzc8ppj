@@ -99,7 +99,9 @@ export const EditPasswordDialog = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Editar Senha / Contra-Senha</DialogTitle>
+          <DialogTitle className="text-h2">
+            Editar Senha / Contra-Senha
+          </DialogTitle>
           <DialogDescription>
             Faça alterações nos detalhes abaixo e clique em salvar.
           </DialogDescription>

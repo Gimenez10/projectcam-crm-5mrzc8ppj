@@ -199,7 +199,9 @@ export default function GerenciarProdutoPage() {
           />
           <Card>
             <CardHeader>
-              <CardTitle>{id ? 'Editar Produto' : 'Novo Produto'}</CardTitle>
+              <CardTitle className="text-h2">
+                {id ? 'Editar Produto' : 'Novo Produto'}
+              </CardTitle>
               <CardDescription>
                 Preencha os detalhes do produto abaixo.
               </CardDescription>

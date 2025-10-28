@@ -70,7 +70,7 @@ export default function ClientesListPage() {
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <CardTitle>Clientes</CardTitle>
+            <CardTitle className="text-h2">Clientes</CardTitle>
             <CardDescription>
               Gerencie seus clientes e visualize seus detalhes.
             </CardDescription>

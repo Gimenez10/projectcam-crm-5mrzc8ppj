@@ -111,7 +111,7 @@ export const CreateUserDialog = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Convidar Novo Usuário</DialogTitle>
+          <DialogTitle className="text-h2">Convidar Novo Usuário</DialogTitle>
           <DialogDescription>
             Preencha os detalhes para criar um novo usuário.
           </DialogDescription>

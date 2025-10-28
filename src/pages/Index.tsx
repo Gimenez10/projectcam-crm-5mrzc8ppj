@@ -164,7 +164,7 @@ const Index = () => {
             <AvatarFallback>{getInitials(profile?.full_name)}</AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            <h1 className="text-h1">
               Bem-vindo(a), {profile?.full_name || 'Usuário'}!
             </h1>
             <p className="text-muted-foreground">

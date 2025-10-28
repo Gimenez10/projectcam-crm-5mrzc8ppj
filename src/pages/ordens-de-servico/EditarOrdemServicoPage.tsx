@@ -77,7 +77,7 @@ export default function EditarOrdemServicoPage() {
   return (
     <div className="flex flex-col gap-6 animate-fade-in-up">
       <PrintHeader />
-      <h1 className="text-2xl font-bold print:hidden">
+      <h1 className="text-h1 print:hidden">
         Editar Ordem de Serviço #{order?.order_number}
       </h1>
 
@@ -85,7 +85,7 @@ export default function EditarOrdemServicoPage() {
         <div className="lg:col-span-2 flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Detalhes do Cliente</CardTitle>
+              <CardTitle className="text-h3">Detalhes do Cliente</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
@@ -100,7 +100,9 @@ export default function EditarOrdemServicoPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Itens da Ordem de Serviço</CardTitle>
+              <CardTitle className="text-h3">
+                Itens da Ordem de Serviço
+              </CardTitle>
               {order?.created_at && (
                 <CardDescription>
                   Data de Criação:{' '}
@@ -148,7 +150,7 @@ export default function EditarOrdemServicoPage() {
         <div className="lg:col-span-1 flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Resumo</CardTitle>
+              <CardTitle className="text-h3">Resumo</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="flex justify-between text-lg font-bold">

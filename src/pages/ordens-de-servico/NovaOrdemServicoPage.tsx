@@ -80,13 +80,13 @@ export default function NovaOrdemServicoPage() {
   return (
     <div className="flex flex-col gap-6 animate-fade-in-up">
       <PrintHeader />
-      <h1 className="text-2xl font-bold print:hidden">Nova Ordem de Serviço</h1>
+      <h1 className="text-h1 print:hidden">Nova Ordem de Serviço</h1>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Detalhes do Cliente</CardTitle>
+              <CardTitle className="text-h3">Detalhes do Cliente</CardTitle>
               <CardDescription>
                 Busque por um cliente existente ou adicione um novo.
               </CardDescription>
@@ -129,7 +129,9 @@ export default function NovaOrdemServicoPage() {
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle>Itens da Ordem de Serviço</CardTitle>
+                  <CardTitle className="text-h3">
+                    Itens da Ordem de Serviço
+                  </CardTitle>
                   <CardDescription>
                     Data de Criação:{' '}
                     {format(creationDate, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
@@ -189,7 +191,9 @@ export default function NovaOrdemServicoPage() {
         <div className="lg:col-span-1 flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Resumo da Ordem de Serviço</CardTitle>
+              <CardTitle className="text-h3">
+                Resumo da Ordem de Serviço
+              </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="flex justify-between">
@@ -216,7 +220,7 @@ export default function NovaOrdemServicoPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Detalhes Adicionais</CardTitle>
+              <CardTitle className="text-h3">Detalhes Adicionais</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid gap-2">

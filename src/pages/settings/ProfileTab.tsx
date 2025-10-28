@@ -73,7 +73,7 @@ export const ProfileTab = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Perfil Público</CardTitle>
+        <CardTitle className="text-h2">Perfil Público</CardTitle>
         <CardDescription>Atualize suas informações de perfil.</CardDescription>
       </CardHeader>
       <CardContent>

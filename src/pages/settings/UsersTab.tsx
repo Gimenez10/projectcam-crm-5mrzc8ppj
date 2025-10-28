@@ -72,7 +72,7 @@ export const UsersTab = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Gerenciamento de Usuários</CardTitle>
+        <CardTitle className="text-h2">Gerenciamento de Usuários</CardTitle>
         <CardDescription>
           Visualize, convide e gerencie os usuários do sistema.
         </CardDescription>

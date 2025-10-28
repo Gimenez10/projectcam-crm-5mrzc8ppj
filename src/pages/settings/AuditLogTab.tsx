@@ -55,7 +55,7 @@ export const AuditLogTab = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Log de Auditoria</CardTitle>
+        <CardTitle className="text-h2">Log de Auditoria</CardTitle>
         <CardDescription>
           Rastreie as atividades dos usuários no sistema.
         </CardDescription>

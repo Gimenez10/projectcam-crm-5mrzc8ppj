@@ -99,7 +99,7 @@ export default function AprovacoesPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Aprovações Pendentes</CardTitle>
+        <CardTitle className="text-h2">Aprovações Pendentes</CardTitle>
         <CardDescription>
           Revise e aprove ou rejeite as ordens de serviço pendentes.
         </CardDescription>

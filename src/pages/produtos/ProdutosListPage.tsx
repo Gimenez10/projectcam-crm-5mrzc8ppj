@@ -70,7 +70,7 @@ export default function ProdutosListPage() {
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <CardTitle>Produtos</CardTitle>
+            <CardTitle className="text-h2">Produtos</CardTitle>
             <CardDescription>
               Gerencie seu catálogo de produtos.
             </CardDescription>

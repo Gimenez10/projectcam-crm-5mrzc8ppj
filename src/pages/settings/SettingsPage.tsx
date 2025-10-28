@@ -9,7 +9,7 @@ export default function SettingsPage() {
   return (
     <div className="flex flex-col gap-8 animate-fade-in-up">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Configurações</h1>
+        <h1 className="text-h1">Configurações</h1>
         <p className="text-muted-foreground">
           Gerencie as configurações da sua conta, perfil e usuários.
         </p>

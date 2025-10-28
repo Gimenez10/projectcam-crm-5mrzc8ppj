@@ -87,7 +87,7 @@ export default function OrdensServicoListPage() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center print:hidden">
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">Ordens de Serviço</h1>
+          <h1 className="text-h1">Ordens de Serviço</h1>
           <p className="text-muted-foreground">
             Gerencie e acompanhe todas as suas ordens de serviço.
           </p>

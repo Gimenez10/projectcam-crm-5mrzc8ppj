@@ -132,7 +132,7 @@ export const EditUserDialog = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Editar Usuário</DialogTitle>
+          <DialogTitle className="text-h2">Editar Usuário</DialogTitle>
           <DialogDescription>
             Faça alterações no perfil do usuário aqui. Clique em salvar quando
             terminar.

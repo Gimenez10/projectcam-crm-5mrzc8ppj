@@ -71,7 +71,7 @@ export default function SignUpPage() {
             <Camera className="h-8 w-8 text-primary" />
             <span className="text-2xl font-bold">PROJECAM</span>
           </div>
-          <CardTitle className="text-2xl">Criar Conta</CardTitle>
+          <CardTitle className="text-h2">Criar Conta</CardTitle>
           <CardDescription>
             Preencha os campos para se cadastrar.
           </CardDescription>

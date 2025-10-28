@@ -36,7 +36,7 @@ export const Header = () => {
       </div>
 
       <div className="flex w-full items-center justify-center">
-        <h1 className="text-xl font-semibold text-foreground">CRM</h1>
+        <h1 className="text-h3 text-foreground">CRM</h1>
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">

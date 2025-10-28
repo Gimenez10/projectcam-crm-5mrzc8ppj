@@ -35,7 +35,7 @@ export const OrdensServicoVendedorBarChart = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>O.S. por Vendedor</CardTitle>
+        <CardTitle className="text-h3">O.S. por Vendedor</CardTitle>
         <CardDescription>
           Número de Ordens de Serviço Criadas por Vendedor no Período
         </CardDescription>

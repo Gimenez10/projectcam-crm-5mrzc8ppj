@@ -18,7 +18,7 @@ export const RecentActivity = ({ activities }: RecentActivityProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Atividade Recente</CardTitle>
+        <CardTitle className="text-h3">Atividade Recente</CardTitle>
         <CardDescription>
           Últimas Atualizações nas Ordens de Serviço.
         </CardDescription>

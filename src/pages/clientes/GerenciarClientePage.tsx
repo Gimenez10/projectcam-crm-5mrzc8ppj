@@ -231,7 +231,7 @@ export default function GerenciarClientePage() {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle>
+                    <CardTitle className="text-h2">
                       {id ? 'Editar Cliente' : 'Novo Cliente'}
                     </CardTitle>
                     <CardDescription>
@@ -429,7 +429,7 @@ export default function GerenciarClientePage() {
             <Card>
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>LOCAL</CardTitle>
+                  <CardTitle className="text-h3">LOCAL</CardTitle>
                   <Button
                     type="button"
                     variant="outline"
@@ -505,7 +505,7 @@ export default function GerenciarClientePage() {
             <Card>
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>EMERGÊNCIA</CardTitle>
+                  <CardTitle className="text-h3">EMERGÊNCIA</CardTitle>
                   <Button
                     type="button"
                     variant="outline"
@@ -583,7 +583,9 @@ export default function GerenciarClientePage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Informações Sobre O Imóvel</CardTitle>
+                <CardTitle className="text-h3">
+                  Informações Sobre O Imóvel
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <FormField
@@ -658,7 +660,7 @@ export default function GerenciarClientePage() {
             <Card>
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>Senha Contra-Senha</CardTitle>
+                  <CardTitle className="text-h3">Senha Contra-Senha</CardTitle>
                   <Button
                     type="button"
                     variant="outline"
@@ -756,7 +758,7 @@ export default function GerenciarClientePage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Horários</CardTitle>
+                <CardTitle className="text-h3">Horários</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="hidden md:grid md:grid-cols-12 gap-4 items-center text-sm font-medium text-muted-foreground px-2">
@@ -884,7 +886,7 @@ export default function GerenciarClientePage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Tempo Sistema</CardTitle>
+                <CardTitle className="text-h3">Tempo Sistema</CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <FormField
@@ -964,7 +966,7 @@ export default function GerenciarClientePage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Equipamento</CardTitle>
+                <CardTitle className="text-h3">Equipamento</CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <FormField

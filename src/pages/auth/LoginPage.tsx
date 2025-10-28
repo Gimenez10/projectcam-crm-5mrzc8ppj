@@ -68,7 +68,7 @@ export default function LoginPage() {
             <Camera className="h-8 w-8 text-primary" />
             <span className="text-2xl font-bold">PROJECAM</span>
           </div>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-h2">Login</CardTitle>
           <CardDescription>
             Entre com suas credenciais para acessar o CRM.
           </CardDescription>

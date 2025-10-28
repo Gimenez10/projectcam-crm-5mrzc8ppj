@@ -81,7 +81,7 @@ export const CustomizeDashboardSheet = ({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Personalizar Dashboard</SheetTitle>
+          <SheetTitle className="text-h2">Personalizar Dashboard</SheetTitle>
           <SheetDescription>
             Selecione os widgets que você deseja exibir no seu painel.
           </SheetDescription>

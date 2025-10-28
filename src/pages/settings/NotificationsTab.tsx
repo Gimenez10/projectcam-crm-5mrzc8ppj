@@ -139,7 +139,9 @@ export const NotificationsTab = () => {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
           <CardHeader>
-            <CardTitle>Configurações de Notificação</CardTitle>
+            <CardTitle className="text-h2">
+              Configurações de Notificação
+            </CardTitle>
             <CardDescription>
               Gerencie quando e para quem as notificações do sistema são
               enviadas.

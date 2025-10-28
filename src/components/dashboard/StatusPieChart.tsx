@@ -29,7 +29,7 @@ export const StatusPieChart = ({ data }: StatusPieChartProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Ordens de Serviço por Status</CardTitle>
+        <CardTitle className="text-h3">Ordens de Serviço por Status</CardTitle>
         <CardDescription>
           Distribuição das Ordens de Serviço Atuais
         </CardDescription>

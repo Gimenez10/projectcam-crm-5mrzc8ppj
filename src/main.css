@@ -102,6 +102,21 @@
   }
 }
 
+@layer components {
+  .text-h1 {
+    @apply text-3xl font-bold tracking-tight;
+  }
+  .text-h2 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  .text-h3 {
+    @apply text-xl font-semibold tracking-tight;
+  }
+  .text-h4 {
+    @apply text-lg font-semibold tracking-tight;
+  }
+}
+
 @layer utilities {
   .backdrop-blur-lg {
     backdrop-filter: blur(10px);

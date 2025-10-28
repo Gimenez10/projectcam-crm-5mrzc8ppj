@@ -34,7 +34,7 @@ export const VendasMensaisBarChart = ({ data }: VendasMensaisBarChartProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Vendas Mensais</CardTitle>
+        <CardTitle className="text-h3">Vendas Mensais</CardTitle>
         <CardDescription>
           Total de Vendas Fechadas nos Últimos 12 Meses
         </CardDescription>
@@ -69,7 +69,7 @@ export const VendasMensaisBarChart = ({ data }: VendasMensaisBarChartProps) => {
                 fontSize={12}
               />
               <YAxis
-                tickFormatter={(value) => `R$${Number(value) / 1000}k`}
+                tickFormatter={(value) => `R${Number(value) / 1000}k`}
                 tickLine={false}
                 axisLine={false}
                 fontSize={12}

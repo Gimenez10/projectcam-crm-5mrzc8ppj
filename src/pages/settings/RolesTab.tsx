@@ -55,7 +55,7 @@ export const RolesTab = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Gerenciamento de Funções</CardTitle>
+        <CardTitle className="text-h2">Gerenciamento de Funções</CardTitle>
         <CardDescription>
           Crie e gerencie as funções de usuário e suas permissões.
         </CardDescription>
