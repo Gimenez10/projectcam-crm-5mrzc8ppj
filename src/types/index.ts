@@ -74,6 +74,34 @@ export type CustomerEmergencyContact = {
   phone: string | null
 }
 
+export type CustomerPassword = {
+  id?: string
+  customer_id?: string
+  question: string | null
+  answer: string | null
+  username: string | null
+}
+
+export type DayOfWeek =
+  | 'monday'
+  | 'tuesday'
+  | 'wednesday'
+  | 'thursday'
+  | 'friday'
+  | 'saturday'
+  | 'sunday'
+
+export type CustomerOperatingHours = {
+  id?: string
+  customer_id?: string
+  day_of_week: DayOfWeek
+  morning_open: string | null
+  morning_close: string | null
+  afternoon_open: string | null
+  afternoon_close: string | null
+  is_active: boolean
+}
+
 export type Customer =
   SupabaseDatabase['public']['Tables']['customers']['Row'] & {
     trade_name: string | null
@@ -85,6 +113,27 @@ export type Customer =
     property_type?: string | null
     property_local_key?: string | null
     property_animals?: string | null
+    // New fields from migrations
+    passwords?: CustomerPassword[]
+    operating_hours?: CustomerOperatingHours[]
+    system_time_entry?: string | null
+    system_time_exit?: string | null
+    system_time_test?: string | null
+    system_time_interval?: string | null
+    system_time_auto_arm?: string | null
+    system_time_siren?: string | null
+    equipment_central?: string | null
+    equipment_version?: string | null
+    equipment_model?: string | null
+    equipment_purchase_lease?: string | null
+    equipment_keyboard?: string | null
+    equipment_siren?: string | null
+    equipment_infra?: string | null
+    equipment_magnet?: string | null
+    equipment_central_phone?: string | null
+    equipment_communication_ways?: string | null
+    installation_team?: string | null
+    responsible_name?: string | null
   }
 
 export type Product = {

@@ -60,7 +60,9 @@ export const getCustomerById = async (id: string): Promise<Customer | null> => {
       `
       *,
       local_contacts:customer_local_contacts(*),
-      emergency_contacts:customer_emergency_contacts(*)
+      emergency_contacts:customer_emergency_contacts(*),
+      passwords:customer_passwords(*),
+      operating_hours:customer_operating_hours(*)
     `,
     )
     .eq('id', id)
@@ -77,8 +79,13 @@ export const createCustomer = async (
   customerData: Omit<Customer, 'id' | 'created_at' | 'created_by'>,
   creatorId: string,
 ) => {
-  const { local_contacts, emergency_contacts, ...mainCustomerData } =
-    customerData
+  const {
+    local_contacts,
+    emergency_contacts,
+    passwords,
+    operating_hours,
+    ...mainCustomerData
+  } = customerData
 
   const { data: newCustomer, error: customerError } = await supabase
     .from('customers')
@@ -120,6 +127,37 @@ export const createCustomer = async (
     }
   }
 
+  if (passwords && passwords.length > 0) {
+    const toInsert = passwords
+      .filter((p) => p.question || p.answer || p.username)
+      .map((password) => ({ ...password, customer_id: customerId }))
+    if (toInsert.length > 0) {
+      const { error } = await supabase
+        .from('customer_passwords')
+        .insert(toInsert)
+      if (error) {
+        await supabase.from('customers').delete().eq('id', customerId)
+        return { data: null, error }
+      }
+    }
+  }
+
+  if (operating_hours && operating_hours.length > 0) {
+    const toInsert = operating_hours.map((hours) => ({
+      ...hours,
+      customer_id: customerId,
+    }))
+    if (toInsert.length > 0) {
+      const { error } = await supabase
+        .from('customer_operating_hours')
+        .insert(toInsert)
+      if (error) {
+        await supabase.from('customers').delete().eq('id', customerId)
+        return { data: null, error }
+      }
+    }
+  }
+
   return { data: newCustomer, error: null }
 }
 
@@ -127,8 +165,13 @@ export const updateCustomer = async (
   id: string,
   customerData: Partial<Customer>,
 ) => {
-  const { local_contacts, emergency_contacts, ...mainCustomerData } =
-    customerData
+  const {
+    local_contacts,
+    emergency_contacts,
+    passwords,
+    operating_hours,
+    ...mainCustomerData
+  } = customerData
 
   const { data, error } = await supabase
     .from('customers')
@@ -166,6 +209,36 @@ export const updateCustomer = async (
     if (toInsert.length > 0) {
       const { error: insertError } = await supabase
         .from('customer_emergency_contacts')
+        .insert(toInsert)
+      if (insertError) return { data: null, error: insertError }
+    }
+  }
+
+  if (passwords) {
+    await supabase.from('customer_passwords').delete().eq('customer_id', id)
+    const toInsert = passwords
+      .filter((p) => p.question || p.answer || p.username)
+      .map((password) => ({ ...password, customer_id: id }))
+    if (toInsert.length > 0) {
+      const { error: insertError } = await supabase
+        .from('customer_passwords')
+        .insert(toInsert)
+      if (insertError) return { data: null, error: insertError }
+    }
+  }
+
+  if (operating_hours) {
+    await supabase
+      .from('customer_operating_hours')
+      .delete()
+      .eq('customer_id', id)
+    const toInsert = operating_hours.map((hours) => ({
+      ...hours,
+      customer_id: id,
+    }))
+    if (toInsert.length > 0) {
+      const { error: insertError } = await supabase
+        .from('customer_operating_hours')
         .insert(toInsert)
       if (insertError) return { data: null, error: insertError }
     }

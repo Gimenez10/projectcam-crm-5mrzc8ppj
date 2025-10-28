@@ -131,6 +131,10 @@ export type Database = {
           line_of_business: string | null
           name: string
           phone: string | null
+          property_animals: string | null
+          property_local_key: string | null
+          property_observations: string | null
+          property_type: string | null
           state: string | null
           trade_name: string | null
           zip_code: string | null
@@ -147,6 +151,10 @@ export type Database = {
           line_of_business?: string | null
           name: string
           phone?: string | null
+          property_animals?: string | null
+          property_local_key?: string | null
+          property_observations?: string | null
+          property_type?: string | null
           state?: string | null
           trade_name?: string | null
           zip_code?: string | null
@@ -163,6 +171,10 @@ export type Database = {
           line_of_business?: string | null
           name?: string
           phone?: string | null
+          property_animals?: string | null
+          property_local_key?: string | null
+          property_observations?: string | null
+          property_type?: string | null
           state?: string | null
           trade_name?: string | null
           zip_code?: string | null
