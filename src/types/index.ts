@@ -63,10 +63,12 @@ export type Product = {
   id: string
   name: string
   description: string | null
-  product_code: string | null
+  product_code: string
   barcode: string | null
-  internal_code: number | null
+  internal_code: string | null
   serial_number: string | null
+  price: number | null
+  stock: number | null
   created_at: string
   updated_at: string
   created_by: string | null
