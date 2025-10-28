@@ -103,6 +103,7 @@ UPDATE public.profiles p
 SET role_id = (SELECT id FROM public.roles r WHERE r.name = p.role::text);
 
 -- Step 7: Drop the old 'role' column and 'user_role' type
+ALTER TABLE public.profiles ALTER COLUMN role DROP DEFAULT;
 ALTER TABLE public.profiles DROP COLUMN role;
 DROP TYPE public.user_role;
 
