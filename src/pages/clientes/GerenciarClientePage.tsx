@@ -8,7 +8,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -21,6 +20,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 import { useAuth } from '@/hooks/use-auth'
 import {
@@ -32,8 +32,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Customer } from '@/types'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { PlusCircle, Trash2 } from 'lucide-react'
-import { Separator } from '@/components/ui/separator'
+import { Pencil, PlusCircle, Trash2 } from 'lucide-react'
 
 const localContactSchema = z.object({
   name: z.string().optional(),
@@ -68,6 +67,10 @@ const customerFormSchema = z.object({
   zip_code: z.string().optional(),
   local_contacts: z.array(localContactSchema).max(3).optional(),
   emergency_contacts: z.array(emergencyContactSchema).max(3).optional(),
+  property_observations: z.string().optional(),
+  property_type: z.string().optional(),
+  property_local_key: z.string().optional(),
+  property_animals: z.string().optional(),
 })
 
 export default function GerenciarClientePage() {
@@ -94,6 +97,10 @@ export default function GerenciarClientePage() {
       zip_code: '',
       local_contacts: [],
       emergency_contacts: [],
+      property_observations: '',
+      property_type: '',
+      property_local_key: '',
+      property_animals: '',
     },
   })
 
@@ -396,14 +403,19 @@ export default function GerenciarClientePage() {
                       </FormItem>
                     )}
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeLocal(index)}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+                  <div className="flex items-center">
+                    <Button type="button" variant="ghost" size="icon">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeLocal(index)}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
                 </div>
               ))}
               {localFields.length === 0 && (
@@ -470,14 +482,19 @@ export default function GerenciarClientePage() {
                       </FormItem>
                     )}
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeEmergency(index)}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+                  <div className="flex items-center">
+                    <Button type="button" variant="ghost" size="icon">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeEmergency(index)}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
                 </div>
               ))}
               {emergencyFields.length === 0 && (
@@ -485,6 +502,77 @@ export default function GerenciarClientePage() {
                   Nenhum contato de emergência adicionado.
                 </p>
               )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>INFORMAÇÕES SOBRE O IMÓVEL</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <FormField
+                control={form.control}
+                name="property_observations"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Observações</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Observações sobre o imóvel"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid md:grid-cols-3 gap-6">
+                <FormField
+                  control={form.control}
+                  name="property_type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo de Imóvel</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Residencial, Comercial..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="property_local_key"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Chave Local</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Com porteiro, na caixa de correio..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="property_animals"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Animais</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Sim, 1 cachorro dócil" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </CardContent>
           </Card>
 

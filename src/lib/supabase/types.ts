@@ -48,6 +48,76 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_emergency_contacts: {
+        Row: {
+          created_at: string
+          customer_id: string
+          id: string
+          name: string | null
+          phone: string | null
+          relationship: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+          relationship?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+          relationship?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'customer_emergency_contacts_customer_id_fkey'
+            columns: ['customer_id']
+            isOneToOne: false
+            referencedRelation: 'customers'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      customer_local_contacts: {
+        Row: {
+          created_at: string
+          customer_id: string
+          id: string
+          name: string | null
+          phone: string | null
+          role: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+          role?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          name?: string | null
+          phone?: string | null
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'customer_local_contacts_customer_id_fkey'
+            columns: ['customer_id']
+            isOneToOne: false
+            referencedRelation: 'customers'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
@@ -57,9 +127,12 @@ export type Database = {
           created_by: string | null
           email: string | null
           id: string
+          ie_rg: string | null
+          line_of_business: string | null
           name: string
           phone: string | null
           state: string | null
+          trade_name: string | null
           zip_code: string | null
         }
         Insert: {
@@ -70,9 +143,12 @@ export type Database = {
           created_by?: string | null
           email?: string | null
           id?: string
+          ie_rg?: string | null
+          line_of_business?: string | null
           name: string
           phone?: string | null
           state?: string | null
+          trade_name?: string | null
           zip_code?: string | null
         }
         Update: {
@@ -83,9 +159,12 @@ export type Database = {
           created_by?: string | null
           email?: string | null
           id?: string
+          ie_rg?: string | null
+          line_of_business?: string | null
           name?: string
           phone?: string | null
           state?: string | null
+          trade_name?: string | null
           zip_code?: string | null
         }
         Relationships: []
@@ -394,6 +473,7 @@ export type Database = {
     }
     Functions: {
       get_user_role: { Args: { user_id: string }; Returns: string }
+      has_permission: { Args: { permission_name: string }; Returns: boolean }
     }
     Enums: {
       approval_status: 'Pendente' | 'Aprovado' | 'Rejeitado'

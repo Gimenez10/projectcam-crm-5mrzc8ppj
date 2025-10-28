@@ -81,6 +81,10 @@ export type Customer =
     line_of_business: string | null
     local_contacts?: CustomerLocalContact[]
     emergency_contacts?: CustomerEmergencyContact[]
+    property_observations?: string | null
+    property_type?: string | null
+    property_local_key?: string | null
+    property_animals?: string | null
   }
 
 export type Product = {
