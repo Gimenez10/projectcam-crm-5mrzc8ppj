@@ -118,6 +118,88 @@ export type Database = {
           },
         ]
       }
+      customer_operating_hours: {
+        Row: {
+          afternoon_close: string | null
+          afternoon_open: string | null
+          created_at: string
+          customer_id: string
+          day_of_week: string
+          id: string
+          is_active: boolean
+          morning_close: string | null
+          morning_open: string | null
+          updated_at: string
+        }
+        Insert: {
+          afternoon_close?: string | null
+          afternoon_open?: string | null
+          created_at?: string
+          customer_id: string
+          day_of_week: string
+          id?: string
+          is_active?: boolean
+          morning_close?: string | null
+          morning_open?: string | null
+          updated_at?: string
+        }
+        Update: {
+          afternoon_close?: string | null
+          afternoon_open?: string | null
+          created_at?: string
+          customer_id?: string
+          day_of_week?: string
+          id?: string
+          is_active?: boolean
+          morning_close?: string | null
+          morning_open?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'customer_operating_hours_customer_id_fkey'
+            columns: ['customer_id']
+            isOneToOne: false
+            referencedRelation: 'customers'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      customer_passwords: {
+        Row: {
+          answer: string | null
+          created_at: string
+          customer_id: string
+          id: string
+          question: string | null
+          username: string | null
+        }
+        Insert: {
+          answer?: string | null
+          created_at?: string
+          customer_id: string
+          id?: string
+          question?: string | null
+          username?: string | null
+        }
+        Update: {
+          answer?: string | null
+          created_at?: string
+          customer_id?: string
+          id?: string
+          question?: string | null
+          username?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'customer_passwords_customer_id_fkey'
+            columns: ['customer_id']
+            isOneToOne: false
+            referencedRelation: 'customers'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
@@ -126,8 +208,19 @@ export type Database = {
           created_at: string
           created_by: string | null
           email: string | null
+          equipment_central: string | null
+          equipment_central_phone: string | null
+          equipment_communication_ways: string | null
+          equipment_infra: string | null
+          equipment_keyboard: string | null
+          equipment_magnet: string | null
+          equipment_model: string | null
+          equipment_purchase_lease: string | null
+          equipment_siren: string | null
+          equipment_version: string | null
           id: string
           ie_rg: string | null
+          installation_team: string | null
           line_of_business: string | null
           name: string
           phone: string | null
@@ -135,7 +228,14 @@ export type Database = {
           property_local_key: string | null
           property_observations: string | null
           property_type: string | null
+          responsible_name: string | null
           state: string | null
+          system_time_auto_arm: string | null
+          system_time_entry: string | null
+          system_time_exit: string | null
+          system_time_interval: string | null
+          system_time_siren: string | null
+          system_time_test: string | null
           trade_name: string | null
           zip_code: string | null
         }
@@ -146,8 +246,19 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           email?: string | null
+          equipment_central?: string | null
+          equipment_central_phone?: string | null
+          equipment_communication_ways?: string | null
+          equipment_infra?: string | null
+          equipment_keyboard?: string | null
+          equipment_magnet?: string | null
+          equipment_model?: string | null
+          equipment_purchase_lease?: string | null
+          equipment_siren?: string | null
+          equipment_version?: string | null
           id?: string
           ie_rg?: string | null
+          installation_team?: string | null
           line_of_business?: string | null
           name: string
           phone?: string | null
@@ -155,7 +266,14 @@ export type Database = {
           property_local_key?: string | null
           property_observations?: string | null
           property_type?: string | null
+          responsible_name?: string | null
           state?: string | null
+          system_time_auto_arm?: string | null
+          system_time_entry?: string | null
+          system_time_exit?: string | null
+          system_time_interval?: string | null
+          system_time_siren?: string | null
+          system_time_test?: string | null
           trade_name?: string | null
           zip_code?: string | null
         }
@@ -166,8 +284,19 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           email?: string | null
+          equipment_central?: string | null
+          equipment_central_phone?: string | null
+          equipment_communication_ways?: string | null
+          equipment_infra?: string | null
+          equipment_keyboard?: string | null
+          equipment_magnet?: string | null
+          equipment_model?: string | null
+          equipment_purchase_lease?: string | null
+          equipment_siren?: string | null
+          equipment_version?: string | null
           id?: string
           ie_rg?: string | null
+          installation_team?: string | null
           line_of_business?: string | null
           name?: string
           phone?: string | null
@@ -175,7 +304,14 @@ export type Database = {
           property_local_key?: string | null
           property_observations?: string | null
           property_type?: string | null
+          responsible_name?: string | null
           state?: string | null
+          system_time_auto_arm?: string | null
+          system_time_entry?: string | null
+          system_time_exit?: string | null
+          system_time_interval?: string | null
+          system_time_siren?: string | null
+          system_time_test?: string | null
           trade_name?: string | null
           zip_code?: string | null
         }
