@@ -1,6 +1,6 @@
-import { corsHeaders } from './cors.ts'
-import { getSupabaseAdmin } from './admin-client.ts'
-import { verifyAdmin } from './auth-middleware.ts'
+import { corsHeaders } from '../_shared/cors.ts'
+import { getSupabaseAdmin } from '../_shared/admin-client.ts'
+import { verifyAdmin } from '../_shared/auth-middleware.ts'
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
