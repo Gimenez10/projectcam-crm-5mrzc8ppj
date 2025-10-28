@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -29,11 +29,12 @@ import {
   updateCustomer,
 } from '@/services/customers'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Customer, DayOfWeek } from '@/types'
+import { Customer, DayOfWeek, CustomerPassword } from '@/types'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Pencil, PlusCircle, Trash2 } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
+import { EditPasswordDialog } from '@/components/clientes/EditPasswordDialog'
 
 const localContactSchema = z.object({
   name: z.string().optional(),
@@ -48,6 +49,8 @@ const emergencyContactSchema = z.object({
 })
 
 const passwordSchema = z.object({
+  id: z.string().optional(),
+  customer_id: z.string().optional(),
   question: z.string().optional(),
   answer: z.string().optional(),
   username: z.string().optional(),
@@ -166,26 +169,32 @@ export default function GerenciarClientePage() {
     name: 'operating_hours',
   })
 
-  useEffect(() => {
+  const fetchAndResetData = useCallback(async () => {
     if (id) {
-      getCustomerById(id).then((customer) => {
-        if (customer) {
-          const existingHours = customer.operating_hours || []
-          const fullOperatingHours = defaultOperatingHours.map((defaultDay) => {
-            const foundDay = existingHours.find(
-              (d) => d.day_of_week === defaultDay.day_of_week,
-            )
-            return foundDay || defaultDay
-          })
-          form.reset({ ...customer, operating_hours: fullOperatingHours })
-        } else {
-          toast({ title: 'Cliente não encontrado', variant: 'destructive' })
-          navigate('/clientes')
-        }
-        setIsLoading(false)
-      })
+      setIsLoading(true)
+      const customer = await getCustomerById(id)
+      if (customer) {
+        const existingHours = customer.operating_hours || []
+        const fullOperatingHours = defaultOperatingHours.map((defaultDay) => {
+          const foundDay = existingHours.find(
+            (d) => d.day_of_week === defaultDay.day_of_week,
+          )
+          return foundDay || defaultDay
+        })
+        form.reset({ ...customer, operating_hours: fullOperatingHours })
+      } else {
+        toast({ title: 'Cliente não encontrado', variant: 'destructive' })
+        navigate('/clientes')
+      }
+      setIsLoading(false)
     }
   }, [id, form, navigate, toast])
+
+  useEffect(() => {
+    if (id) {
+      fetchAndResetData()
+    }
+  }, [id, fetchAndResetData])
 
   const onSubmit = async (values: z.infer<typeof customerFormSchema>) => {
     if (!user) return
@@ -462,9 +471,6 @@ export default function GerenciarClientePage() {
                     )}
                   />
                   <div className="flex items-center">
-                    <Button type="button" variant="ghost" size="icon">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
                     <Button
                       type="button"
                       variant="ghost"
@@ -541,9 +547,6 @@ export default function GerenciarClientePage() {
                     )}
                   />
                   <div className="flex items-center">
-                    <Button type="button" variant="ghost" size="icon">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
                     <Button
                       type="button"
                       variant="ghost"
@@ -651,54 +654,71 @@ export default function GerenciarClientePage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              {passwordFields.map((field, index) => (
-                <div key={field.id} className="flex items-end gap-4">
-                  <FormField
-                    control={form.control}
-                    name={`passwords.${index}.question`}
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Pergunta</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Pergunta secreta" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`passwords.${index}.answer`}
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Resposta</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Resposta secreta" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`passwords.${index}.username`}
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel>Usuário</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Usuário associado" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removePassword(index)}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
-              ))}
+              {passwordFields.map((field, index) => {
+                const passwordData = form.getValues(
+                  `passwords.${index}`,
+                ) as CustomerPassword
+                return (
+                  <div key={field.id} className="flex items-end gap-4">
+                    <FormField
+                      control={form.control}
+                      name={`passwords.${index}.question`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Pergunta</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Pergunta secreta" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`passwords.${index}.answer`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Resposta</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Resposta secreta" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`passwords.${index}.username`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Usuário</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Usuário associado" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <div className="flex items-center">
+                      {passwordData?.id && (
+                        <EditPasswordDialog
+                          password={passwordData}
+                          onPasswordUpdated={fetchAndResetData}
+                        >
+                          <Button type="button" variant="ghost" size="icon">
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </EditPasswordDialog>
+                      )}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removePassword(index)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </div>
+                )
+              })}
               {passwordFields.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-4">
                   Nenhuma senha adicionada.

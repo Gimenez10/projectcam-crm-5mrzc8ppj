@@ -251,3 +251,21 @@ export const deleteCustomer = async (id: string) => {
   const { error } = await supabase.from('customers').delete().eq('id', id)
   return { error }
 }
+
+export const updateCustomerPassword = async (
+  passwordId: string,
+  updates: {
+    username?: string | null
+    question?: string | null
+    answer?: string | null
+  },
+) => {
+  const { data, error } = await supabase
+    .from('customer_passwords')
+    .update(updates)
+    .eq('id', passwordId)
+    .select()
+    .single()
+
+  return { data, error }
+}
