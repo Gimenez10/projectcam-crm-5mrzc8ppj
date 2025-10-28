@@ -25,7 +25,7 @@ export const Header = () => {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-lg md:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur-lg md:px-6 print:hidden">
       <div className="flex items-center gap-2">
         <Link to="/" className="flex items-center gap-2 font-semibold">
           <Camera className="h-6 w-6 text-primary" />

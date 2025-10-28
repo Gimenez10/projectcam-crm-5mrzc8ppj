@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { File, MoreHorizontal, PlusCircle, Search } from 'lucide-react'
+import { File, MoreHorizontal, PlusCircle, Search, Printer } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -71,6 +71,10 @@ export default function OrdensServicoListPage() {
     fetchOrders()
   }, [fetchOrders])
 
+  const handlePrint = () => {
+    window.print()
+  }
+
   const renderSkeleton = () => (
     <TableRow>
       <TableCell colSpan={7}>
@@ -81,7 +85,7 @@ export default function OrdensServicoListPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center">
+      <div className="flex items-center print:hidden">
         <div className="flex-1">
           <h1 className="text-2xl font-bold">Ordens de Serviço</h1>
           <p className="text-muted-foreground">
@@ -95,6 +99,17 @@ export default function OrdensServicoListPage() {
               Exportar
             </span>
           </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 gap-1"
+            onClick={handlePrint}
+          >
+            <Printer className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Imprimir
+            </span>
+          </Button>
           <Button size="sm" className="h-8 gap-1" asChild>
             <Link to="/ordens-de-servico/nova">
               <PlusCircle className="h-3.5 w-3.5" />
@@ -105,7 +120,11 @@ export default function OrdensServicoListPage() {
           </Button>
         </div>
       </div>
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="print:hidden"
+      >
         <div className="flex justify-between items-center">
           <TabsList>
             <TabsTrigger value="all">Todas</TabsTrigger>
@@ -125,7 +144,7 @@ export default function OrdensServicoListPage() {
           </div>
         </div>
         <TabsContent value={activeTab} className="mt-4">
-          <Card>
+          <Card className="print:shadow-none print:border-none">
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
@@ -206,7 +225,7 @@ export default function OrdensServicoListPage() {
                 </TableBody>
               </Table>
             </CardContent>
-            <div className="p-4 border-t">
+            <div className="p-4 border-t print:hidden">
               <DataTablePagination
                 page={page}
                 total={total}

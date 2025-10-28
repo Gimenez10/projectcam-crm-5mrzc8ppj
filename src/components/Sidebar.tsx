@@ -114,7 +114,7 @@ export const Sidebar = () => {
   return (
     <aside
       className={cn(
-        'hidden md:flex md:flex-col border-r bg-card transition-all duration-300 ease-in-out',
+        'hidden md:flex md:flex-col border-r bg-card transition-all duration-300 ease-in-out print:hidden',
         isExpanded ? 'w-64' : 'w-20',
       )}
       onMouseEnter={() => setIsExpanded(true)}
