@@ -59,13 +59,13 @@ $$;
 
 -- Step 4: Create new RLS policies based on permissions
 CREATE POLICY "Usuários com permissão podem visualizar clientes." ON public.customers
-  FOR SELECT USING (public.has_permission('customers:read'));
+  FOR SELECT USING (public.has_permission('customers:read'::text));
 
 CREATE POLICY "Usuários com permissão podem criar clientes." ON public.customers
-  FOR INSERT WITH CHECK (public.has_permission('customers:create'));
+  FOR INSERT WITH CHECK (public.has_permission('customers:create'::text));
 
 CREATE POLICY "Usuários com permissão podem atualizar clientes." ON public.customers
-  FOR UPDATE USING (public.has_permission('customers:update'));
+  FOR UPDATE USING (public.has_permission('customers:update'::text));
 
 CREATE POLICY "Usuários com permissão podem excluir clientes." ON public.customers
-  FOR DELETE USING (public.has_permission('customers:delete'));
+  FOR DELETE USING (public.has_permission('customers:delete'::text));

@@ -39,7 +39,7 @@ CREATE POLICY "Users with customer read permission can view local contacts"
 ON public.customer_local_contacts FOR SELECT
 USING (
   EXISTS (
-    SELECT 1 FROM customers c WHERE c.id = customer_id AND public.has_permission('customers:read')
+    SELECT 1 FROM customers c WHERE c.id = customer_id AND public.has_permission('customers:read'::text)
   )
 );
 
@@ -47,7 +47,7 @@ CREATE POLICY "Users with customer update permission can manage local contacts"
 ON public.customer_local_contacts FOR ALL
 USING (
   EXISTS (
-    SELECT 1 FROM customers c WHERE c.id = customer_id AND public.has_permission('customers:update')
+    SELECT 1 FROM customers c WHERE c.id = customer_id AND public.has_permission('customers:update'::text)
   )
 );
 
@@ -56,7 +56,7 @@ CREATE POLICY "Users with customer read permission can view emergency contacts"
 ON public.customer_emergency_contacts FOR SELECT
 USING (
   EXISTS (
-    SELECT 1 FROM customers c WHERE c.id = customer_id AND public.has_permission('customers:read')
+    SELECT 1 FROM customers c WHERE c.id = customer_id AND public.has_permission('customers:read'::text)
   )
 );
 
@@ -64,6 +64,6 @@ CREATE POLICY "Users with customer update permission can manage emergency contac
 ON public.customer_emergency_contacts FOR ALL
 USING (
   EXISTS (
-    SELECT 1 FROM customers c WHERE c.id = customer_id AND public.has_permission('customers:update')
+    SELECT 1 FROM customers c WHERE c.id = customer_id AND public.has_permission('customers:update'::text)
   )
 );
