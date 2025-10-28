@@ -168,7 +168,7 @@ const Index = () => {
               Bem-vindo(a), {profile?.full_name || 'Usuário'}!
             </h1>
             <p className="text-muted-foreground">
-              Aqui está um resumo da atividade recente.
+              Aqui Está um Resumo da Atividade Recente.
             </p>
           </div>
         </div>

@@ -36,7 +36,7 @@ export const VendasMensaisBarChart = ({ data }: VendasMensaisBarChartProps) => {
       <CardHeader>
         <CardTitle>Vendas Mensais</CardTitle>
         <CardDescription>
-          Total de vendas fechadas nos últimos 12 meses
+          Total de Vendas Fechadas nos Últimos 12 Meses
         </CardDescription>
       </CardHeader>
       <CardContent>

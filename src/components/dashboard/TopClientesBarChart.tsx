@@ -29,7 +29,7 @@ export const TopClientesBarChart = ({ data }: TopClientesBarChartProps) => {
       <CardHeader>
         <CardTitle>Top 5 Clientes</CardTitle>
         <CardDescription>
-          Clientes com maior volume de vendas no período
+          Clientes com Maior Volume de Vendas no Período
         </CardDescription>
       </CardHeader>
       <CardContent>

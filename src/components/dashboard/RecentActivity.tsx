@@ -20,7 +20,7 @@ export const RecentActivity = ({ activities }: RecentActivityProps) => {
       <CardHeader>
         <CardTitle>Atividade Recente</CardTitle>
         <CardDescription>
-          Últimas atualizações nas ordens de serviço.
+          Últimas Atualizações nas Ordens de Serviço.
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">

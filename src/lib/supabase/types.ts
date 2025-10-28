@@ -620,6 +620,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_dashboard_kpi_data: { Args: never; Returns: Json }
+      get_dashboard_monthly_sales: { Args: never; Returns: Json }
+      get_dashboard_recent_activities: { Args: never; Returns: Json }
+      get_dashboard_sales_by_salesperson: { Args: never; Returns: Json }
+      get_dashboard_status_distribution: { Args: never; Returns: Json }
+      get_dashboard_top_customers: { Args: never; Returns: Json }
       get_user_role: { Args: { user_id: string }; Returns: string }
       has_permission: { Args: { permission_name: string }; Returns: boolean }
     }
