@@ -565,7 +565,7 @@ export default function GerenciarClientePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>INFORMAÇÕES SOBRE O IMÓVEL</CardTitle>
+              <CardTitle>Informações Sobre O Imóvel</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <FormField
@@ -590,7 +590,7 @@ export default function GerenciarClientePage() {
                   name="property_type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tipo de Imóvel</FormLabel>
+                      <FormLabel>Tipo De Imóvel</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Residencial, Comercial..."
@@ -637,7 +637,7 @@ export default function GerenciarClientePage() {
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle>SENHA CONTRA-SENHA</CardTitle>
+                <CardTitle>Senha Contra-Senha</CardTitle>
                 <Button
                   type="button"
                   variant="outline"
@@ -709,7 +709,7 @@ export default function GerenciarClientePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Horarios</CardTitle>
+              <CardTitle>Horários</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="hidden md:grid md:grid-cols-12 gap-4 items-center text-sm font-medium text-muted-foreground px-2">
@@ -837,7 +837,7 @@ export default function GerenciarClientePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>TEMPO SISTEMA</CardTitle>
+              <CardTitle>Tempo Sistema</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               <FormField
@@ -857,7 +857,7 @@ export default function GerenciarClientePage() {
                 name="system_time_exit"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Saida</FormLabel>
+                    <FormLabel>Saída</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -1021,7 +1021,7 @@ export default function GerenciarClientePage() {
                 name="equipment_central_phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Telefone da Central</FormLabel>
+                    <FormLabel>Telefone Da Central</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -1033,7 +1033,7 @@ export default function GerenciarClientePage() {
                 name="equipment_communication_ways"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Vias de comunicação</FormLabel>
+                    <FormLabel>Vias De Comunicação</FormLabel>
                     <FormControl>
                       <Input placeholder="Telefone, GPRS, Rádio" {...field} />
                     </FormControl>
@@ -1050,7 +1050,7 @@ export default function GerenciarClientePage() {
                 name="installation_team"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Equipe de Instalação</FormLabel>
+                    <FormLabel>Equipe De Instalação</FormLabel>
                     <FormControl>
                       <Input placeholder="Nome da equipe" {...field} />
                     </FormControl>
@@ -1067,7 +1067,7 @@ export default function GerenciarClientePage() {
               name="responsible_name"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel>Nome do Responsavel</FormLabel>
+                  <FormLabel>Nome Do Responsável</FormLabel>
                   <FormControl>
                     <Input placeholder="Nome do responsável" {...field} />
                   </FormControl>
