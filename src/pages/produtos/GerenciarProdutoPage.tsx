@@ -133,7 +133,6 @@ export default function GerenciarProdutoPage() {
         setScanningField(null)
       }
     }
-    // Reset file input value to allow re-selection of the same file
     if (event.target) {
       event.target.value = ''
     }
