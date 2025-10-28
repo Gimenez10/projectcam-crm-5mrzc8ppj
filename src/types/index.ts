@@ -58,7 +58,31 @@ export type Profile = {
   role?: { name: string } | null
 }
 
-export type Customer = SupabaseDatabase['public']['Tables']['customers']['Row']
+export type CustomerLocalContact = {
+  id?: string
+  customer_id?: string
+  name: string | null
+  phone: string | null
+  role: string | null
+}
+
+export type CustomerEmergencyContact = {
+  id?: string
+  customer_id?: string
+  name: string | null
+  relationship: string | null
+  phone: string | null
+}
+
+export type Customer =
+  SupabaseDatabase['public']['Tables']['customers']['Row'] & {
+    trade_name: string | null
+    ie_rg: string | null
+    line_of_business: string | null
+    local_contacts?: CustomerLocalContact[]
+    emergency_contacts?: CustomerEmergencyContact[]
+  }
+
 export type Product = {
   id: string
   name: string

@@ -1,8 +1,6 @@
 import { supabase } from '@/lib/supabase/client'
 import { Customer } from '@/types'
 
-type CustomerPayload = Omit<Customer, 'id' | 'created_at' | 'created_by'>
-
 type GetCustomersParams = {
   page?: number
   perPage?: number
@@ -58,7 +56,13 @@ export const getAllCustomers = async (): Promise<Customer[]> => {
 export const getCustomerById = async (id: string): Promise<Customer | null> => {
   const { data, error } = await supabase
     .from('customers')
-    .select('*')
+    .select(
+      `
+      *,
+      local_contacts:customer_local_contacts(*),
+      emergency_contacts:customer_emergency_contacts(*)
+    `,
+    )
     .eq('id', id)
     .single()
 
@@ -70,28 +74,104 @@ export const getCustomerById = async (id: string): Promise<Customer | null> => {
 }
 
 export const createCustomer = async (
-  customerData: CustomerPayload,
+  customerData: Omit<Customer, 'id' | 'created_at' | 'created_by'>,
   creatorId: string,
 ) => {
-  const { data, error } = await supabase
+  const { local_contacts, emergency_contacts, ...mainCustomerData } =
+    customerData
+
+  const { data: newCustomer, error: customerError } = await supabase
     .from('customers')
-    .insert([{ ...customerData, created_by: creatorId }])
+    .insert([{ ...mainCustomerData, created_by: creatorId }])
     .select()
     .single()
-  return { data, error }
+
+  if (customerError) return { data: null, error: customerError }
+
+  const customerId = newCustomer.id
+
+  if (local_contacts && local_contacts.length > 0) {
+    const toInsert = local_contacts
+      .filter((c) => c.name || c.phone || c.role)
+      .map((contact) => ({ ...contact, customer_id: customerId }))
+    if (toInsert.length > 0) {
+      const { error } = await supabase
+        .from('customer_local_contacts')
+        .insert(toInsert)
+      if (error) {
+        await supabase.from('customers').delete().eq('id', customerId)
+        return { data: null, error }
+      }
+    }
+  }
+
+  if (emergency_contacts && emergency_contacts.length > 0) {
+    const toInsert = emergency_contacts
+      .filter((c) => c.name || c.phone || c.relationship)
+      .map((contact) => ({ ...contact, customer_id: customerId }))
+    if (toInsert.length > 0) {
+      const { error } = await supabase
+        .from('customer_emergency_contacts')
+        .insert(toInsert)
+      if (error) {
+        await supabase.from('customers').delete().eq('id', customerId)
+        return { data: null, error }
+      }
+    }
+  }
+
+  return { data: newCustomer, error: null }
 }
 
 export const updateCustomer = async (
   id: string,
-  customerData: Partial<CustomerPayload>,
+  customerData: Partial<Customer>,
 ) => {
+  const { local_contacts, emergency_contacts, ...mainCustomerData } =
+    customerData
+
   const { data, error } = await supabase
     .from('customers')
-    .update(customerData)
+    .update(mainCustomerData)
     .eq('id', id)
     .select()
     .single()
-  return { data, error }
+
+  if (error) return { data: null, error }
+
+  if (local_contacts) {
+    await supabase
+      .from('customer_local_contacts')
+      .delete()
+      .eq('customer_id', id)
+    const toInsert = local_contacts
+      .filter((c) => c.name || c.phone || c.role)
+      .map((contact) => ({ ...contact, customer_id: id }))
+    if (toInsert.length > 0) {
+      const { error: insertError } = await supabase
+        .from('customer_local_contacts')
+        .insert(toInsert)
+      if (insertError) return { data: null, error: insertError }
+    }
+  }
+
+  if (emergency_contacts) {
+    await supabase
+      .from('customer_emergency_contacts')
+      .delete()
+      .eq('customer_id', id)
+    const toInsert = emergency_contacts
+      .filter((c) => c.name || c.phone || c.relationship)
+      .map((contact) => ({ ...contact, customer_id: id }))
+    if (toInsert.length > 0) {
+      const { error: insertError } = await supabase
+        .from('customer_emergency_contacts')
+        .insert(toInsert)
+      if (insertError) return { data: null, error: insertError }
+    }
+  }
+
+  return { data, error: null }
 }
 
 export const deleteCustomer = async (id: string) => {

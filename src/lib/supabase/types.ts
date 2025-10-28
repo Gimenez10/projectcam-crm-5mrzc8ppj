@@ -120,6 +120,27 @@ export type Database = {
         }
         Relationships: []
       }
+      permissions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           barcode: string | null
@@ -171,7 +192,7 @@ export type Database = {
           dashboard_layout: Json | null
           full_name: string | null
           id: string
-          role: Database['public']['Enums']['user_role']
+          role_id: string | null
           updated_at: string
         }
         Insert: {
@@ -179,7 +200,7 @@ export type Database = {
           dashboard_layout?: Json | null
           full_name?: string | null
           id: string
-          role?: Database['public']['Enums']['user_role']
+          role_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -187,8 +208,70 @@ export type Database = {
           dashboard_layout?: Json | null
           full_name?: string | null
           id?: string
-          role?: Database['public']['Enums']['user_role']
+          role_id?: string | null
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'profiles_role_id_fkey'
+            columns: ['role_id']
+            isOneToOne: false
+            referencedRelation: 'roles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      role_permissions: {
+        Row: {
+          permission_id: string
+          role_id: string
+        }
+        Insert: {
+          permission_id: string
+          role_id: string
+        }
+        Update: {
+          permission_id?: string
+          role_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'role_permissions_permission_id_fkey'
+            columns: ['permission_id']
+            isOneToOne: false
+            referencedRelation: 'permissions'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'role_permissions_role_id_fkey'
+            columns: ['role_id']
+            isOneToOne: false
+            referencedRelation: 'roles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      roles: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_predefined: boolean
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_predefined?: boolean
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_predefined?: boolean
+          name?: string
         }
         Relationships: []
       }
@@ -310,10 +393,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_user_role: {
-        Args: { user_id: string }
-        Returns: Database['public']['Enums']['user_role']
-      }
+      get_user_role: { Args: { user_id: string }; Returns: string }
     }
     Enums: {
       approval_status: 'Pendente' | 'Aprovado' | 'Rejeitado'
@@ -323,7 +403,6 @@ export type Database = {
         | 'Aprovado'
         | 'Rejeitado'
         | 'Fechado'
-      user_role: 'admin' | 'manager' | 'seller'
     }
     CompositeTypes: {
       [_ in never]: never
@@ -459,7 +538,6 @@ export const Constants = {
         'Rejeitado',
         'Fechado',
       ],
-      user_role: ['admin', 'manager', 'seller'],
     },
   },
 } as const
