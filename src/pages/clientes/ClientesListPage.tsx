@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { MoreHorizontal, PlusCircle, Search } from 'lucide-react'
+import { MoreHorizontal, PlusCircle, Search, Printer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -31,6 +31,8 @@ import { Customer } from '@/types'
 import { DeleteCustomerDialog } from '@/components/clientes/DeleteCustomerDialog'
 import { useDebounce } from '@/hooks/use-debounce'
 import { DataTablePagination } from '@/components/DataTablePagination'
+import { generateBlankCustomerFormPdf } from '@/services/pdf'
+import { useToast } from '@/components/ui/use-toast'
 
 export default function ClientesListPage() {
   const [customers, setCustomers] = useState<Customer[]>([])
@@ -39,7 +41,9 @@ export default function ClientesListPage() {
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
+  const [isPrintingBlankForm, setIsPrintingBlankForm] = useState(false)
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
+  const { toast } = useToast()
 
   const fetchCustomers = useCallback(async () => {
     setIsLoading(true)
@@ -56,6 +60,23 @@ export default function ClientesListPage() {
   useEffect(() => {
     fetchCustomers()
   }, [fetchCustomers])
+
+  const handlePrintBlankForm = async () => {
+    setIsPrintingBlankForm(true)
+    const { signedUrl, error } = await generateBlankCustomerFormPdf()
+    setIsPrintingBlankForm(false)
+
+    if (error || !signedUrl) {
+      toast({
+        title: 'Erro ao gerar formulário',
+        description:
+          'Não foi possível gerar o documento. Tente novamente mais tarde.',
+        variant: 'destructive',
+      })
+      return
+    }
+    window.open(signedUrl, '_blank')
+  }
 
   const renderSkeleton = () => (
     <TableRow>
@@ -75,11 +96,23 @@ export default function ClientesListPage() {
               Gerencie seus clientes e visualize seus detalhes.
             </CardDescription>
           </div>
-          <Button asChild>
-            <Link to="/clientes/novo">
-              <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Cliente
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            <Button
+              variant="outline"
+              onClick={handlePrintBlankForm}
+              disabled={isPrintingBlankForm}
+            >
+              <Printer className="mr-2 h-4 w-4" />
+              {isPrintingBlankForm
+                ? 'Gerando...'
+                : 'Imprimir Formulário em Branco'}
+            </Button>
+            <Button asChild>
+              <Link to="/clientes/novo">
+                <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Cliente
+              </Link>
+            </Button>
+          </div>
         </div>
         <div className="relative mt-4">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

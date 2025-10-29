@@ -20,3 +20,20 @@ export const generateCustomerPdf = async (customerId: string) => {
 
   return { signedUrl: data.signedUrl as string, error: null }
 }
+
+/**
+ * Calls the edge function to generate a blank PDF form for a new customer.
+ * @returns An object containing the signed URL for the PDF or an error.
+ */
+export const generateBlankCustomerFormPdf = async () => {
+  const { data, error } = await supabase.functions.invoke(
+    'generate-blank-customer-form-pdf',
+  )
+
+  if (error) {
+    console.error('Error generating blank form PDF:', error)
+    return { signedUrl: null, error }
+  }
+
+  return { signedUrl: data.signedUrl as string, error: null }
+}
