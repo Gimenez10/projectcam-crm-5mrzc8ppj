@@ -20,9 +20,7 @@ const Section = ({
 )
 
 const InfoGrid = ({ children }: { children: React.ReactNode }) => (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
-    {children}
-  </div>
+  <div className="grid grid-cols-3 gap-x-6 gap-y-4">{children}</div>
 )
 
 const InfoItem = ({

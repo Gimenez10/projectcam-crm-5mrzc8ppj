@@ -98,8 +98,8 @@ export default function ClientesListPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
-                <TableHead>CPF/CNPJ</TableHead>
-                <TableHead>Telefone</TableHead>
+                <TableHead className="hidden sm:table-cell">CPF/CNPJ</TableHead>
+                <TableHead className="hidden md:table-cell">Telefone</TableHead>
                 <TableHead>
                   <span className="sr-only">Ações</span>
                 </TableHead>
@@ -115,8 +115,12 @@ export default function ClientesListPage() {
                       <TableCell className="font-medium">
                         {customer.name}
                       </TableCell>
-                      <TableCell>{customer.cpf_cnpj || 'N/A'}</TableCell>
-                      <TableCell>{customer.phone || 'N/A'}</TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        {customer.cpf_cnpj || 'N/A'}
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {customer.phone || 'N/A'}
+                      </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>

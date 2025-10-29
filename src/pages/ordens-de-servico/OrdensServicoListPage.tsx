@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -150,12 +151,18 @@ export default function OrdensServicoListPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Nº</TableHead>
+                      <TableHead className="w-[80px]">Nº</TableHead>
                       <TableHead>Cliente</TableHead>
-                      <TableHead>Vendedor</TableHead>
+                      <TableHead className="hidden sm:table-cell">
+                        Vendedor
+                      </TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Valor</TableHead>
-                      <TableHead>Data</TableHead>
+                      <TableHead className="text-right hidden md:table-cell">
+                        Valor
+                      </TableHead>
+                      <TableHead className="hidden lg:table-cell">
+                        Data
+                      </TableHead>
                       <TableHead>
                         <span className="sr-only">Ações</span>
                       </TableHead>
@@ -172,7 +179,7 @@ export default function OrdensServicoListPage() {
                               #{order.order_number}
                             </TableCell>
                             <TableCell>{order.customer?.name}</TableCell>
-                            <TableCell>
+                            <TableCell className="hidden sm:table-cell">
                               {order.salesperson?.full_name}
                             </TableCell>
                             <TableCell>
@@ -185,13 +192,13 @@ export default function OrdensServicoListPage() {
                                 {order.status}
                               </Badge>
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-right hidden md:table-cell">
                               {new Intl.NumberFormat('pt-BR', {
                                 style: 'currency',
                                 currency: 'BRL',
                               }).format(order.total_value)}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="hidden lg:table-cell">
                               {format(
                                 new Date(order.created_at),
                                 'dd/MM/yyyy',
@@ -200,7 +207,7 @@ export default function OrdensServicoListPage() {
                                 },
                               )}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="text-right">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button

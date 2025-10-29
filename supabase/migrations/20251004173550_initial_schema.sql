@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public
-AS $$
+AS $
 BEGIN
   INSERT INTO public.profiles (id, full_name, avatar_url, role)
   VALUES (
@@ -28,7 +28,7 @@ BEGIN
   );
   RETURN NEW;
 END;
-$$;
+$;
 
 -- Trigger to call the function on new user signup
 CREATE TRIGGER on_auth_user_created
@@ -94,9 +94,9 @@ CREATE OR REPLACE FUNCTION public.get_user_role(user_id UUID)
 RETURNS public.user_role
 LANGUAGE sql
 SECURITY DEFINER SET search_path = public
-AS $$
+AS $
   SELECT role FROM public.profiles WHERE id = user_id;
-$$;
+$;
 
 -- Policies for profiles
 CREATE POLICY "Users can view their own profile." ON public.profiles
@@ -146,3 +146,4 @@ CREATE POLICY "Admins can manage all service order items." ON public.service_ord
 ALTER TABLE public.service_orders ADD CONSTRAINT service_orders_order_number_key UNIQUE (order_number);
 -- Ensure order_number is between 0 and 1000 as requested
 ALTER TABLE public.service_orders ADD CONSTRAINT order_number_check CHECK (order_number >= 0 AND order_number <= 1000);
+

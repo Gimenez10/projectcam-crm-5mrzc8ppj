@@ -109,11 +109,11 @@ export default function AprovacoesPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Nº</TableHead>
+                <TableHead className="w-[80px]">Nº</TableHead>
                 <TableHead>Cliente</TableHead>
-                <TableHead>Vendedor</TableHead>
+                <TableHead className="hidden sm:table-cell">Vendedor</TableHead>
                 <TableHead className="text-right">Valor</TableHead>
-                <TableHead>Data</TableHead>
+                <TableHead className="hidden md:table-cell">Data</TableHead>
                 <TableHead className="text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -127,38 +127,40 @@ export default function AprovacoesPage() {
                       #{order.order_number}
                     </TableCell>
                     <TableCell>{order.customer?.name}</TableCell>
-                    <TableCell>{order.salesperson?.full_name}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {order.salesperson?.full_name}
+                    </TableCell>
                     <TableCell className="text-right">
                       {new Intl.NumberFormat('pt-BR', {
                         style: 'currency',
                         currency: 'BRL',
                       }).format(order.total_value)}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">
                       {format(new Date(order.created_at), 'dd/MM/yyyy', {
                         locale: ptBR,
                       })}
                     </TableCell>
-                    <TableCell className="text-center space-x-2">
+                    <TableCell className="text-center space-x-1 sm:space-x-2">
                       <Button
-                        size="sm"
+                        size="icon"
                         variant="ghost"
-                        className="text-green-500 hover:text-green-600"
+                        className="text-green-500 hover:text-green-600 h-8 w-8"
                         onClick={() => handleApproval(order.id, 'Aprovado')}
                       >
                         <CheckCircle className="h-4 w-4" />
                       </Button>
                       <Button
-                        size="sm"
+                        size="icon"
                         variant="ghost"
-                        className="text-red-500 hover:text-red-600"
+                        className="text-red-500 hover:text-red-600 h-8 w-8"
                         onClick={() => handleApproval(order.id, 'Rejeitado')}
                       >
                         <XCircle className="h-4 w-4" />
                       </Button>
-                      <Button asChild size="sm" variant="link">
+                      <Button asChild size="sm" variant="link" className="px-1">
                         <Link to={`/ordens-de-servico/editar/${order.id}`}>
-                          Detalhes
+                          Ver
                         </Link>
                       </Button>
                     </TableCell>

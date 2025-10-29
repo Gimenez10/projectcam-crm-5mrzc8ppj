@@ -36,7 +36,7 @@ export function DataTablePagination({
       <div className="text-sm text-muted-foreground flex-shrink-0">
         {total} item(s) no total.
       </div>
-      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 lg:gap-8 w-full sm:w-auto justify-center">
+      <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-end gap-4 sm:gap-6 lg:gap-8 w-full">
         <div className="flex items-center gap-2">
           <p className="text-sm font-medium whitespace-nowrap">
             Itens por página
@@ -57,7 +57,7 @@ export function DataTablePagination({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[120px] items-center justify-center text-sm font-medium whitespace-nowrap">
+        <div className="flex items-center justify-center text-sm font-medium whitespace-nowrap">
           Página {page} de {totalPages}
         </div>
         <div className="flex items-center gap-2">

@@ -74,7 +74,9 @@ export const RolesTab = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Função</TableHead>
-                  <TableHead>Descrição</TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                    Descrição
+                  </TableHead>
                   <TableHead>Permissões</TableHead>
                   <TableHead>
                     <span className="sr-only">Ações</span>
@@ -94,7 +96,7 @@ export const RolesTab = () => {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="text-muted-foreground max-w-[200px] truncate">
+                        <TableCell className="hidden sm:table-cell text-muted-foreground max-w-[200px] truncate">
                           {role.description}
                         </TableCell>
                         <TableCell>{role.permissions.length}</TableCell>

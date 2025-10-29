@@ -98,9 +98,15 @@ export default function ProdutosListPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
-                <TableHead>Cód. Produto</TableHead>
-                <TableHead>Cód. Barra</TableHead>
-                <TableHead>Cód. Interno</TableHead>
+                <TableHead className="hidden sm:table-cell">
+                  Cód. Produto
+                </TableHead>
+                <TableHead className="hidden md:table-cell">
+                  Cód. Barra
+                </TableHead>
+                <TableHead className="hidden lg:table-cell">
+                  Cód. Interno
+                </TableHead>
                 <TableHead>
                   <span className="sr-only">Ações</span>
                 </TableHead>
@@ -116,9 +122,15 @@ export default function ProdutosListPage() {
                       <TableCell className="font-medium">
                         {product.name}
                       </TableCell>
-                      <TableCell>{product.product_code || 'N/A'}</TableCell>
-                      <TableCell>{product.barcode || 'N/A'}</TableCell>
-                      <TableCell>{product.internal_code ?? 'N/A'}</TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        {product.product_code || 'N/A'}
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {product.barcode || 'N/A'}
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        {product.internal_code ?? 'N/A'}
+                      </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>

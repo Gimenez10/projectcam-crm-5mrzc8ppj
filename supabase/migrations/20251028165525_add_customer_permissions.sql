@@ -45,7 +45,7 @@ CREATE OR REPLACE FUNCTION public.has_permission(permission_name TEXT)
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public
-AS $$
+AS $
 BEGIN
   RETURN EXISTS (
     SELECT 1
@@ -55,7 +55,7 @@ BEGIN
     WHERE pr.id = auth.uid() AND p.name = permission_name
   );
 END;
-$$;
+$;
 
 -- Step 4: Create new RLS policies based on permissions
 CREATE POLICY "Usuários com permissão podem visualizar clientes." ON public.customers
@@ -69,3 +69,4 @@ CREATE POLICY "Usuários com permissão podem atualizar clientes." ON public.cus
 
 CREATE POLICY "Usuários com permissão podem excluir clientes." ON public.customers
   FOR DELETE USING (public.has_permission('customers:delete'::text));
+

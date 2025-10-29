@@ -164,7 +164,7 @@ export const RoleDialog = ({
                 <FormItem>
                   <FormLabel>Permissões</FormLabel>
                   <ScrollArea className="h-64 rounded-md border p-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {permissions.map((permission) => (
                         <FormField
                           key={permission.id}

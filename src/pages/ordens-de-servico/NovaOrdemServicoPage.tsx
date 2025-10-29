@@ -155,7 +155,9 @@ export default function NovaOrdemServicoPage() {
                       <TableHead className="w-1/3">Descrição</TableHead>
                       <TableHead>Qtd.</TableHead>
                       <TableHead>Preço Unit.</TableHead>
-                      <TableHead>Desc. (%)</TableHead>
+                      <TableHead className="hidden sm:table-cell">
+                        Desc. (%)
+                      </TableHead>
                       <TableHead className="text-right">Total</TableHead>
                       <TableHead className="print:hidden">Ações</TableHead>
                     </TableRow>
@@ -175,7 +177,7 @@ export default function NovaOrdemServicoPage() {
                       <TableCell>
                         <Input placeholder="R$ 0,00" className="w-24" />
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <Input
                           type="number"
                           defaultValue="0"

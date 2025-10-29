@@ -68,3 +68,4 @@ USING (
     SELECT 1 FROM customers c WHERE c.id = customer_id AND public.has_permission('customers:update'::text)
   )
 );
+

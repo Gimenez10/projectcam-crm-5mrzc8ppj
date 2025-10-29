@@ -68,7 +68,7 @@ export const AuditLogTab = () => {
                 <TableRow>
                   <TableHead>Ator</TableHead>
                   <TableHead>Ação</TableHead>
-                  <TableHead>Alvo</TableHead>
+                  <TableHead className="hidden sm:table-cell">Alvo</TableHead>
                   <TableHead>Data e Hora</TableHead>
                 </TableRow>
               </TableHeader>
@@ -90,7 +90,9 @@ export const AuditLogTab = () => {
                       <TableCell>
                         <Badge variant="outline">{log.action}</Badge>
                       </TableCell>
-                      <TableCell>{log.target_user_name || 'N/A'}</TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        {log.target_user_name || 'N/A'}
+                      </TableCell>
                       <TableCell>
                         {format(
                           new Date(log.created_at),
