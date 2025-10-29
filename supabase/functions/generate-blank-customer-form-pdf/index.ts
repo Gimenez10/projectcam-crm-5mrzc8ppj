@@ -11,18 +11,16 @@ function getBlankHtmlTemplate(): string {
     </div>
   `
 
-  const renderGrid = (items: { label: string }[], columns = 3) => `
+  const renderGridItem = (label: string) => `
+    <div class="grid-item">
+      <span class="label">${label}</span>
+      <div class="value-line"></div>
+    </div>
+  `
+
+  const renderGrid = (items: string[], columns = 3) => `
     <div class="grid grid-cols-${columns}">
-      ${items
-        .map(
-          (item) => `
-        <div class="grid-item">
-          <span class="label">${item.label}</span>
-          <div class="value-line"></div>
-        </div>
-      `,
-        )
-        .join('')}
+      ${items.map(renderGridItem).join('')}
     </div>
   `
 
@@ -54,11 +52,11 @@ function getBlankHtmlTemplate(): string {
 
   const renderOperatingHoursTable = () => {
     const days = [
-      'Segunda',
-      'Terça',
-      'Quarta',
-      'Quinta',
-      'Sexta',
+      'Segunda-feira',
+      'Terça-feira',
+      'Quarta-feira',
+      'Quinta-feira',
+      'Sexta-feira',
       'Sábado',
       'Domingo',
     ]
@@ -69,7 +67,7 @@ function getBlankHtmlTemplate(): string {
           <thead>
             <tr>
               <th>Dia da Semana</th>
-              <th>Ativo</th>
+              <th class="text-center">Ativo</th>
               <th>Manhã (Abertura)</th>
               <th>Manhã (Fechamento)</th>
               <th>Tarde (Abertura)</th>
@@ -82,7 +80,7 @@ function getBlankHtmlTemplate(): string {
                 (day) => `
               <tr>
                 <td>${day}</td>
-                <td><div class="checkbox"></div></td>
+                <td class="text-center"><div class="checkbox"></div></td>
                 <td><div class="value-line-short"></div></td>
                 <td><div class="value-line-short"></div></td>
                 <td><div class="value-line-short"></div></td>
@@ -104,26 +102,27 @@ function getBlankHtmlTemplate(): string {
       <meta charset="UTF-8">
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-        body { font-family: 'Inter', sans-serif; color: #333; font-size: 9px; }
+        body { font-family: 'Inter', sans-serif; color: #333; font-size: 9px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         .page { padding: 15mm; }
         h1 { font-size: 22px; text-align: center; margin-bottom: 20px; color: #007bff; }
         h2 { font-size: 13px; border-bottom: 1px solid #eee; padding-bottom: 4px; margin-top: 15px; margin-bottom: 8px; color: #343a40; font-weight: 600; }
         .section { margin-bottom: 12px; page-break-inside: avoid; }
-        .grid { display: grid; gap: 8px; }
+        .grid { display: grid; gap: 12px 8px; }
         .grid-cols-1 { grid-template-columns: 1fr; }
         .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
         .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
         .grid-item { display: flex; flex-direction: column; }
-        .label { font-weight: 600; color: #6c757d; margin-bottom: 3px; font-size: 8px; }
-        .value-line { border-bottom: 1px solid #ccc; height: 12px; }
-        .value-line-short { border-bottom: 1px solid #ccc; height: 12px; margin-top: 4px; }
+        .label { font-weight: 600; color: #6c757d; margin-bottom: 3px; font-size: 8px; text-transform: uppercase; }
+        .value-line { border-bottom: 1px solid #ccc; height: 16px; }
+        .value-line-short { border-bottom: 1px solid #ccc; height: 16px; }
         .textarea-item { margin-top: 8px; }
         .textarea-box { border: 1px solid #ccc; height: 40px; border-radius: 4px; }
         table { width: 100%; border-collapse: collapse; margin-top: 8px; }
         th, td { border: 1px solid #dee2e6; padding: 5px; text-align: left; }
-        th { background-color: #f8f9fa; font-weight: 600; }
+        th { background-color: #f8f9fa !important; font-weight: 600; }
         .checkbox { width: 12px; height: 12px; border: 1px solid #ccc; margin: auto; }
+        .text-center { text-align: center; }
       </style>
     </head>
     <body>
@@ -132,38 +131,35 @@ function getBlankHtmlTemplate(): string {
         
         ${renderSection(
           'Dados Principais',
-          renderGrid([
-            { label: 'Nome Completo / Razão Social' },
-            { label: 'Nome Fantasia' },
-            { label: 'CPF/CNPJ' },
-            { label: 'IE/RG' },
-            { label: 'E-mail' },
-            { label: 'Telefone' },
-            { label: 'Nome do Responsável' },
-            { label: 'Ramo de Atividade' },
-          ]),
+          renderGrid(
+            [
+              'Nome Completo / Razão Social',
+              'Nome Fantasia',
+              'CPF/CNPJ',
+              'IE/RG',
+              'E-mail',
+              'Telefone',
+              'Nome do Responsável',
+              'Ramo de Atividade',
+            ],
+            2,
+          ),
         )}
 
         ${renderSection(
           'Endereço',
           renderGrid(
-            [
-              { label: 'Endereço (Rua, Número, Bairro)' },
-              { label: 'Cidade' },
-              { label: 'Estado' },
-              { label: 'CEP' },
-            ],
-            4,
+            ['Endereço (Rua, Número, Bairro)', 'Cidade', 'Estado', 'CEP'],
+            2,
           ),
         )}
 
         ${renderSection(
           'Informações da Propriedade',
-          renderGrid([
-            { label: 'Tipo de Propriedade' },
-            { label: 'Animais na Propriedade' },
-            { label: 'Chave do Local' },
-          ]) + renderTextarea('Observações da Propriedade'),
+          renderGrid(
+            ['Tipo de Propriedade', 'Animais na Propriedade', 'Chave do Local'],
+            3,
+          ) + renderTextarea('Observações da Propriedade'),
         )}
 
         ${renderTable(['Nome', 'Telefone', 'Função'], 3, 'Contatos Locais')}
@@ -184,16 +180,16 @@ function getBlankHtmlTemplate(): string {
           'Informações do Equipamento',
           renderGrid(
             [
-              { label: 'Modelo do Equipamento' },
-              { label: 'Versão do Equipamento' },
-              { label: 'Central do Equipamento' },
-              { label: 'Telefone da Central' },
-              { label: 'Teclado' },
-              { label: 'Sirene' },
-              { label: 'Ímã' },
-              { label: 'Meios de Comunicação' },
-              { label: 'Infraestrutura' },
-              { label: 'Compra/Locação' },
+              'Modelo do Equipamento',
+              'Versão do Equipamento',
+              'Central do Equipamento',
+              'Telefone da Central',
+              'Teclado',
+              'Sirene',
+              'Ímã',
+              'Meios de Comunicação',
+              'Infraestrutura',
+              'Compra/Locação',
             ],
             2,
           ),
@@ -203,12 +199,12 @@ function getBlankHtmlTemplate(): string {
           'Tempos do Sistema',
           renderGrid(
             [
-              { label: 'Tempo de Entrada' },
-              { label: 'Tempo de Saída' },
-              { label: 'Tempo da Sirene' },
-              { label: 'Tempo de Arme Automático' },
-              { label: 'Intervalo de Tempo' },
-              { label: 'Tempo de Teste' },
+              'Tempo de Entrada',
+              'Tempo de Saída',
+              'Tempo da Sirene',
+              'Tempo de Arme Automático',
+              'Intervalo de Tempo',
+              'Tempo de Teste',
             ],
             3,
           ),
@@ -216,7 +212,7 @@ function getBlankHtmlTemplate(): string {
 
         ${renderSection(
           'Equipe de Instalação',
-          renderGrid([{ label: 'Equipe de Instalação' }], 1),
+          renderGrid(['Equipe de Instalação'], 1),
         )}
       </div>
     </body>
