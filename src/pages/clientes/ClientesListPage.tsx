@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { MoreHorizontal, PlusCircle, Search, Printer } from 'lucide-react'
+import { MoreHorizontal, PlusCircle, Search, FileDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -103,10 +103,10 @@ export default function ClientesListPage() {
               onClick={handlePrintBlankForm}
               disabled={isPrintingBlankForm}
             >
-              <Printer className="mr-2 h-4 w-4" />
+              <FileDown className="mr-2 h-4 w-4" />
               {isPrintingBlankForm
                 ? 'Gerando...'
-                : 'Imprimir Formulário em Branco'}
+                : 'Download Formulário em Branco'}
             </Button>
             <Button asChild>
               <Link to="/clientes/novo">

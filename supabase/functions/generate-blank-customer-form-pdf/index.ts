@@ -156,7 +156,7 @@ function getBlankHtmlTemplate(): string {
         ${renderSection(
           'Informações da Propriedade',
           renderGrid(
-            ['Tipo de Propriedade', 'Animais na Propriedade', 'Chave do Local'],
+            ['Tipo de Imóvel', 'Animais na Propriedade', 'Chave do Local'],
             3,
           ) + renderTextarea('Observações da Propriedade'),
         )}
@@ -168,9 +168,9 @@ function getBlankHtmlTemplate(): string {
           'Contatos de Emergência',
         )}
         ${renderTable(
-          ['Usuário', 'Pergunta de Segurança', 'Resposta'],
+          ['Usuário', 'Pergunta', 'Resposta'],
           3,
-          'Senhas do Cliente',
+          'Senhas/Perguntas de Segurança',
         )}
 
         ${renderOperatingHoursTable()}
@@ -183,12 +183,12 @@ function getBlankHtmlTemplate(): string {
               'Versão do Equipamento',
               'Central do Equipamento',
               'Telefone da Central',
-              'Teclado',
-              'Sirene',
-              'Ímã',
-              'Meios de Comunicação',
-              'Infraestrutura',
-              'Compra/Locação',
+              'Teclado do Equipamento',
+              'Sirene do Equipamento',
+              'Magnético do Equipamento',
+              'Meios de Comunicação do Equipamento',
+              'Infraestrutura do Equipamento',
+              'Compra/Locação do Equipamento',
             ],
             2,
           ),
@@ -200,9 +200,9 @@ function getBlankHtmlTemplate(): string {
             [
               'Tempo de Entrada',
               'Tempo de Saída',
-              'Tempo da Sirene',
-              'Tempo de Arme Automático',
-              'Intervalo de Tempo',
+              'Tempo de Sirene',
+              'Arme Automático',
+              'Intervalo',
               'Tempo de Teste',
             ],
             3,
