@@ -101,26 +101,26 @@ function getBlankHtmlTemplate(): string {
     <head>
       <meta charset="UTF-8">
       <style>
-        body { font-family: sans-serif; color: #333; font-size: 9px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .page { padding: 15mm; }
-        h1 { font-size: 22px; text-align: center; margin-bottom: 20px; color: #007bff; }
-        h2 { font-size: 13px; border-bottom: 1px solid #eee; padding-bottom: 4px; margin-top: 15px; margin-bottom: 8px; color: #343a40; font-weight: 600; }
-        .section { margin-bottom: 12px; page-break-inside: avoid; }
-        .grid { display: grid; gap: 12px 8px; }
+        body { font-family: sans-serif; color: #333; font-size: 10px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .page { padding: 20mm; }
+        h1 { font-size: 24px; text-align: center; margin-bottom: 20px; color: #007bff; }
+        h2 { font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 20px; margin-bottom: 10px; color: #343a40; font-weight: 600; }
+        .section { margin-bottom: 15px; page-break-inside: avoid; }
+        .grid { display: grid; gap: 12px 10px; }
         .grid-cols-1 { grid-template-columns: 1fr; }
         .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
         .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
         .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
         .grid-item { display: flex; flex-direction: column; }
-        .label { font-weight: 600; color: #6c757d; margin-bottom: 3px; font-size: 8px; text-transform: uppercase; }
-        .value-line { border-bottom: 1px solid #ccc; height: 16px; }
-        .value-line-short { border-bottom: 1px solid #ccc; height: 16px; }
-        .textarea-item { margin-top: 8px; }
-        .textarea-box { border: 1px solid #ccc; height: 40px; border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-        th, td { border: 1px solid #dee2e6; padding: 5px; text-align: left; }
+        .label { font-weight: 600; color: #6c757d; margin-bottom: 4px; font-size: 9px; text-transform: uppercase; }
+        .value-line { border-bottom: 1px solid #ccc; height: 18px; }
+        .value-line-short { border-bottom: 1px solid #ccc; height: 18px; }
+        .textarea-item { margin-top: 10px; }
+        .textarea-box { border: 1px solid #ccc; height: 45px; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #dee2e6; padding: 6px; text-align: left; }
         th { background-color: #f8f9fa !important; font-weight: 600; }
-        .checkbox { width: 12px; height: 12px; border: 1px solid #ccc; margin: auto; }
+        .checkbox { width: 14px; height: 14px; border: 1px solid #ccc; margin: auto; }
         .text-center { text-align: center; }
       </style>
     </head>
