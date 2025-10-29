@@ -20,6 +20,7 @@ COMMENT ON COLUMN public.audit_logs.details IS 'A JSON object with more details 
 ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
 
 -- Policies for audit_logs
+DROP POLICY IF EXISTS "Admins can view all audit logs." ON public.audit_logs;
 CREATE POLICY "Admins can view all audit logs." ON public.audit_logs
   FOR SELECT USING (public.get_user_role(auth.uid()) = 'admin');
 

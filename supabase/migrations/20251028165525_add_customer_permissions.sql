@@ -7,31 +7,14 @@ INSERT INTO public.permissions (name, description) VALUES
 ON CONFLICT (name) DO NOTHING;
 
 -- Step 2: Assign new permissions to predefined roles
--- Admin gets all customer permissions
 INSERT INTO public.role_permissions (role_id, permission_id)
-SELECT
-    r.id,
-    p.id
-FROM public.roles r, public.permissions p
-WHERE r.name = 'admin' AND p.name LIKE 'customers:%'
+SELECT r.id, p.id FROM public.roles r, public.permissions p WHERE r.name = 'admin' AND p.name LIKE 'customers:%'
 ON CONFLICT (role_id, permission_id) DO NOTHING;
-
--- Manager gets all customer permissions
 INSERT INTO public.role_permissions (role_id, permission_id)
-SELECT
-    r.id,
-    p.id
-FROM public.roles r, public.permissions p
-WHERE r.name = 'manager' AND p.name LIKE 'customers:%'
+SELECT r.id, p.id FROM public.roles r, public.permissions p WHERE r.name = 'manager' AND p.name LIKE 'customers:%'
 ON CONFLICT (role_id, permission_id) DO NOTHING;
-
--- Seller gets create, read, and update permissions for customers
 INSERT INTO public.role_permissions (role_id, permission_id)
-SELECT
-    r.id,
-    p.id
-FROM public.roles r, public.permissions p
-WHERE r.name = 'seller' AND p.name IN ('customers:create', 'customers:read', 'customers:update')
+SELECT r.id, p.id FROM public.roles r, public.permissions p WHERE r.name = 'seller' AND p.name IN ('customers:create', 'customers:read', 'customers:update')
 ON CONFLICT (role_id, permission_id) DO NOTHING;
 
 -- Step 3: Drop old RLS policies on the customers table
@@ -58,14 +41,18 @@ END;
 $$;
 
 -- Step 4: Create new RLS policies based on permissions
+DROP POLICY IF EXISTS "Usuários com permissão podem visualizar clientes." ON public.customers;
 CREATE POLICY "Usuários com permissão podem visualizar clientes." ON public.customers
   FOR SELECT USING (public.has_permission('customers:read'::text));
 
+DROP POLICY IF EXISTS "Usuários com permissão podem criar clientes." ON public.customers;
 CREATE POLICY "Usuários com permissão podem criar clientes." ON public.customers
   FOR INSERT WITH CHECK (public.has_permission('customers:create'::text));
 
+DROP POLICY IF EXISTS "Usuários com permissão podem atualizar clientes." ON public.customers;
 CREATE POLICY "Usuários com permissão podem atualizar clientes." ON public.customers
   FOR UPDATE USING (public.has_permission('customers:update'::text));
 
+DROP POLICY IF EXISTS "Usuários com permissão podem excluir clientes." ON public.customers;
 CREATE POLICY "Usuários com permissão podem excluir clientes." ON public.customers
   FOR DELETE USING (public.has_permission('customers:delete'::text));

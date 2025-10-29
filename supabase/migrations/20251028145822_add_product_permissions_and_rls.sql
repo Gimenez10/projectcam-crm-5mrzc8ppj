@@ -16,38 +16,18 @@ WHERE r.name IN ('admin', 'manager') AND p.name LIKE 'products:%'
 ON CONFLICT (role_id, permission_id) DO NOTHING;
 
 -- RLS Policies for products
+DROP POLICY IF EXISTS "Usuários autenticados podem visualizar produtos." ON public.products;
 CREATE POLICY "Usuários autenticados podem visualizar produtos." ON public.products
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Usuários com permissão podem criar produtos." ON public.products;
 CREATE POLICY "Usuários com permissão podem criar produtos." ON public.products
-  FOR INSERT WITH CHECK (
-    EXISTS (
-      SELECT 1
-      FROM profiles pr
-      JOIN role_permissions rp ON pr.role_id = rp.role_id
-      JOIN permissions p ON rp.permission_id = p.id
-      WHERE pr.id = auth.uid() AND p.name = 'products:create'
-    )
-  );
+  FOR INSERT WITH CHECK (public.has_permission('products:create'));
 
+DROP POLICY IF EXISTS "Usuários com permissão podem atualizar produtos." ON public.products;
 CREATE POLICY "Usuários com permissão podem atualizar produtos." ON public.products
-  FOR UPDATE USING (
-    EXISTS (
-      SELECT 1
-      FROM profiles pr
-      JOIN role_permissions rp ON pr.role_id = rp.role_id
-      JOIN permissions p ON rp.permission_id = p.id
-      WHERE pr.id = auth.uid() AND p.name = 'products:update'
-    )
-  );
+  FOR UPDATE USING (public.has_permission('products:update'));
 
+DROP POLICY IF EXISTS "Usuários com permissão podem excluir produtos." ON public.products;
 CREATE POLICY "Usuários com permissão podem excluir produtos." ON public.products
-  FOR DELETE USING (
-    EXISTS (
-      SELECT 1
-      FROM profiles pr
-      JOIN role_permissions rp ON pr.role_id = rp.role_id
-      JOIN permissions p ON rp.permission_id = p.id
-      WHERE pr.id = auth.uid() AND p.name = 'products:delete'
-    )
-  );
+  FOR DELETE USING (public.has_permission('products:delete'));
