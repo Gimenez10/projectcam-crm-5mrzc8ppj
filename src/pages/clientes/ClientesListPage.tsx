@@ -70,6 +70,7 @@ export default function ClientesListPage() {
       toast({
         title: 'Erro ao gerar formulário',
         description:
+          error?.message ||
           'Não foi possível gerar o documento. Tente novamente mais tarde.',
         variant: 'destructive',
       })

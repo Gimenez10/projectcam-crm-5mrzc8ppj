@@ -41,6 +41,7 @@ export const CustomerActions = ({ customer }: CustomerActionsProps) => {
       toast({
         title: 'Erro ao gerar PDF',
         description:
+          error?.message ||
           'Não foi possível gerar o documento. Tente novamente mais tarde.',
         variant: 'destructive',
       })

@@ -14,8 +14,13 @@ export const generateCustomerPdf = async (customerId: string) => {
   )
 
   if (error) {
-    console.error('Error generating PDF:', error)
+    console.error('Error invoking customer PDF function:', error)
     return { signedUrl: null, error }
+  }
+
+  if (data.error) {
+    console.error('Error from customer PDF function:', data.error)
+    return { signedUrl: null, error: new Error(data.error) }
   }
 
   return { signedUrl: data.signedUrl as string, error: null }
@@ -31,8 +36,13 @@ export const generateBlankCustomerFormPdf = async () => {
   )
 
   if (error) {
-    console.error('Error generating blank form PDF:', error)
+    console.error('Error invoking blank form PDF function:', error)
     return { signedUrl: null, error }
+  }
+
+  if (data.error) {
+    console.error('Error from blank form PDF function:', data.error)
+    return { signedUrl: null, error: new Error(data.error) }
   }
 
   return { signedUrl: data.signedUrl as string, error: null }

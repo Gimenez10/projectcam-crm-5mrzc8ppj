@@ -101,8 +101,7 @@ function getBlankHtmlTemplate(): string {
     <head>
       <meta charset="UTF-8">
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-        body { font-family: 'Inter', sans-serif; color: #333; font-size: 9px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        body { font-family: sans-serif; color: #333; font-size: 9px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         .page { padding: 15mm; }
         h1 { font-size: 22px; text-align: center; margin-bottom: 20px; color: #007bff; }
         h2 { font-size: 13px; border-bottom: 1px solid #eee; padding-bottom: 4px; margin-top: 15px; margin-bottom: 8px; color: #343a40; font-weight: 600; }
@@ -234,7 +233,7 @@ Deno.serve(async (req) => {
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     })
     const page = await browser.newPage()
-    await page.setContent(html, { waitUntil: 'networkidle0' })
+    await page.setContent(html, { waitUntil: 'domcontentloaded' })
     const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true })
     await browser.close()
 
@@ -259,9 +258,13 @@ Deno.serve(async (req) => {
       status: 200,
     })
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    })
+    console.error('Error generating blank customer form PDF:', error)
+    return new Response(
+      JSON.stringify({ error: `Falha ao gerar PDF: ${error.message}` }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      },
+    )
   }
 })
