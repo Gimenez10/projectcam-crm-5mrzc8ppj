@@ -6,7 +6,7 @@ const mobileNavItems = originalNavItems.filter((item) => !item.disabled)
 
 export const MobileNav = () => {
   return (
-    <nav className="md:hidden sticky top-16 bg-background border-b z-20 print:hidden">
+    <nav className="md:hidden sticky bottom-0 bg-background border-t z-20 print:hidden">
       <div className="grid grid-cols-5 items-center h-16">
         {mobileNavItems.map((item) => (
           <NavLink

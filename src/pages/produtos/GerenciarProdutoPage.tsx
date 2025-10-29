@@ -236,7 +236,7 @@ export default function GerenciarProdutoPage() {
                   </FormItem>
                 )}
               />
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="product_code"
@@ -329,11 +329,15 @@ export default function GerenciarProdutoPage() {
               </div>
             </CardContent>
           </Card>
-          <div className="mt-6 flex justify-end gap-2">
-            <Button variant="outline" asChild>
+          <div className="mt-6 flex flex-col sm:flex-row justify-end gap-2">
+            <Button variant="outline" asChild className="w-full sm:w-auto">
               <Link to="/produtos">Cancelar</Link>
             </Button>
-            <Button type="submit" disabled={isSaving}>
+            <Button
+              type="submit"
+              disabled={isSaving}
+              className="w-full sm:w-auto"
+            >
               {isSaving ? 'Salvando...' : 'Salvar Produto'}
             </Button>
           </div>

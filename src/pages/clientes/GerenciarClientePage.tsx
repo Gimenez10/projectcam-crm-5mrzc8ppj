@@ -229,7 +229,7 @@ export default function GerenciarClientePage() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <Card>
               <CardHeader>
-                <div className="flex justify-between items-start">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
                   <div>
                     <CardTitle className="text-h2">
                       {id ? 'Editar Cliente' : 'Novo Cliente'}
@@ -238,16 +238,16 @@ export default function GerenciarClientePage() {
                       Preencha os detalhes do cliente abaixo.
                     </CardDescription>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     {id && customerData && (
                       <CustomerActions customer={customerData} />
                     )}
                     {id && form.getValues('created_at') && (
-                      <div className="text-sm text-muted-foreground">
-                        <span className="font-semibold">Data do cadastro:</span>{' '}
+                      <div className="text-sm text-muted-foreground whitespace-nowrap">
+                        <span className="font-semibold">Cadastro:</span>{' '}
                         {format(
                           new Date(form.getValues('created_at')!),
-                          'dd/MM/yyyy HH:mm',
+                          'dd/MM/yyyy',
                           { locale: ptBR },
                         )}
                       </div>
@@ -256,7 +256,7 @@ export default function GerenciarClientePage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
                     name="trade_name"
@@ -290,7 +290,7 @@ export default function GerenciarClientePage() {
                     )}
                   />
                 </div>
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
                     name="ie_rg"
@@ -324,7 +324,7 @@ export default function GerenciarClientePage() {
                     )}
                   />
                 </div>
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <FormField
                     control={form.control}
                     name="cpf_cnpj"
@@ -382,7 +382,7 @@ export default function GerenciarClientePage() {
                     </FormItem>
                   )}
                 />
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <FormField
                     control={form.control}
                     name="city"
@@ -428,7 +428,7 @@ export default function GerenciarClientePage() {
 
             <Card>
               <CardHeader>
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <CardTitle className="text-h3">LOCAL</CardTitle>
                   <Button
                     type="button"
@@ -445,12 +445,15 @@ export default function GerenciarClientePage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {localFields.map((field, index) => (
-                  <div key={field.id} className="flex items-end gap-4">
+                  <div
+                    key={field.id}
+                    className="flex flex-col sm:flex-row sm:items-end gap-4"
+                  >
                     <FormField
                       control={form.control}
                       name={`local_contacts.${index}.name`}
                       render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem className="flex-1 w-full">
                           <FormLabel>Nome</FormLabel>
                           <FormControl>
                             <Input placeholder="Nome do contato" {...field} />
@@ -462,7 +465,7 @@ export default function GerenciarClientePage() {
                       control={form.control}
                       name={`local_contacts.${index}.phone`}
                       render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem className="flex-1 w-full">
                           <FormLabel>Telefone</FormLabel>
                           <FormControl>
                             <Input placeholder="Telefone" {...field} />
@@ -474,7 +477,7 @@ export default function GerenciarClientePage() {
                       control={form.control}
                       name={`local_contacts.${index}.role`}
                       render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem className="flex-1 w-full">
                           <FormLabel>Função</FormLabel>
                           <FormControl>
                             <Input placeholder="Função" {...field} />
@@ -482,16 +485,15 @@ export default function GerenciarClientePage() {
                         </FormItem>
                       )}
                     />
-                    <div className="flex items-center">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeLocal(index)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeLocal(index)}
+                      className="mt-4 sm:mt-0"
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
                   </div>
                 ))}
                 {localFields.length === 0 && (
@@ -504,7 +506,7 @@ export default function GerenciarClientePage() {
 
             <Card>
               <CardHeader>
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <CardTitle className="text-h3">EMERGÊNCIA</CardTitle>
                   <Button
                     type="button"
@@ -521,12 +523,15 @@ export default function GerenciarClientePage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {emergencyFields.map((field, index) => (
-                  <div key={field.id} className="flex items-end gap-4">
+                  <div
+                    key={field.id}
+                    className="flex flex-col sm:flex-row sm:items-end gap-4"
+                  >
                     <FormField
                       control={form.control}
                       name={`emergency_contacts.${index}.name`}
                       render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem className="flex-1 w-full">
                           <FormLabel>Nome</FormLabel>
                           <FormControl>
                             <Input placeholder="Nome do contato" {...field} />
@@ -538,7 +543,7 @@ export default function GerenciarClientePage() {
                       control={form.control}
                       name={`emergency_contacts.${index}.relationship`}
                       render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem className="flex-1 w-full">
                           <FormLabel>Relação</FormLabel>
                           <FormControl>
                             <Input
@@ -553,7 +558,7 @@ export default function GerenciarClientePage() {
                       control={form.control}
                       name={`emergency_contacts.${index}.phone`}
                       render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem className="flex-1 w-full">
                           <FormLabel>Telefone</FormLabel>
                           <FormControl>
                             <Input placeholder="Telefone" {...field} />
@@ -561,16 +566,15 @@ export default function GerenciarClientePage() {
                         </FormItem>
                       )}
                     />
-                    <div className="flex items-center">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeEmergency(index)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeEmergency(index)}
+                      className="mt-4 sm:mt-0"
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
                   </div>
                 ))}
                 {emergencyFields.length === 0 && (
@@ -604,7 +608,7 @@ export default function GerenciarClientePage() {
                     </FormItem>
                   )}
                 />
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <FormField
                     control={form.control}
                     name="property_type"
@@ -659,7 +663,7 @@ export default function GerenciarClientePage() {
 
             <Card>
               <CardHeader>
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <CardTitle className="text-h3">Senha Contra-Senha</CardTitle>
                   <Button
                     type="button"
@@ -679,12 +683,15 @@ export default function GerenciarClientePage() {
                     `passwords.${index}`,
                   ) as CustomerPassword
                   return (
-                    <div key={field.id} className="flex items-end gap-4">
+                    <div
+                      key={field.id}
+                      className="flex flex-col sm:flex-row sm:items-end gap-4"
+                    >
                       <FormField
                         control={form.control}
                         name={`passwords.${index}.question`}
                         render={({ field }) => (
-                          <FormItem className="flex-1">
+                          <FormItem className="flex-1 w-full">
                             <FormLabel>Pergunta</FormLabel>
                             <FormControl>
                               <Input
@@ -699,7 +706,7 @@ export default function GerenciarClientePage() {
                         control={form.control}
                         name={`passwords.${index}.answer`}
                         render={({ field }) => (
-                          <FormItem className="flex-1">
+                          <FormItem className="flex-1 w-full">
                             <FormLabel>Resposta</FormLabel>
                             <FormControl>
                               <Input
@@ -714,7 +721,7 @@ export default function GerenciarClientePage() {
                         control={form.control}
                         name={`passwords.${index}.username`}
                         render={({ field }) => (
-                          <FormItem className="flex-1">
+                          <FormItem className="flex-1 w-full">
                             <FormLabel>Usuário</FormLabel>
                             <FormControl>
                               <Input
@@ -725,7 +732,7 @@ export default function GerenciarClientePage() {
                           </FormItem>
                         )}
                       />
-                      <div className="flex items-center">
+                      <div className="flex items-center self-start sm:self-end pt-8">
                         {passwordData?.id && (
                           <EditPasswordDialog
                             password={passwordData}
@@ -770,12 +777,28 @@ export default function GerenciarClientePage() {
                 {operatingHoursFields.map((field, index) => (
                   <div
                     key={field.id}
-                    className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center border rounded-lg p-4"
+                    className="flex flex-col md:grid md:grid-cols-12 gap-4 items-start md:items-center border rounded-lg p-4"
                   >
-                    <div className="md:col-span-2 font-medium">
-                      {weekDays[index].label}
+                    <div className="md:col-span-2 font-medium flex justify-between items-center w-full">
+                      <span>{weekDays[index].label}</span>
+                      <div className="md:hidden">
+                        <FormField
+                          control={form.control}
+                          name={`operating_hours.${index}.is_active`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     </div>
-                    <div className="md:col-span-1 flex justify-center">
+                    <div className="hidden md:col-span-1 md:flex justify-center">
                       <FormField
                         control={form.control}
                         name={`operating_hours.${index}.is_active`}
@@ -791,7 +814,7 @@ export default function GerenciarClientePage() {
                         )}
                       />
                     </div>
-                    <div className="md:col-span-4 grid grid-cols-2 gap-2">
+                    <div className="md:col-span-4 grid grid-cols-2 gap-2 w-full">
                       <FormField
                         control={form.control}
                         name={`operating_hours.${index}.morning_open`}
@@ -835,7 +858,7 @@ export default function GerenciarClientePage() {
                         )}
                       />
                     </div>
-                    <div className="md:col-span-4 grid grid-cols-2 gap-2">
+                    <div className="md:col-span-4 grid grid-cols-2 gap-2 w-full">
                       <FormField
                         control={form.control}
                         name={`operating_hours.${index}.afternoon_open`}
@@ -888,7 +911,7 @@ export default function GerenciarClientePage() {
               <CardHeader>
                 <CardTitle className="text-h3">Tempo Sistema</CardTitle>
               </CardHeader>
-              <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <CardContent className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 <FormField
                   control={form.control}
                   name="system_time_entry"
@@ -968,7 +991,7 @@ export default function GerenciarClientePage() {
               <CardHeader>
                 <CardTitle className="text-h3">Equipamento</CardTitle>
               </CardHeader>
-              <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <FormField
                   control={form.control}
                   name="equipment_central"
@@ -1110,12 +1133,12 @@ export default function GerenciarClientePage() {
               </CardContent>
             </Card>
 
-            <div className="mt-6 flex items-center justify-end gap-4">
+            <div className="mt-6 flex flex-col sm:flex-row sm:items-end gap-4">
               <FormField
                 control={form.control}
                 name="responsible_name"
                 render={({ field }) => (
-                  <FormItem className="flex-1">
+                  <FormItem className="flex-1 w-full">
                     <FormLabel>Nome Do Responsável</FormLabel>
                     <FormControl>
                       <Input placeholder="Nome do responsável" {...field} />
@@ -1124,11 +1147,19 @@ export default function GerenciarClientePage() {
                   </FormItem>
                 )}
               />
-              <div className="flex gap-2 self-end">
-                <Button variant="outline" asChild>
+              <div className="flex gap-2 self-end w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  asChild
+                  className="flex-1 sm:flex-none"
+                >
                   <Link to="/clientes">Cancelar</Link>
                 </Button>
-                <Button type="submit" disabled={isSaving}>
+                <Button
+                  type="submit"
+                  disabled={isSaving}
+                  className="flex-1 sm:flex-none"
+                >
                   {isSaving ? 'Salvando...' : 'Salvar Cliente'}
                 </Button>
               </div>

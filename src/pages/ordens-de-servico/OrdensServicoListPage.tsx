@@ -85,14 +85,14 @@ export default function OrdensServicoListPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center print:hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 print:hidden">
         <div className="flex-1">
           <h1 className="text-h1">Ordens de Serviço</h1>
           <p className="text-muted-foreground">
             Gerencie e acompanhe todas as suas ordens de serviço.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end sm:self-auto">
           <Button size="sm" variant="outline" className="h-8 gap-1">
             <File className="h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -125,19 +125,19 @@ export default function OrdensServicoListPage() {
         onValueChange={setActiveTab}
         className="print:hidden"
       >
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <TabsList>
             <TabsTrigger value="all">Todas</TabsTrigger>
             <TabsTrigger value="Pendente">Pendentes</TabsTrigger>
             <TabsTrigger value="Aprovado">Aprovadas</TabsTrigger>
             <TabsTrigger value="Fechado">Fechadas</TabsTrigger>
           </TabsList>
-          <div className="relative w-full max-w-sm">
+          <div className="relative w-full sm:max-w-xs">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Buscar por cliente, nº ou vendedor..."
-              className="pl-8"
+              className="pl-8 w-full"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -146,86 +146,94 @@ export default function OrdensServicoListPage() {
         <TabsContent value={activeTab} className="mt-4">
           <Card className="print:shadow-none print:border-none">
             <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nº</TableHead>
-                    <TableHead>Cliente</TableHead>
-                    <TableHead>Vendedor</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Valor</TableHead>
-                    <TableHead>Data</TableHead>
-                    <TableHead>
-                      <span className="sr-only">Ações</span>
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoading
-                    ? Array.from({ length: perPage }).map((_, i) =>
-                        renderSkeleton(),
-                      )
-                    : orders.map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell className="font-medium">
-                            #{order.order_number}
-                          </TableCell>
-                          <TableCell>{order.customer?.name}</TableCell>
-                          <TableCell>{order.salesperson?.full_name}</TableCell>
-                          <TableCell>
-                            <Badge
-                              className={cn(
-                                'border-transparent',
-                                statusVariant[order.status],
+              <div className="relative w-full overflow-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nº</TableHead>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Vendedor</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Valor</TableHead>
+                      <TableHead>Data</TableHead>
+                      <TableHead>
+                        <span className="sr-only">Ações</span>
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {isLoading
+                      ? Array.from({ length: perPage }).map((_, i) =>
+                          renderSkeleton(),
+                        )
+                      : orders.map((order) => (
+                          <TableRow key={order.id}>
+                            <TableCell className="font-medium">
+                              #{order.order_number}
+                            </TableCell>
+                            <TableCell>{order.customer?.name}</TableCell>
+                            <TableCell>
+                              {order.salesperson?.full_name}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                className={cn(
+                                  'border-transparent',
+                                  statusVariant[order.status],
+                                )}
+                              >
+                                {order.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL',
+                              }).format(order.total_value)}
+                            </TableCell>
+                            <TableCell>
+                              {format(
+                                new Date(order.created_at),
+                                'dd/MM/yyyy',
+                                {
+                                  locale: ptBR,
+                                },
                               )}
-                            >
-                              {order.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {new Intl.NumberFormat('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL',
-                            }).format(order.total_value)}
-                          </TableCell>
-                          <TableCell>
-                            {format(new Date(order.created_at), 'dd/MM/yyyy', {
-                              locale: ptBR,
-                            })}
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  aria-haspopup="true"
-                                  size="icon"
-                                  variant="ghost"
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                                <DropdownMenuItem asChild>
-                                  <Link
-                                    to={`/ordens-de-servico/editar/${order.id}`}
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    aria-haspopup="true"
+                                    size="icon"
+                                    variant="ghost"
                                   >
-                                    Editar
-                                  </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem className="text-destructive">
-                                  Excluir
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                </TableBody>
-              </Table>
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                                  <DropdownMenuItem asChild>
+                                    <Link
+                                      to={`/ordens-de-servico/editar/${order.id}`}
+                                    >
+                                      Editar
+                                    </Link>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem className="text-destructive">
+                                    Excluir
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
-            <div className="p-4 border-t print:hidden">
+            <CardFooter className="p-4 border-t print:hidden">
               <DataTablePagination
                 page={page}
                 total={total}
@@ -233,7 +241,7 @@ export default function OrdensServicoListPage() {
                 onPageChange={setPage}
                 onPerPageChange={setPerPage}
               />
-            </div>
+            </CardFooter>
           </Card>
         </TabsContent>
       </Tabs>

@@ -36,7 +36,7 @@ export const Header = () => {
       </div>
 
       <div className="flex w-full items-center justify-center">
-        <h1 className="text-h3 text-foreground">CRM</h1>
+        <h1 className="text-h3 text-foreground hidden sm:block">CRM</h1>
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">
@@ -44,8 +44,8 @@ export const Header = () => {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Buscar ordens de serviço..."
-            className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
+            placeholder="Buscar..."
+            className="pl-8 sm:w-[200px] lg:w-[300px]"
           />
         </div>
         <ThemeToggle />

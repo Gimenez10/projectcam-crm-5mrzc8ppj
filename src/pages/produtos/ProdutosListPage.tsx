@@ -86,14 +86,14 @@ export default function ProdutosListPage() {
           <Input
             type="search"
             placeholder="Buscar por nome, código do produto ou de barras..."
-            className="pl-8 sm:w-1/2 md:w-1/3"
+            className="pl-8 w-full sm:w-1/2 md:w-1/3"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="overflow-x-auto">
+        <div className="relative w-full overflow-auto">
           <Table>
             <TableHeader>
               <TableRow>

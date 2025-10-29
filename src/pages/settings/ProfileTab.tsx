@@ -79,7 +79,7 @@ export const ProfileTab = () => {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
               <Avatar className="h-20 w-20">
                 <AvatarImage
                   src={form.watch('avatar_url') || undefined}
@@ -93,7 +93,7 @@ export const ProfileTab = () => {
                 control={form.control}
                 name="avatar_url"
                 render={({ field }) => (
-                  <FormItem className="flex-grow">
+                  <FormItem className="flex-grow w-full">
                     <FormLabel>URL do Avatar</FormLabel>
                     <FormControl>
                       <Input

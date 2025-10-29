@@ -161,21 +161,23 @@ export const NotificationsTab = () => {
                   control={form.control}
                   name={`settings.${index}.is_enabled`}
                   render={({ field: switchField }) => (
-                    <FormItem className="flex flex-col md:flex-row md:items-start md:justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5 mb-4 md:mb-0">
-                        <FormLabel className="text-base">
-                          {field.event_type}
-                        </FormLabel>
-                        <FormDescription>{field.description}</FormDescription>
-                      </div>
-                      <div className="flex items-center gap-4 md:w-1/2">
+                    <FormItem className="flex flex-col rounded-lg border p-4">
+                      <div className="flex flex-row items-start justify-between space-x-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">
+                            {field.event_type}
+                          </FormLabel>
+                          <FormDescription>{field.description}</FormDescription>
+                        </div>
                         <FormControl>
                           <Switch
                             checked={switchField.value}
                             onCheckedChange={switchField.onChange}
                           />
                         </FormControl>
-                        {form.watch(`settings.${index}.is_enabled`) && (
+                      </div>
+                      {form.watch(`settings.${index}.is_enabled`) && (
+                        <div className="pt-4">
                           <Controller
                             control={form.control}
                             name={`settings.${index}.recipients`}
@@ -202,8 +204,8 @@ export const NotificationsTab = () => {
                               />
                             )}
                           />
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </FormItem>
                   )}
                 />

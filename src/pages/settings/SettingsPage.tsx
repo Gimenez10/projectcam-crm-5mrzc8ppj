@@ -4,6 +4,7 @@ import { UsersTab } from './UsersTab'
 import { RolesTab } from './RolesTab'
 import { AuditLogTab } from './AuditLogTab'
 import { NotificationsTab } from './NotificationsTab'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
 export default function SettingsPage() {
   return (
@@ -16,13 +17,16 @@ export default function SettingsPage() {
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="profile">Perfil</TabsTrigger>
-          <TabsTrigger value="users">Usuários</TabsTrigger>
-          <TabsTrigger value="roles">Funções</TabsTrigger>
-          <TabsTrigger value="notifications">Notificações</TabsTrigger>
-          <TabsTrigger value="audit">Log de Auditoria</TabsTrigger>
-        </TabsList>
+        <ScrollArea className="w-full whitespace-nowrap">
+          <TabsList className="grid w-full grid-cols-5 min-w-[600px]">
+            <TabsTrigger value="profile">Perfil</TabsTrigger>
+            <TabsTrigger value="users">Usuários</TabsTrigger>
+            <TabsTrigger value="roles">Funções</TabsTrigger>
+            <TabsTrigger value="notifications">Notificações</TabsTrigger>
+            <TabsTrigger value="audit">Log de Auditoria</TabsTrigger>
+          </TabsList>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
         <TabsContent value="profile" className="mt-6">
           <ProfileTab />
         </TabsContent>

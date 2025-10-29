@@ -105,73 +105,75 @@ export default function AprovacoesPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nº</TableHead>
-              <TableHead>Cliente</TableHead>
-              <TableHead>Vendedor</TableHead>
-              <TableHead className="text-right">Valor</TableHead>
-              <TableHead>Data</TableHead>
-              <TableHead className="text-center">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              Array.from({ length: 3 }).map((_, i) => renderSkeleton())
-            ) : orders.length > 0 ? (
-              orders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-medium">
-                    #{order.order_number}
-                  </TableCell>
-                  <TableCell>{order.customer?.name}</TableCell>
-                  <TableCell>{order.salesperson?.full_name}</TableCell>
-                  <TableCell className="text-right">
-                    {new Intl.NumberFormat('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    }).format(order.total_value)}
-                  </TableCell>
-                  <TableCell>
-                    {format(new Date(order.created_at), 'dd/MM/yyyy', {
-                      locale: ptBR,
-                    })}
-                  </TableCell>
-                  <TableCell className="text-center space-x-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-green-500 hover:text-green-600"
-                      onClick={() => handleApproval(order.id, 'Aprovado')}
-                    >
-                      <CheckCircle className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="text-red-500 hover:text-red-600"
-                      onClick={() => handleApproval(order.id, 'Rejeitado')}
-                    >
-                      <XCircle className="h-4 w-4" />
-                    </Button>
-                    <Button asChild size="sm" variant="link">
-                      <Link to={`/ordens-de-servico/editar/${order.id}`}>
-                        Detalhes
-                      </Link>
-                    </Button>
+        <div className="relative w-full overflow-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nº</TableHead>
+                <TableHead>Cliente</TableHead>
+                <TableHead>Vendedor</TableHead>
+                <TableHead className="text-right">Valor</TableHead>
+                <TableHead>Data</TableHead>
+                <TableHead className="text-center">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, i) => renderSkeleton())
+              ) : orders.length > 0 ? (
+                orders.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-medium">
+                      #{order.order_number}
+                    </TableCell>
+                    <TableCell>{order.customer?.name}</TableCell>
+                    <TableCell>{order.salesperson?.full_name}</TableCell>
+                    <TableCell className="text-right">
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      }).format(order.total_value)}
+                    </TableCell>
+                    <TableCell>
+                      {format(new Date(order.created_at), 'dd/MM/yyyy', {
+                        locale: ptBR,
+                      })}
+                    </TableCell>
+                    <TableCell className="text-center space-x-2">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-green-500 hover:text-green-600"
+                        onClick={() => handleApproval(order.id, 'Aprovado')}
+                      >
+                        <CheckCircle className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-red-500 hover:text-red-600"
+                        onClick={() => handleApproval(order.id, 'Rejeitado')}
+                      >
+                        <XCircle className="h-4 w-4" />
+                      </Button>
+                      <Button asChild size="sm" variant="link">
+                        <Link to={`/ordens-de-servico/editar/${order.id}`}>
+                          Detalhes
+                        </Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    Nenhuma ordem de serviço pendente de aprovação.
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  Nenhuma ordem de serviço pendente de aprovação.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   )

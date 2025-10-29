@@ -172,16 +172,17 @@ const Index = () => {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end sm:self-center">
           <Button variant="outline" onClick={() => setIsSheetOpen(true)}>
             <Layout className="mr-2 h-4 w-4" />
-            Personalizar Dashboard
+            <span className="sm:hidden">Editar</span>
+            <span className="hidden sm:inline">Personalizar Dashboard</span>
           </Button>
         </div>
       </div>
 
       {isWidgetVisible('kpiCards') && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {isLoading
             ? Array.from({ length: 4 }).map((_, index) => (
                 <Skeleton key={index} className="h-[126px] w-full" />
@@ -190,7 +191,7 @@ const Index = () => {
         </div>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+      <div className="grid grid-cols-1 lg:grid-cols-7 gap-4">
         {isWidgetVisible('vendasMensais') && (
           <div className="lg:col-span-4">
             {isLoading ? (
@@ -211,7 +212,7 @@ const Index = () => {
         )}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {isWidgetVisible('topClientes') && (
           <div className="lg:col-span-2">
             {isLoading ? (

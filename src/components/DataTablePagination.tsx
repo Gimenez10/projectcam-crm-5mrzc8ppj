@@ -32,13 +32,15 @@ export function DataTablePagination({
   const totalPages = Math.ceil(total / perPage)
 
   return (
-    <div className="flex items-center justify-between px-2">
-      <div className="flex-1 text-sm text-muted-foreground">
+    <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-4 sm:gap-8 w-full">
+      <div className="text-sm text-muted-foreground flex-shrink-0">
         {total} item(s) no total.
       </div>
-      <div className="flex items-center space-x-6 lg:space-x-8">
-        <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Itens por página</p>
+      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 lg:gap-8 w-full sm:w-auto justify-center">
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-medium whitespace-nowrap">
+            Itens por página
+          </p>
           <Select
             value={`${perPage}`}
             onValueChange={(value) => onPerPageChange(Number(value))}
@@ -55,10 +57,10 @@ export function DataTablePagination({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+        <div className="flex w-[120px] items-center justify-center text-sm font-medium whitespace-nowrap">
           Página {page} de {totalPages}
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"

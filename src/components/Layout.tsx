@@ -9,10 +9,10 @@ export default function Layout() {
       <Sidebar />
       <div className="flex flex-col">
         <Header />
-        <MobileNav />
         <main className="flex-1 bg-background p-4 md:p-6 lg:p-8 print:p-0">
           <Outlet />
         </main>
+        <MobileNav />
       </div>
     </div>
   )

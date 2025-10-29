@@ -62,46 +62,48 @@ export const AuditLogTab = () => {
       </CardHeader>
       <CardContent>
         <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Ator</TableHead>
-                <TableHead>Ação</TableHead>
-                <TableHead>Alvo</TableHead>
-                <TableHead>Data e Hora</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => renderSkeleton())
-              ) : logs.length === 0 ? (
+          <div className="relative w-full overflow-auto">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={4} className="h-24 text-center">
-                    Nenhum registro de auditoria encontrado.
-                  </TableCell>
+                  <TableHead>Ator</TableHead>
+                  <TableHead>Ação</TableHead>
+                  <TableHead>Alvo</TableHead>
+                  <TableHead>Data e Hora</TableHead>
                 </TableRow>
-              ) : (
-                logs.map((log) => (
-                  <TableRow key={log.id}>
-                    <TableCell className="font-medium">
-                      {log.actor_name}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{log.action}</Badge>
-                    </TableCell>
-                    <TableCell>{log.target_user_name || 'N/A'}</TableCell>
-                    <TableCell>
-                      {format(
-                        new Date(log.created_at),
-                        "dd/MM/yyyy 'às' HH:mm",
-                        { locale: ptBR },
-                      )}
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => renderSkeleton())
+                ) : logs.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="h-24 text-center">
+                      Nenhum registro de auditoria encontrado.
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  logs.map((log) => (
+                    <TableRow key={log.id}>
+                      <TableCell className="font-medium">
+                        {log.actor_name}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{log.action}</Badge>
+                      </TableCell>
+                      <TableCell>{log.target_user_name || 'N/A'}</TableCell>
+                      <TableCell>
+                        {format(
+                          new Date(log.created_at),
+                          "dd/MM/yyyy 'às' HH:mm",
+                          { locale: ptBR },
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </CardContent>
     </Card>

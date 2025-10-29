@@ -82,7 +82,7 @@ export default function NovaOrdemServicoPage() {
       <PrintHeader />
       <h1 className="text-h1 print:hidden">Nova Ordem de Serviço</h1>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 flex flex-col gap-6">
           <Card>
             <CardHeader>
@@ -103,7 +103,7 @@ export default function NovaOrdemServicoPage() {
                   emptyPlaceholder="Nenhum cliente encontrado."
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="customer-cpf">CPF/CNPJ</Label>
                   <Input
@@ -127,7 +127,7 @@ export default function NovaOrdemServicoPage() {
 
           <Card>
             <CardHeader>
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                 <div>
                   <CardTitle className="text-h3">
                     Itens da Ordem de Serviço
@@ -137,53 +137,63 @@ export default function NovaOrdemServicoPage() {
                     {format(creationDate, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
                   </CardDescription>
                 </div>
-                <div className="flex justify-end gap-2 print:hidden">
+                <div className="flex justify-end gap-2 print:hidden self-end sm:self-auto">
                   <Button variant="outline">
-                    <Upload className="mr-2 h-4 w-4" /> Upload via OCR
+                    <Upload className="mr-2 h-4 w-4" /> OCR
                   </Button>
                   <Button>
-                    <PlusCircle className="mr-2 h-4 w-4" /> Adicionar Item
+                    <PlusCircle className="mr-2 h-4 w-4" /> Adicionar
                   </Button>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-1/4">Descrição</TableHead>
-                    <TableHead>Qtd.</TableHead>
-                    <TableHead>Preço Unit.</TableHead>
-                    <TableHead>Desc. (%)</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
-                    <TableHead className="print:hidden">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      <Input placeholder="Descrição do item" />
-                    </TableCell>
-                    <TableCell>
-                      <Input type="number" defaultValue="1" className="w-16" />
-                    </TableCell>
-                    <TableCell>
-                      <Input placeholder="R$ 0,00" className="w-24" />
-                    </TableCell>
-                    <TableCell>
-                      <Input type="number" defaultValue="0" className="w-16" />
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      R$ 0,00
-                    </TableCell>
-                    <TableCell className="print:hidden">
-                      <Button variant="ghost" size="icon">
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              <div className="relative w-full overflow-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-1/3">Descrição</TableHead>
+                      <TableHead>Qtd.</TableHead>
+                      <TableHead>Preço Unit.</TableHead>
+                      <TableHead>Desc. (%)</TableHead>
+                      <TableHead className="text-right">Total</TableHead>
+                      <TableHead className="print:hidden">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>
+                        <Input placeholder="Descrição do item" />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          defaultValue="1"
+                          className="w-16"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input placeholder="R$ 0,00" className="w-24" />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          defaultValue="0"
+                          className="w-16"
+                        />
+                      </TableCell>
+                      <TableCell className="text-right font-medium">
+                        R$ 0,00
+                      </TableCell>
+                      <TableCell className="print:hidden">
+                        <Button variant="ghost" size="icon">
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -245,7 +255,7 @@ export default function NovaOrdemServicoPage() {
         </div>
       </div>
 
-      <div className="sticky bottom-0 bg-background/95 py-4 border-t flex justify-end gap-2 print:hidden">
+      <div className="sticky bottom-0 bg-background/95 py-4 border-t flex flex-col sm:flex-row justify-end gap-2 print:hidden">
         <Button variant="outline" asChild>
           <Link to="/ordens-de-servico">Cancelar</Link>
         </Button>

@@ -81,7 +81,7 @@ export default function EditarOrdemServicoPage() {
         Editar Ordem de Serviço #{order?.order_number}
       </h1>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 flex flex-col gap-6">
           <Card>
             <CardHeader>
@@ -113,36 +113,38 @@ export default function EditarOrdemServicoPage() {
               )}
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Descrição</TableHead>
-                    <TableHead>Qtd.</TableHead>
-                    <TableHead>Preço Unit.</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {order?.items?.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell>{item.description}</TableCell>
-                      <TableCell>{item.quantity}</TableCell>
-                      <TableCell>
-                        {new Intl.NumberFormat('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        }).format(item.unit_price)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {new Intl.NumberFormat('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        }).format(item.quantity * item.unit_price)}
-                      </TableCell>
+              <div className="relative w-full overflow-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Descrição</TableHead>
+                      <TableHead>Qtd.</TableHead>
+                      <TableHead>Preço Unit.</TableHead>
+                      <TableHead className="text-right">Total</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {order?.items?.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell>{item.description}</TableCell>
+                        <TableCell>{item.quantity}</TableCell>
+                        <TableCell>
+                          {new Intl.NumberFormat('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          }).format(item.unit_price)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {new Intl.NumberFormat('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          }).format(item.quantity * item.unit_price)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -170,11 +172,11 @@ export default function EditarOrdemServicoPage() {
         </div>
       </div>
 
-      <div className="sticky bottom-0 bg-background/95 py-4 border-t flex justify-end gap-2 print:hidden">
-        <Button variant="outline" asChild>
+      <div className="sticky bottom-0 bg-background/95 py-4 border-t flex flex-col sm:flex-row justify-end gap-2 print:hidden">
+        <Button variant="outline" asChild className="w-full sm:w-auto">
           <Link to="/ordens-de-servico">Cancelar</Link>
         </Button>
-        <Button>Salvar Alterações</Button>
+        <Button className="w-full sm:w-auto">Salvar Alterações</Button>
       </div>
     </div>
   )
