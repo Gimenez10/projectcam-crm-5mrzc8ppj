@@ -36,6 +36,7 @@ FOR EACH ROW
 EXECUTE PROCEDURE public.trigger_set_timestamp();
 
 -- RLS Policies for customer_passwords
+DROP POLICY IF EXISTS "Users with customer read permission can view passwords" ON public.customer_passwords;
 CREATE POLICY "Users with customer read permission can view passwords"
 ON public.customer_passwords FOR SELECT
 USING (
@@ -44,6 +45,7 @@ USING (
   )
 );
 
+DROP POLICY IF EXISTS "Users with customer update permission can manage passwords" ON public.customer_passwords;
 CREATE POLICY "Users with customer update permission can manage passwords"
 ON public.customer_passwords FOR ALL
 USING (
@@ -53,6 +55,7 @@ USING (
 );
 
 -- RLS Policies for customer_operating_hours
+DROP POLICY IF EXISTS "Users with customer read permission can view operating hours" ON public.customer_operating_hours;
 CREATE POLICY "Users with customer read permission can view operating hours"
 ON public.customer_operating_hours FOR SELECT
 USING (
@@ -61,6 +64,7 @@ USING (
   )
 );
 
+DROP POLICY IF EXISTS "Users with customer update permission can manage operating hours" ON public.customer_operating_hours;
 CREATE POLICY "Users with customer update permission can manage operating hours"
 ON public.customer_operating_hours FOR ALL
 USING (
@@ -68,4 +72,3 @@ USING (
     SELECT 1 FROM customers c WHERE c.id = customer_id AND public.has_permission('customers:update'::text)
   )
 );
-

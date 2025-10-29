@@ -120,12 +120,12 @@ CREATE OR REPLACE FUNCTION public.get_user_role(user_id UUID)
 RETURNS TEXT
 LANGUAGE sql
 SECURITY DEFINER SET search_path = public
-AS $
+AS $$
   SELECT r.name
   FROM public.profiles p
   JOIN public.roles r ON p.role_id = r.id
   WHERE p.id = user_id;
-$;
+$$;
 
 -- Step 11: Re-grant execute on the function to authenticated role
 GRANT EXECUTE ON FUNCTION public.get_user_role(user_id UUID) TO authenticated;
@@ -135,7 +135,7 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public
-AS $
+AS $$
 DECLARE
   default_role_id UUID;
 BEGIN
@@ -151,7 +151,7 @@ BEGIN
   );
   RETURN NEW;
 END;
-$;
+$$;
 
 -- Step 13: Enable RLS for new tables
 ALTER TABLE public.roles ENABLE ROW LEVEL SECURITY;
@@ -197,4 +197,3 @@ CREATE POLICY "Admins can manage all service order items." ON public.service_ord
 
 CREATE POLICY "Admins can view all audit logs." ON public.audit_logs
   FOR SELECT USING (public.get_user_role(auth.uid()) = 'admin');
-

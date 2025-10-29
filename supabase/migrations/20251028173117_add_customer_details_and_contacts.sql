@@ -35,6 +35,7 @@ COMMENT ON TABLE public.customer_emergency_contacts IS 'Stores emergency contact
 ALTER TABLE public.customer_emergency_contacts ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for local contacts
+DROP POLICY IF EXISTS "Users with customer read permission can view local contacts" ON public.customer_local_contacts;
 CREATE POLICY "Users with customer read permission can view local contacts"
 ON public.customer_local_contacts FOR SELECT
 USING (
@@ -43,6 +44,7 @@ USING (
   )
 );
 
+DROP POLICY IF EXISTS "Users with customer update permission can manage local contacts" ON public.customer_local_contacts;
 CREATE POLICY "Users with customer update permission can manage local contacts"
 ON public.customer_local_contacts FOR ALL
 USING (
@@ -52,6 +54,7 @@ USING (
 );
 
 -- RLS Policies for emergency contacts
+DROP POLICY IF EXISTS "Users with customer read permission can view emergency contacts" ON public.customer_emergency_contacts;
 CREATE POLICY "Users with customer read permission can view emergency contacts"
 ON public.customer_emergency_contacts FOR SELECT
 USING (
@@ -60,6 +63,7 @@ USING (
   )
 );
 
+DROP POLICY IF EXISTS "Users with customer update permission can manage emergency contacts" ON public.customer_emergency_contacts;
 CREATE POLICY "Users with customer update permission can manage emergency contacts"
 ON public.customer_emergency_contacts FOR ALL
 USING (

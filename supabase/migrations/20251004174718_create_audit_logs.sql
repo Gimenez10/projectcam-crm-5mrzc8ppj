@@ -1,5 +1,5 @@
 -- Create audit_logs table
-CREATE TABLE public.audit_logs (
+CREATE TABLE IF NOT EXISTS public.audit_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     actor_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     actor_name TEXT, -- Denormalized for easier display

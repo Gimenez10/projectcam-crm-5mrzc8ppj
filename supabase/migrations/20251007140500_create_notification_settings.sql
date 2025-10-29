@@ -38,16 +38,15 @@ VALUES
 
 -- Function to automatically update updated_at timestamp
 CREATE OR REPLACE FUNCTION public.trigger_set_timestamp()
-RETURNS TRIGGER AS $
+RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 -- Trigger for notification_settings
 CREATE TRIGGER set_timestamp
 BEFORE UPDATE ON public.notification_settings
 FOR EACH ROW
 EXECUTE PROCEDURE public.trigger_set_timestamp();
-

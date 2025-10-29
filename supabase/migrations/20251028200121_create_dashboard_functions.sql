@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION get_dashboard_kpi_data()
 RETURNS json
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $
+AS $$
 DECLARE
     created_count INT;
     total_sales NUMERIC;
@@ -36,14 +36,14 @@ BEGIN
         'conversionRate', conversion_rate
     );
 END;
-$;
+$$;
 
 -- Function for Status Distribution Pie Chart
 CREATE OR REPLACE FUNCTION get_dashboard_status_distribution()
 RETURNS json
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $
+AS $$
 BEGIN
     RETURN (
         SELECT json_agg(json_build_object('name', status, 'value', count))
@@ -54,14 +54,14 @@ BEGIN
         ) AS status_counts
     );
 END;
-$;
+$$;
 
 -- Function for Monthly Sales Bar Chart
 CREATE OR REPLACE FUNCTION get_dashboard_monthly_sales()
 RETURNS json
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $
+AS $$
 DECLARE
     twelve_months_ago DATE;
 BEGIN
@@ -82,14 +82,14 @@ BEGIN
         ) t
     );
 END;
-$;
+$$;
 
 -- Function for Top Customers Bar Chart
 CREATE OR REPLACE FUNCTION get_dashboard_top_customers()
 RETURNS json
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $
+AS $$
 BEGIN
     RETURN (
         SELECT json_agg(json_build_object('name', c.name, 'value', total_value))
@@ -106,14 +106,14 @@ BEGIN
         JOIN public.customers c ON c.id = top_customers.customer_id
     );
 END;
-$;
+$$;
 
 -- Function for Sales by Salesperson Bar Chart
 CREATE OR REPLACE FUNCTION get_dashboard_sales_by_salesperson()
 RETURNS json
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $
+AS $$
 BEGIN
     RETURN (
         SELECT json_agg(json_build_object('name', p.full_name, 'value', order_count))
@@ -128,14 +128,14 @@ BEGIN
         JOIN public.profiles p ON p.id = sales_counts.created_by
     );
 END;
-$;
+$$;
 
 -- Function for Recent Activities
 CREATE OR REPLACE FUNCTION get_dashboard_recent_activities()
 RETURNS json
 LANGUAGE plpgsql
 SECURITY DEFINER
-AS $
+AS $$
 BEGIN
     RETURN (
         SELECT json_agg(t)
@@ -156,5 +156,4 @@ BEGIN
         ) t
     );
 END;
-$;
-
+$$;
