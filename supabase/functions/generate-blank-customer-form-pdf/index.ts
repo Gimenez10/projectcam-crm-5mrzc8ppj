@@ -161,12 +161,8 @@ function getBlankHtmlTemplate(): string {
           ) + renderTextarea('Observações da Propriedade'),
         )}
 
-        ${renderTable(['Nome', 'Telefone', 'Função'], 3, 'Contatos Locais')}
-        ${renderTable(
-          ['Nome', 'Telefone', 'Parentesco'],
-          3,
-          'Contatos de Emergência',
-        )}
+        ${renderTable(['Nome', 'Telefone', 'Função / Parentesco'], 3, 'Contatos Locais e de Emergência')}
+        
         ${renderTable(
           ['Usuário / Descrição', 'Senha / Resposta'],
           2,
@@ -233,11 +229,11 @@ Deno.serve(async (req) => {
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     })
     const page = await browser.newPage()
-    await page.setContent(html, { waitUntil: 'domcontentloaded' })
+    await page.setContent(html, { waitUntil: 'networkidle0' })
     const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true })
     await browser.close()
 
-    const pdfPath = `blank-forms/customer-form-${new Date().toISOString()}.pdf`
+    const pdfPath = `blank-forms/customer-form-${Date.now()}.pdf`
     const { error: uploadError } = await supabaseAdmin.storage
       .from('customer-pdfs')
       .upload(pdfPath, pdfBuffer, {
