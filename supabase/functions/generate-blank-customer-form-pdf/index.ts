@@ -168,9 +168,9 @@ function getBlankHtmlTemplate(): string {
           'Contatos de Emergência',
         )}
         ${renderTable(
-          ['Usuário', 'Pergunta', 'Resposta'],
-          3,
-          'Senhas/Perguntas de Segurança',
+          ['Usuário / Descrição', 'Senha / Resposta'],
+          2,
+          'Senhas/Contra-Senhas',
         )}
 
         ${renderOperatingHoursTable()}
