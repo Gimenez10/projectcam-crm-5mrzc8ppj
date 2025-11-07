@@ -41,6 +41,18 @@ const formSchema = z.object({
     }),
 })
 
+const salesPermissions = [
+  'service_orders:create',
+  'service_orders:read:own',
+  'service_orders:update:own',
+  'customers:create',
+  'customers:read',
+  'customers:update',
+  'products:create',
+  'products:read',
+  'products:update',
+]
+
 type RoleDialogProps = {
   children: ReactNode
   role?: Role
@@ -108,6 +120,18 @@ export const RoleDialog = ({
     }
   }
 
+  const handleSelectAll = () => {
+    const allPermissionIds = permissions.map((p) => p.id)
+    form.setValue('permissionIds', allPermissionIds, { shouldValidate: true })
+  }
+
+  const handleSelectSales = () => {
+    const salesPermissionIds = permissions
+      .filter((p) => salesPermissions.includes(p.name))
+      .map((p) => p.id)
+    form.setValue('permissionIds', salesPermissionIds, { shouldValidate: true })
+  }
+
   const title = role ? 'Editar Função' : 'Adicionar Nova Função'
   const description = role
     ? 'Edite os detalhes e permissões desta função.'
@@ -162,8 +186,30 @@ export const RoleDialog = ({
               name="permissionIds"
               render={() => (
                 <FormItem>
-                  <FormLabel>Permissões</FormLabel>
-                  <ScrollArea className="h-64 rounded-md border p-4">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                    <FormLabel>Permissões</FormLabel>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSelectAll}
+                        disabled={role?.is_predefined}
+                      >
+                        Selecionar Todas
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSelectSales}
+                        disabled={role?.is_predefined}
+                      >
+                        Selecionar Funções de Vendas
+                      </Button>
+                    </div>
+                  </div>
+                  <ScrollArea className="h-64 rounded-md border p-4 mt-2">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {permissions.map((permission) => (
                         <FormField
