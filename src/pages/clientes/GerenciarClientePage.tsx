@@ -37,6 +37,7 @@ import { Switch } from '@/components/ui/switch'
 import { EditPasswordDialog } from '@/components/clientes/EditPasswordDialog'
 import { CustomerActions } from '@/components/clientes/CustomerActions'
 import { CustomerPrintLayout } from '@/components/clientes/CustomerPrintLayout'
+import { useSync } from '@/context/SyncContext'
 
 const localContactSchema = z.object({
   name: z.string().optional(),
@@ -138,6 +139,7 @@ export default function GerenciarClientePage() {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { user } = useAuth()
+  const { isOffline, addToQueue } = useSync()
   const [isLoading, setIsLoading] = useState(!!id)
   const [isSaving, setIsSaving] = useState(false)
   const [customerData, setCustomerData] = useState<Customer | null>(null)
@@ -203,6 +205,20 @@ export default function GerenciarClientePage() {
   const onSubmit = async (values: z.infer<typeof customerFormSchema>) => {
     if (!user) return
     setIsSaving(true)
+
+    if (isOffline) {
+      const offlineCustomer: Customer = {
+        id: id || crypto.randomUUID(),
+        created_at: new Date().toISOString(),
+        created_by: user.id,
+        ...values,
+      } as Customer
+      await addToQueue(offlineCustomer)
+      setIsSaving(false)
+      navigate('/clientes')
+      return
+    }
+
     const result = id
       ? await updateCustomer(id, values as Partial<Customer>)
       : await createCustomer(values as Customer, user.id)

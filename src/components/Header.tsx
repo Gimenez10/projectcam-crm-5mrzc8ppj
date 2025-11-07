@@ -14,6 +14,7 @@ import { ThemeToggle } from './ThemeToggle'
 import { useAuth } from '@/hooks/use-auth'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { getInitials } from '@/lib/utils'
+import { SyncStatusIndicator } from './SyncStatusIndicator'
 
 export const Header = () => {
   const { profile, signOut } = useAuth()
@@ -40,6 +41,7 @@ export const Header = () => {
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">
+        <SyncStatusIndicator />
         <div className="relative hidden md:block">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input

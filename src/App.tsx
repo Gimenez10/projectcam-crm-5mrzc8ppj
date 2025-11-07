@@ -20,61 +20,64 @@ import ProdutosListPage from './pages/produtos/ProdutosListPage'
 import GerenciarProdutoPage from './pages/produtos/GerenciarProdutoPage'
 import ClientesListPage from './pages/clientes/ClientesListPage'
 import GerenciarClientePage from './pages/clientes/GerenciarClientePage'
+import { SyncProvider } from './context/SyncContext'
 
 const App = () => (
   <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
     <BrowserRouter>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route element={<AuthLayout />}>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
-            </Route>
-
-            <Route element={<ProtectedRoute />}>
-              <Route element={<Layout />}>
-                <Route path="/" element={<Index />} />
-                <Route
-                  path="/ordens-de-servico"
-                  element={<OrdensServicoListPage />}
-                />
-                <Route
-                  path="/ordens-de-servico/nova"
-                  element={<NovaOrdemServicoPage />}
-                />
-                <Route
-                  path="/ordens-de-servico/editar/:id"
-                  element={<EditarOrdemServicoPage />}
-                />
-                <Route path="/produtos" element={<ProdutosListPage />} />
-                <Route
-                  path="/produtos/novo"
-                  element={<GerenciarProdutoPage />}
-                />
-                <Route
-                  path="/produtos/editar/:id"
-                  element={<GerenciarProdutoPage />}
-                />
-                <Route path="/clientes" element={<ClientesListPage />} />
-                <Route
-                  path="/clientes/novo"
-                  element={<GerenciarClientePage />}
-                />
-                <Route
-                  path="/clientes/editar/:id"
-                  element={<GerenciarClientePage />}
-                />
-                <Route path="/aprovacoes" element={<AprovacoesPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
+        <SyncProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route element={<AuthLayout />}>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
               </Route>
-            </Route>
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </TooltipProvider>
+              <Route element={<ProtectedRoute />}>
+                <Route element={<Layout />}>
+                  <Route path="/" element={<Index />} />
+                  <Route
+                    path="/ordens-de-servico"
+                    element={<OrdensServicoListPage />}
+                  />
+                  <Route
+                    path="/ordens-de-servico/nova"
+                    element={<NovaOrdemServicoPage />}
+                  />
+                  <Route
+                    path="/ordens-de-servico/editar/:id"
+                    element={<EditarOrdemServicoPage />}
+                  />
+                  <Route path="/produtos" element={<ProdutosListPage />} />
+                  <Route
+                    path="/produtos/novo"
+                    element={<GerenciarProdutoPage />}
+                  />
+                  <Route
+                    path="/produtos/editar/:id"
+                    element={<GerenciarProdutoPage />}
+                  />
+                  <Route path="/clientes" element={<ClientesListPage />} />
+                  <Route
+                    path="/clientes/novo"
+                    element={<GerenciarClientePage />}
+                  />
+                  <Route
+                    path="/clientes/editar/:id"
+                    element={<GerenciarClientePage />}
+                  />
+                  <Route path="/aprovacoes" element={<AprovacoesPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                </Route>
+              </Route>
+
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </TooltipProvider>
+        </SyncProvider>
       </AuthProvider>
     </BrowserRouter>
   </ThemeProvider>
