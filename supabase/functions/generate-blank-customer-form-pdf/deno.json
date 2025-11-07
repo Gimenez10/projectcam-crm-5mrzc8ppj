@@ -1,6 +1,7 @@
 {
   "imports": {
     "puppeteer": "https://deno.land/x/puppeteer@16.2.0/mod.ts",
-    "https://esm.sh/@supabase/supabase-js@2": "https://esm.sh/@supabase/supabase-js@2"
+    "https://esm.sh/@supabase/supabase-js@2": "https://esm.sh/@supabase/supabase-js@2",
+    "../_shared/": "../_shared/"
   }
 }

@@ -161,12 +161,14 @@ function getBlankHtmlTemplate(): string {
           ) + renderTextarea('Observações da Propriedade'),
         )}
 
-        ${renderTable(['Nome', 'Telefone', 'Função / Parentesco'], 3, 'Local e Emergência')}
+        ${renderTable(['Nome', 'Telefone', 'Função'], 3, 'Contatos Locais')}
+        
+        ${renderTable(['Nome', 'Telefone', 'Parentesco'], 3, 'Contatos de Emergência')}
         
         ${renderTable(
-          ['Usuário / Descrição', 'Senha / Resposta'],
-          2,
-          'Senha e Contra Senha',
+          ['Usuário / Descrição', 'Pergunta', 'Resposta'],
+          3,
+          'Senhas e Contra-Senhas',
         )}
 
         ${renderOperatingHoursTable()}
