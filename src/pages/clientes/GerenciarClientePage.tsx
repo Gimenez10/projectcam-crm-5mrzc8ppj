@@ -350,12 +350,29 @@ export default function GerenciarClientePage() {
     if (!user) return
     setIsSaving(true)
 
+    const processedValues = {
+      ...values,
+      operating_hours: values.operating_hours?.map((hour) => ({
+        ...hour,
+        morning_open: hour.morning_open || null,
+        morning_close: hour.morning_close || null,
+        afternoon_open: hour.afternoon_open || null,
+        afternoon_close: hour.afternoon_close || null,
+      })),
+      system_time_entry: values.system_time_entry || null,
+      system_time_exit: values.system_time_exit || null,
+      system_time_test: values.system_time_test || null,
+      system_time_interval: values.system_time_interval || null,
+      system_time_auto_arm: values.system_time_auto_arm || null,
+      system_time_siren: values.system_time_siren || null,
+    }
+
     if (isOffline) {
       const offlineCustomer: Customer = {
         id: id || crypto.randomUUID(),
         created_at: new Date().toISOString(),
         created_by: user.id,
-        ...values,
+        ...processedValues,
       } as Customer
       await addToQueue(offlineCustomer)
       setIsSaving(false)
@@ -364,8 +381,8 @@ export default function GerenciarClientePage() {
     }
 
     const result = id
-      ? await updateCustomer(id, values as Partial<Customer>)
-      : await createCustomer(values as Customer, user.id)
+      ? await updateCustomer(id, processedValues as Partial<Customer>)
+      : await createCustomer(processedValues as Customer, user.id)
     setIsSaving(false)
 
     if (result.error) {
