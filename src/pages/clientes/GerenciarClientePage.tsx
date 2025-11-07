@@ -39,16 +39,42 @@ import { CustomerActions } from '@/components/clientes/CustomerActions'
 import { CustomerPrintLayout } from '@/components/clientes/CustomerPrintLayout'
 import { useSync } from '@/context/SyncContext'
 
+const isValidCpfCnpj = (value: string = '') => {
+  const cleaned = value.replace(/[^\d]/g, '')
+  if (cleaned.length !== 11 && cleaned.length !== 14) {
+    return false
+  }
+  return /^\d+$/.test(cleaned)
+}
+
+const isValidPhone = (value: string = '') => {
+  const cleaned = value.replace(/[^\d]/g, '')
+  return /^\d{10,11}$/.test(cleaned)
+}
+
+const isValidZipCode = (value: string = '') => {
+  const cleaned = value.replace(/[^\d]/g, '')
+  return /^\d{8}$/.test(cleaned)
+}
+
+const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/
+
 const localContactSchema = z.object({
-  name: z.string().optional(),
-  phone: z.string().optional(),
+  name: z.string().min(1, { message: 'Nome é obrigatório.' }),
+  phone: z
+    .string()
+    .min(1, { message: 'Telefone é obrigatório.' })
+    .refine(isValidPhone, { message: 'Telefone inválido.' }),
   role: z.string().optional(),
 })
 
 const emergencyContactSchema = z.object({
-  name: z.string().optional(),
+  name: z.string().min(1, { message: 'Nome é obrigatório.' }),
   relationship: z.string().optional(),
-  phone: z.string().optional(),
+  phone: z
+    .string()
+    .min(1, { message: 'Telefone é obrigatório.' })
+    .refine(isValidPhone, { message: 'Telefone inválido.' }),
 })
 
 const passwordSchema = z.object({
@@ -59,34 +85,104 @@ const passwordSchema = z.object({
   username: z.string().optional(),
 })
 
-const operatingHoursSchema = z.object({
-  day_of_week: z.string(),
-  is_active: z.boolean(),
-  morning_open: z.string().optional().nullable(),
-  morning_close: z.string().optional().nullable(),
-  afternoon_open: z.string().optional().nullable(),
-  afternoon_close: z.string().optional().nullable(),
-})
+const operatingHoursSchema = z
+  .object({
+    day_of_week: z.string(),
+    is_active: z.boolean(),
+    morning_open: z.string().optional().nullable(),
+    morning_close: z.string().optional().nullable(),
+    afternoon_open: z.string().optional().nullable(),
+    afternoon_close: z.string().optional().nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.is_active) {
+      const { morning_open, morning_close, afternoon_open, afternoon_close } =
+        data
+      if (morning_open && !timeRegex.test(morning_open)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Formato inválido',
+          path: ['morning_open'],
+        })
+      }
+      if (morning_close && !timeRegex.test(morning_close)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Formato inválido',
+          path: ['morning_close'],
+        })
+      }
+      if (afternoon_open && !timeRegex.test(afternoon_open)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Formato inválido',
+          path: ['afternoon_open'],
+        })
+      }
+      if (afternoon_close && !timeRegex.test(afternoon_close)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Formato inválido',
+          path: ['afternoon_close'],
+        })
+      }
+      if (
+        morning_open &&
+        morning_close &&
+        timeRegex.test(morning_open) &&
+        timeRegex.test(morning_close) &&
+        morning_open >= morning_close
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Deve ser anterior ao fechamento',
+          path: ['morning_open'],
+        })
+      }
+      if (
+        afternoon_open &&
+        afternoon_close &&
+        timeRegex.test(afternoon_open) &&
+        timeRegex.test(afternoon_close) &&
+        afternoon_open >= afternoon_close
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Deve ser anterior ao fechamento',
+          path: ['afternoon_open'],
+        })
+      }
+    }
+  })
 
 const customerFormSchema = z.object({
   created_at: z.string().optional(),
   trade_name: z.string().optional(),
-  name: z
-    .string()
-    .min(3, { message: 'A razão social deve ter pelo menos 3 caracteres.' }),
+  name: z.string().min(1, { message: 'Razão Social é obrigatória.' }),
   ie_rg: z.string().optional(),
   line_of_business: z.string().optional(),
-  cpf_cnpj: z.string().optional(),
+  cpf_cnpj: z
+    .string()
+    .min(1, { message: 'CPF/CNPJ é obrigatório.' })
+    .refine(isValidCpfCnpj, { message: 'CPF/CNPJ inválido.' }),
   email: z
     .string()
     .email({ message: 'Email inválido.' })
     .optional()
     .or(z.literal('')),
-  phone: z.string().optional(),
+  phone: z
+    .string()
+    .optional()
+    .refine((val) => !val || isValidPhone(val), {
+      message: 'Telefone inválido.',
+    }),
   address: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
-  zip_code: z.string().optional(),
+  zip_code: z
+    .string()
+    .optional()
+    .refine((val) => !val || isValidZipCode(val), { message: 'CEP inválido.' }),
   local_contacts: z.array(localContactSchema).max(3).optional(),
   emergency_contacts: z.array(emergencyContactSchema).max(3).optional(),
   property_observations: z.string().optional(),
@@ -474,6 +570,7 @@ export default function GerenciarClientePage() {
                           <FormControl>
                             <Input placeholder="Nome do contato" {...field} />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -486,6 +583,7 @@ export default function GerenciarClientePage() {
                           <FormControl>
                             <Input placeholder="Telefone" {...field} />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -498,6 +596,7 @@ export default function GerenciarClientePage() {
                           <FormControl>
                             <Input placeholder="Função" {...field} />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -552,6 +651,7 @@ export default function GerenciarClientePage() {
                           <FormControl>
                             <Input placeholder="Nome do contato" {...field} />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -567,6 +667,7 @@ export default function GerenciarClientePage() {
                               {...field}
                             />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -579,6 +680,7 @@ export default function GerenciarClientePage() {
                           <FormControl>
                             <Input placeholder="Telefone" {...field} />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -849,6 +951,7 @@ export default function GerenciarClientePage() {
                                 }
                               />
                             </FormControl>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
@@ -870,6 +973,7 @@ export default function GerenciarClientePage() {
                                 }
                               />
                             </FormControl>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
@@ -893,6 +997,7 @@ export default function GerenciarClientePage() {
                                 }
                               />
                             </FormControl>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
@@ -914,6 +1019,7 @@ export default function GerenciarClientePage() {
                                 }
                               />
                             </FormControl>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
