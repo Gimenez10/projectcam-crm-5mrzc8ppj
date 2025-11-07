@@ -32,12 +32,13 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Customer, DayOfWeek, CustomerPassword } from '@/types'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Pencil, PlusCircle, Trash2 } from 'lucide-react'
+import { Loader2, Pencil, PlusCircle, Trash2 } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import { EditPasswordDialog } from '@/components/clientes/EditPasswordDialog'
 import { CustomerActions } from '@/components/clientes/CustomerActions'
 import { CustomerPrintLayout } from '@/components/clientes/CustomerPrintLayout'
 import { useSync } from '@/context/SyncContext'
+import { useCep } from '@/hooks/use-cep'
 
 const isValidCpfCnpj = (value: string = '') => {
   const cleaned = value.replace(/[^\d]/g, '')
@@ -176,13 +177,13 @@ const customerFormSchema = z.object({
     .refine((val) => !val || isValidPhone(val), {
       message: 'Telefone inválido.',
     }),
-  address: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
   zip_code: z
     .string()
     .optional()
     .refine((val) => !val || isValidZipCode(val), { message: 'CEP inválido.' }),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
   local_contacts: z.array(localContactSchema).max(3).optional(),
   emergency_contacts: z.array(emergencyContactSchema).max(3).optional(),
   property_observations: z.string().optional(),
@@ -191,12 +192,12 @@ const customerFormSchema = z.object({
   property_animals: z.string().optional(),
   passwords: z.array(passwordSchema).optional(),
   operating_hours: z.array(operatingHoursSchema).optional(),
-  system_time_entry: z.string().optional(),
-  system_time_exit: z.string().optional(),
-  system_time_test: z.string().optional(),
-  system_time_interval: z.string().optional(),
-  system_time_auto_arm: z.string().optional(),
-  system_time_siren: z.string().optional(),
+  system_time_entry: z.string().optional().nullable(),
+  system_time_exit: z.string().optional().nullable(),
+  system_time_test: z.string().optional().nullable(),
+  system_time_interval: z.string().optional().nullable(),
+  system_time_auto_arm: z.string().optional().nullable(),
+  system_time_siren: z.string().optional().nullable(),
   equipment_central: z.string().optional(),
   equipment_version: z.string().optional(),
   equipment_model: z.string().optional(),
@@ -239,6 +240,7 @@ export default function GerenciarClientePage() {
   const [isLoading, setIsLoading] = useState(!!id)
   const [isSaving, setIsSaving] = useState(false)
   const [customerData, setCustomerData] = useState<Customer | null>(null)
+  const { fetchAddress, isLoading: isCepLoading, error: cepError } = useCep()
 
   const form = useForm<z.infer<typeof customerFormSchema>>({
     resolver: zodResolver(customerFormSchema),
@@ -297,6 +299,52 @@ export default function GerenciarClientePage() {
       fetchAndResetData()
     }
   }, [id, fetchAndResetData])
+
+  useEffect(() => {
+    if (cepError) {
+      toast({
+        title: 'Erro ao buscar CEP',
+        description: cepError,
+        variant: 'destructive',
+      })
+    }
+  }, [cepError, toast])
+
+  const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const cep = e.target.value
+    const address = await fetchAddress(cep)
+    if (address) {
+      form.setValue('address', address.street)
+      form.setValue('city', address.city)
+      form.setValue('state', address.state)
+      toast({ title: 'Endereço preenchido automaticamente!' })
+    }
+  }
+
+  const applyMondayToWeekdays = () => {
+    const mondayHours = form.getValues('operating_hours.0')
+    for (let i = 1; i <= 4; i++) {
+      // Tuesday to Friday
+      form.setValue(`operating_hours.${i}.is_active`, mondayHours.is_active)
+      form.setValue(
+        `operating_hours.${i}.morning_open`,
+        mondayHours.morning_open,
+      )
+      form.setValue(
+        `operating_hours.${i}.morning_close`,
+        mondayHours.morning_close,
+      )
+      form.setValue(
+        `operating_hours.${i}.afternoon_open`,
+        mondayHours.afternoon_open,
+      )
+      form.setValue(
+        `operating_hours.${i}.afternoon_close`,
+        mondayHours.afternoon_close,
+      )
+    }
+    toast({ title: 'Horários de Segunda aplicados para Terça a Sexta.' })
+  }
 
   const onSubmit = async (values: z.infer<typeof customerFormSchema>) => {
     if (!user) return
@@ -481,20 +529,44 @@ export default function GerenciarClientePage() {
                     )}
                   />
                 </div>
-                <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Endereço</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Rua, Número, Bairro" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                  <FormField
+                    control={form.control}
+                    name="zip_code"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-1">
+                        <FormLabel>CEP</FormLabel>
+                        <div className="flex items-center">
+                          <FormControl>
+                            <Input
+                              placeholder="00000-000"
+                              {...field}
+                              onBlur={handleCepBlur}
+                            />
+                          </FormControl>
+                          {isCepLoading && (
+                            <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                          )}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-3">
+                        <FormLabel>Endereço</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Rua, Número, Bairro" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
                     name="city"
@@ -516,19 +588,6 @@ export default function GerenciarClientePage() {
                         <FormLabel>Estado</FormLabel>
                         <FormControl>
                           <Input placeholder="SP" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="zip_code"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>CEP</FormLabel>
-                        <FormControl>
-                          <Input placeholder="00000-000" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -883,7 +942,17 @@ export default function GerenciarClientePage() {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-h3">Horários</CardTitle>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                  <CardTitle className="text-h3">Horários</CardTitle>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={applyMondayToWeekdays}
+                  >
+                    Manter o mesmo horário de segunda a sexta
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="hidden md:grid md:grid-cols-12 gap-4 items-center text-sm font-medium text-muted-foreground px-2">
@@ -1041,7 +1110,11 @@ export default function GerenciarClientePage() {
                     <FormItem>
                       <FormLabel>Entrada</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input
+                          type="time"
+                          {...field}
+                          value={field.value ?? ''}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -1053,7 +1126,11 @@ export default function GerenciarClientePage() {
                     <FormItem>
                       <FormLabel>Saída</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input
+                          type="time"
+                          {...field}
+                          value={field.value ?? ''}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -1065,7 +1142,11 @@ export default function GerenciarClientePage() {
                     <FormItem>
                       <FormLabel>Teste</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input
+                          type="time"
+                          {...field}
+                          value={field.value ?? ''}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -1077,7 +1158,11 @@ export default function GerenciarClientePage() {
                     <FormItem>
                       <FormLabel>Interv.</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input
+                          type="time"
+                          {...field}
+                          value={field.value ?? ''}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -1089,7 +1174,11 @@ export default function GerenciarClientePage() {
                     <FormItem>
                       <FormLabel>Auto Arme</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input
+                          type="time"
+                          {...field}
+                          value={field.value ?? ''}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -1101,7 +1190,11 @@ export default function GerenciarClientePage() {
                     <FormItem>
                       <FormLabel>Sirene</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input
+                          type="time"
+                          {...field}
+                          value={field.value ?? ''}
+                        />
                       </FormControl>
                     </FormItem>
                   )}

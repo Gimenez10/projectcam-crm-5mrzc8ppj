@@ -32,7 +32,7 @@ export const getServiceOrders = async ({
       total_value,
       created_at,
       customer:customers(id, name),
-      salesperson:profiles(id, full_name)
+      salesperson:profiles!service_orders_created_by_fkey(id, full_name)
     `,
     { count: 'exact' },
   )
@@ -86,7 +86,8 @@ export const getServiceOrderById = async (
       `
       *,
       customer:customers(*),
-      salesperson:profiles(*),
+      salesperson:profiles!service_orders_created_by_fkey(*),
+      approver:profiles!service_orders_approver_id_fkey(*),
       items:service_order_items(*)
     `,
     )
@@ -102,6 +103,7 @@ export const getServiceOrderById = async (
     ...data,
     customer: data.customer,
     salesperson: data.salesperson,
+    approver: data.approver,
     items: data.items,
   } as unknown as ServiceOrder
 }

@@ -158,6 +158,7 @@ export type ServiceOrder =
   SupabaseDatabase['public']['Tables']['service_orders']['Row'] & {
     customer: Customer | null
     salesperson: Profile | null
+    approver?: Profile | null
     items?: ServiceOrderItem[]
   }
 

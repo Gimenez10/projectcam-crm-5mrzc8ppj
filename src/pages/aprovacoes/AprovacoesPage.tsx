@@ -37,7 +37,7 @@ export default function AprovacoesPage() {
         `
         id, order_number, status, total_value, created_at,
         customer:customers(id, name),
-        salesperson:profiles(id, full_name)
+        salesperson:profiles!service_orders_created_by_fkey(id, full_name)
       `,
       )
       .eq('status', 'Pendente')
